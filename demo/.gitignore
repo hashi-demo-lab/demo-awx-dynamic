@@ -1,0 +1,15 @@
+# local throwaway AWX admin credential — never commit
+awx/.admin_password
+# dev_overrides provider binary (rebuild via: go build -o awx/tf/bin/terraform-provider-dynamic ./cmd/terraform-provider-dynamic)
+awx/tf/bin/
+# terraform working state + plugin cache
+awx/tf/.terraform/
+awx/tf/.terraform.lock.hcl
+awx/tf/terraform.tfstate*
+# large rendered media (regenerate from banner.py/cinema.sh/music.py)
+*.gif
+*.mp4
+*.wav
+
+# built CLI used by record-awx.sh
+bin/

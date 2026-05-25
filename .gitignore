@@ -1,0 +1,4 @@
+.env
+
+.agents/skills/agentprovider-workspace
+.claude/skills/agentprovider-workspace/

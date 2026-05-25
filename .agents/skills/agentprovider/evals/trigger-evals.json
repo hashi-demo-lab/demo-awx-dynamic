@@ -1,0 +1,22 @@
+[
+  {"query": "I've got the OpenAPI spec for our internal Widgets API (widgets.yaml). Can you turn it into a Terraform provider so we can manage widgets as resources?", "should_trigger": true},
+  {"query": "make a terraform data source for the open-meteo forecast api — give it lat/long and read back temperature and elevation", "should_trigger": true},
+  {"query": "we need a short-lived auth token resource in terraform: POST /login to get a bearer token, refresh it, and revoke on destroy. token must never hit state", "should_trigger": true},
+  {"query": "wrap this REST api as a terraform provider — it's CRUD on /items, returns the id under _id, and PUT returns an empty body", "should_trigger": true},
+  {"query": "the counter api has /up and /down endpoints to bump a value, no normal CRUD. can we drive it from terraform?", "should_trigger": true},
+  {"query": "add a agentprovider contract for the github repos endpoint and prove it conforms against the recorded responses", "should_trigger": true},
+  {"query": "this api key goes in the query string as ?api_key=... — author a agentprovider contract for the read-only lookup it gates", "should_trigger": true},
+  {"query": "build me a provider for an async api: create returns 202 and a Location header you poll until the job is done", "should_trigger": true},
+  {"query": "agentprovider conform keeps failing on second_apply_is_noop for my contract, what repair hint applies?", "should_trigger": true},
+  {"query": "I need to wrap our billing REST API as terraform — resources for invoices and a data source for tax rates (a string→number map)", "should_trigger": true},
+  {"query": "how do I run the existing dynamic provider against a real crudcrud endpoint? what env vars does the provider block need?", "should_trigger": false},
+  {"query": "write a Go terraform provider from scratch using terraform-plugin-framework with hand-written resource structs", "should_trigger": false},
+  {"query": "my terraform apply is failing with a 401 from the AWS provider, help me fix the credentials", "should_trigger": false},
+  {"query": "generate an OpenAPI spec from my existing Express routes", "should_trigger": false},
+  {"query": "explain how terraform plan vs apply works and what a refresh does", "should_trigger": false},
+  {"query": "review this pull request that changes the provider engine's pagination code in internal/engine", "should_trigger": false},
+  {"query": "convert this Postman collection into curl commands", "should_trigger": false},
+  {"query": "what's the difference between a terraform data source and a resource conceptually?", "should_trigger": false},
+  {"query": "add retry-with-backoff to my Python requests client for a flaky REST API", "should_trigger": false},
+  {"query": "set up a new terraform module that composes the aws_vpc and aws_subnet resources", "should_trigger": false}
+]
