@@ -12,7 +12,7 @@ Use local AWX on localhost
 
 Workflow:
 1. use agentprovider skill
-2. Create the Terraform example that uses the resources, data source, and both actions.
+2. create the Terraform example that uses the resources, data source, and both actions.
 3. terraform init, terraform apply -auto-approve
 4. cat the terraform code
 5. Summarize the provider implementation, including how the resources, data source, and actions were implemented. Time from start to finish
