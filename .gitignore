@@ -3,5 +3,5 @@
 .agents/skills/agentprovider-workspace
 .claude/skills/agentprovider-workspace/
 .claude/skills/mie-priority-list
-.agentprovider/.DS_Store
-.agentprovider/.DS_Store
+*/.DS_Store
+
