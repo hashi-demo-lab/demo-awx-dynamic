@@ -102,8 +102,11 @@ request bodies.
 has no such pruning, and it mirrors the *whole* example faithfully. For a verbose
 API that example is mostly server-owned noise (`related`, `summary_fields`,
 timestamps), so a `--response` draft is something you **rewrite down to the
-practitioner fields**, not lightly tweak: keep the handful you actually set or
-read, and route server-owned churn to `ignore_server_fields`.
+practitioner fields**, not lightly tweak: model the fields a practitioner sets or
+reads (settable inputs as `optional`/`optional+computed`, server values as
+`computed`), and route only server-*owned* churn to `ignore_server_fields`. Don't
+collapse settable inputs into `ignore_server_fields` — see the completeness step on
+green-washing.
 The two new kinds emit valid but **not-yet-conforming** drafts: an ephemeral draft
 carries placeholder `renew`/`close` paths, and an action draft carries placeholder
 `conformance.example` output values — both must be repaired before `conform` passes
@@ -167,9 +170,19 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
   nothing to read or act on otherwise. If one doesn't exist yet, create a throwaway
   fixture (a quick API POST, or apply the sibling resource first) and record against
   its id.
-- **`--suggest` is resource-tuned.** On an action-only contract it may propose an
-  `identity.response_field` (an action has no identity) — ignore that one;
-  `unmodeled_fields`/`ignore_server_fields` suggestions still apply.
+- **`--suggest` is resource-tuned** — its `unmodeled_fields` /
+  `ignore_server_fields` suggestions target a create/update surface, so weigh them
+  lightly on a read-only data source and ignore any that don't fit the kind.
+- **A "conformance.example pins X but the live run observed X-updated … will fail
+  conform on re-record" warning is a false positive for any field you deliberately
+  change in `update_to`.** `record` compares your `example` against the *last*
+  value it saw — the post-update one — but `conform` checks `example` against the
+  **create-time** response and `update_to` against the updated one, so an
+  `example` ≠ `update_to` is correct by design and conform passes. **Do not follow
+  the warning's suggestion** to move the field into `conformance.expect.<f>:
+  {not_null: true}`: that drops the create-time *value* check in
+  `create_echoes_inputs` and weakens the proof. Keep the create value in `example`
+  and the updated value in `update_to`.
 - **Security — recording sends real credentials to `base_url`.** For a freshly
   bootstrapped, unreviewed contract, record against a **user-controlled staging
   `--base-url`**, never an embedded production URL you haven't read. The engine
@@ -191,7 +204,14 @@ agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cass
 ```
 
 `conform` emits JSON on stdout **by default** (pass `--format text` for the concise
-human verdict; `--json` is still accepted as an alias). The JSON is stable:
+human verdict; `--json` is still accepted as an alias). **stdout is pure JSON;
+human status lines go to stderr** — including the `mutation check: targeted
+invariants bite N/M` banner under `--mutation-check`. So parse **stdout alone**
+(`conform … 2>/dev/null | your-json-parser`); never capture `2>&1` and then wonder
+why the JSON won't decode, and don't switch to `--format text` just to dodge a
+"non-JSON preamble" that is actually on stderr. (`record`'s advisory warnings are
+*also* surfaced inside the JSON `warnings[]` array, so a stdout-only reader still
+sees them.) The JSON is stable:
 `{contract, overall_passed, results[], repair_hints[], summary}`. Each failing
 result carries `expected`, `actual`, `contract_path`, and `suggested_fix`;
 `repair_hints` ranks unique fixes in failure order. Loop:
@@ -255,11 +275,67 @@ shape you don't model (an error/`detail` envelope, a delete body) and aren't
 worth modeling. Note: response-union can't see *write-only* inputs the server
 never echoes — model those from the API's docs/specs.
 
+**`ignore_server_fields` is for server-*owned* output only — not a dumping ground
+to hit a completeness number.** Before you ignore a field, ask the one question
+that decides its class: **does the API accept this field as a create/update
+input?** (Check the request schema — OpenAPI request body, an `OPTIONS`/`POST`
+field listing, or the create-body the API documents.) If yes, it is a
+**practitioner knob** and belongs in `schema.attributes` as `optional: true`, *not*
+in `ignore_server_fields`. Add `computed: true` **only** when the server *supplies a
+value you didn't send* — a default (`""`, `0`, `false`) or a canonicalized form of
+your input — so Terraform accepts the server value without a perpetual diff. Do
+**not** mark a field computed merely because the server echoes it back: an optional
+input the server leaves null/absent when omitted should stay `optional`-only, or
+`computed` will silently suppress drift detection on a real input (see the
+attribute-marking note under "Get these right up front"). Reserve `ignore_server_fields` for fields the practitioner
+can never set — timestamps, `related`/`_links`, `summary_fields`, computed status,
+counters, error envelopes (`detail`). **A foreign-key / reference id is a settable
+input, not server-owned** — `*_credential`, `execution_environment`,
+`default_environment`, `*_environment`, a parent/`organization`/`project` id, and
+similar reference fields are accepted on create/update (the API lists them in its
+request schema / `OPTIONS` POST), so they belong in `schema.attributes` as
+`optional` FKs, not swept into `ignore_server_fields` as "server-owned." The tell
+is that the field *names a related object*: if the practitioner could point it at a
+different object, it is a knob, not envelope. **Behavior toggles are settable knobs
+too** — boolean/enum flags such as `enable_*`, `allow_*`, `*_enabled`, and the whole
+`ask_*` / `*_on_launch` family that a verbose API accepts in its create/update body
+configure how the resource behaves; a verbose object can carry a dozen-plus of them,
+and they are the single biggest green-washing trap (easy to wave off as "launch-time
+behavior" and dump). If the request schema accepts the flag, model it `optional`
+(`+computed` when the server defaults it) — do not park it in `ignore_server_fields`.
+The completeness gate may not catch any of this on an API that exposes no request
+schema (response-union evidence can't tell a settable input from a server-supplied
+one), so it is on you to classify by the one test — **"does the create/update body
+accept this field?"** — not by where the value happens to come from or whether it
+"feels" like core config. Ignoring a *settable* field only to clear the
+gate is **green-washing**: completeness reads 100% but you have shipped a resource
+that can't configure most of the API (a verbose object can have dozens of real
+optional inputs — limits, tags, timeouts, feature toggles — and burying them turns
+a rich resource into a near-empty one). Reach 100% the right way: model the
+settable fields a practitioner would reasonably set as `optional`(`+computed`), and
+ignore only the genuinely server-owned remainder. A quick self-check on any
+contract: count the `optional`/`optional+computed` attributes against the API's
+settable-input list — if you're modeling a handful while ignoring dozens of
+settable fields, you green-washed, not completed.
+
+This guard is about **settable inputs**, which only exist on a contract with a
+create/update body (resources). A **read-only DataSource or Ephemeral has no
+settable inputs** — every field is a computed output — so routing the
+non-projected server envelope into `ignore_server_fields` to reach completeness is
+*legitimate*, not green-washing (nothing a practitioner could set is being hidden).
+For those kinds the quality bar is the inverse: **model the practitioner-useful
+outputs as `computed`** (don't leave the data source projecting three fields), then
+ignore the remaining pure envelope. Don't react to the green-washing rule by
+refusing `ignore_server_fields` and leaving a read-only contract stuck at low
+completeness — that fails the gate without improving quality.
+
 Completeness is a **resource / data-source** gate. An **action-only or ephemeral**
 contract models only the verb's inputs plus a few computed outputs, so its
 completeness against a full read payload is **low by design — not a defect**. Judge
 an action by `action_returns_expected` (does it project the outputs you claimed?),
-not by a percentage, and don't point `--min-completeness` at one.
+not by a percentage, and don't point `--min-completeness` at one. That same
+low-by-design completeness is why `--emit-proof` (which requires 100%) does not
+apply to action/ephemeral kinds — prove them at `conform`, not with a sidecar (step 5).
 
 `record --suggest` also flags `unmodeled_fields` and field-level suggestions so
 you catch gaps at record time. It still does not edit the contract for you.
@@ -271,6 +347,27 @@ After `conform` and `completeness` pass, run:
 ```bash
 agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --mutation-check --emit-proof
 ```
+
+`--emit-proof` gates on **two** things: a passing `--mutation-check` *and* **100%
+completeness** (every recorded field is either modeled or in `ignore_server_fields`)
+— below that it refuses with `completeness N% is below proof threshold 100%` and
+writes no sidecar. The sidecar, when written, is named `<type>.proven.json` — the
+contract file's `.yaml` extension is **replaced**, not appended (a contract
+`awx_org.yaml` yields `awx_org.proven.json`, not `awx_org.yaml.proven.json`). On a verbose API you reach 100% not by modeling every field but
+by routing the **server-owned envelope** (relation links, summary blocks, URLs,
+timestamps, computed status — anything the practitioner never sets or reads) into
+`ignore_server_fields`. That is a non-request change, so it needs **no re-record** —
+just re-run `completeness` then `--emit-proof`. **Reach the 100% by modeling the
+settable inputs and ignoring only server-owned output — not by sweeping settable
+knobs into `ignore_server_fields`** (that green-washes the gate; see the
+completeness step).
+
+Because of that 100% gate, **`--emit-proof` is a resource / data-source step.** An
+**action-only or ephemeral** contract is low-by-design on completeness (it models
+only a verb's inputs + a few outputs), can never reach the 100% threshold, and so
+gets **no `.proven.json`** — that is expected, not a failure. Prove those kinds at
+`conform` (with `--mutation-check` for targeted-mutation evidence); don't try to
+inflate their completeness to force a sidecar.
 
 `--mutation-check` mutates contract-relevant response evidence first: computed
 outputs pinned in `conformance.example`, `conformance.expect` leaves, identity
@@ -305,10 +402,18 @@ the *why* and the symptom→fix mapping for each.
   status is the most common "first conform fails"; the auto-hint may misattribute
   it to `create.body`, so when you see `expected status in [], got 200`, add the
   status to the op named in the failing result.
-- **`update_to` and `update.body` list *every* request-body attribute, not just
-  the changed one** — include unchanged required fields in `conformance.update_to`.
-  The update body is built only from keys present, so a partial `update_to`
-  changes the replayed request body and won't match the recorded update.
+- **`update_to` and `update.body` must list the *same* request-body attributes —
+  the symmetry runs both ways.** Include unchanged required fields in
+  `conformance.update_to` (the body is built only from keys present, so a partial
+  `update_to` won't match the recorded update). The inverse bites just as hard and
+  is easier to miss: **any attribute you put in `update.body` must also appear in
+  `update_to` with a value** — `record` sends that attribute on the live PATCH/PUT
+  (a modeled optional is sent even as `null`), but `conform` rebuilds the request
+  from `update_to`'s keys, so an attribute in `update.body` that `update_to` omits
+  makes the replayed body *shorter* than the recorded one → a byte-replay miss (`no
+  recorded interaction for PATCH …`). If a field is never actually changed by the
+  update, drop it from `update.body` rather than carrying it as a null; if it is
+  changed, give it a value in `update_to`. Keep the two key sets identical.
 - **The example must match the request the recorder will replay — and re-record
   after you change it.** Two recurring traps: (1) an `optional: true, computed: true`
   field the server defaults (e.g. `max_hosts`) is still sent in the body, so it must
@@ -326,6 +431,15 @@ the *why* and the symptom→fix mapping for each.
   the API field under another name with `field:` (attribute `value`, `field: count`).
 - **Object/nested attributes need an explicit `required`/`optional`/`computed`
   marker** — including the fields *inside* an object.
+- **`computed` is for server-supplied values, not every optional.** Mark an
+  optional input `optional: true, computed: true` *only* when the server fills it in
+  when you omit it — a default (`description→""`, `max_hosts→0`) or a canonicalized
+  form of your input. An optional input the server leaves null/absent when omitted
+  stays `optional`-only. Reflexively marking every optional `computed` (e.g. to make
+  `optional_default_consistency` stop complaining) is a quality regression: a
+  `computed` attribute won't report drift when it's unset, so you lose change
+  detection on genuine inputs. Let the CLI's `promote_to_optional_computed` hint —
+  which fires on exactly the server-defaulted fields — tell you which ones need it.
 - **An action's input attribute must not map to the same API field as a computed
   output** — a by-id action that interpolates `${id}` into its path is the classic
   trap: if a computed output already maps `field: id` (the id the action returns),
@@ -337,6 +451,13 @@ the *why* and the symptom→fix mapping for each.
 - **Custom-action invariants are name-keyed** — `action_increment_changes_count` /
   `action_decrement_changes_count` drive actions named exactly `increment` /
   `decrement`; match the names.
+- **Choose an action's `type` so that `<type>_<verb>` equals the Terraform action
+  id you want** — the action surfaces as `dynamic_<type>_<verb>`, built by
+  concatenation. If you want the action `awx_job_launch`, set `type: awx_job` with
+  verb `launch` (→ `dynamic_awx_job_launch`); do **not** set `type: awx_job_launch`,
+  which yields `dynamic_awx_job_launch_launch` and a plan-time "no action schema for
+  …" error after you've already recorded. The verb lives in the action, not the
+  type — split the desired name at the trailing verb and put the stem in `type`.
 - **Action contracts need a real computed output check** — for action-only
   contracts, declare `action_returns_expected` and put at least one computed
   response field in `conformance.example` (for example `run_id`). A config-only
@@ -454,7 +575,7 @@ Done means, in this exact order:
 1. Every fresh or changed contract was seeded with `agentprovider bootstrap` (or, if deliberately hand-authored, that exception is stated in the summary and the draft was confirmed to load under strict decoding).
 2. Fresh or changed contracts are recorded with `agentprovider record` against the intended target.
 3. `agentprovider conform <contract> <cassette>` returns `overall_passed: true` (JSON by default) with a non-empty `conformance.invariants` set for every contract.
-4. `agentprovider completeness <contract> <cassette>` is run for every contract, and any important `missing` fields are modeled or explicitly judged out of scope.
+4. `agentprovider completeness <contract> <cassette>` is run for every contract, and any important `missing` fields are modeled or explicitly judged out of scope — with settable inputs modeled as `optional`(`+computed`) attributes, not swept into `ignore_server_fields` to inflate the number (green-washing). A resource/data source should expose the practitioner-relevant settable inputs the API accepts, not a thin handful.
 5. For provider-authoring tasks, the Terraform example that consumes the contracts applies successfully against the intended runtime.
 6. The cassette is redacted and reviewed, and credentials are sourced from env/provider config, not committed.
 

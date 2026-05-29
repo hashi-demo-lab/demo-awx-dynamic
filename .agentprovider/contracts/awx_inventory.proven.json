@@ -1,0 +1,23 @@
+{
+  "contract": "awx_inventory",
+  "contract_hash": "sha256:9db14e462018dcce15ea5a258a1bdb2faad7b79c551f94ab82b58e6024f5cfe1",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/awx_inventory.cassette.yaml",
+  "cassette_hash": "sha256:acc612331352b904d44b2de286a9bb86954ec0af0e003f02c851b0f373985825",
+  "generated_at": "2026-05-29T05:45:18Z"
+}

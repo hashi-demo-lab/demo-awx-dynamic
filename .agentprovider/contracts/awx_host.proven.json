@@ -1,0 +1,23 @@
+{
+  "contract": "awx_host",
+  "contract_hash": "sha256:b5f63b4e44c23894bfb8444f07abd4c5074b97091bdd93f804cb1443e3c96f61",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/awx_host.cassette.yaml",
+  "cassette_hash": "sha256:74a2d228efa6913873898b4c4ce2a04bac463ced8f08f2f73a78f6f01f246481",
+  "generated_at": "2026-05-29T05:46:08Z"
+}

@@ -1,0 +1,23 @@
+{
+  "contract": "awx_organization",
+  "contract_hash": "sha256:28c0339604db9c2b330bd469976ba9c49edf7a42b6c6b402f9d459a318d87fee",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/awx_organization.cassette.yaml",
+  "cassette_hash": "sha256:f9cae6cb064e9f53fc0b872c57ca885f92ae81eca371076de65cb4b737fa5598",
+  "generated_at": "2026-05-29T05:44:21Z"
+}

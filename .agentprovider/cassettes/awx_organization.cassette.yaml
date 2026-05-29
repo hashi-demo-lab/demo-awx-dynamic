@@ -1,0 +1,448 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 118
+        host: localhost:30080
+        body: '{"default_environment":null,"description":"agentprovider eval r10 organization","max_hosts":0,"name":"apeval-r10-org"}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/organizations/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 3714
+        body: '{"created":"2026-05-29T05:43:56.594225Z","custom_virtualenv":null,"default_environment":null,"description":"agentprovider eval r10 organization","id":106,"max_hosts":0,"modified":"2026-05-29T05:43:56.594234Z","name":"apeval-r10-org","related":{"access_list":"/api/v2/organizations/106/access_list/","activity_stream":"/api/v2/organizations/106/activity_stream/","admins":"/api/v2/organizations/106/admins/","applications":"/api/v2/organizations/106/applications/","created_by":"/api/v2/users/1/","credentials":"/api/v2/organizations/106/credentials/","execution_environments":"/api/v2/organizations/106/execution_environments/","galaxy_credentials":"/api/v2/organizations/106/galaxy_credentials/","instance_groups":"/api/v2/organizations/106/instance_groups/","inventories":"/api/v2/organizations/106/inventories/","job_templates":"/api/v2/organizations/106/job_templates/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/organizations/apeval-r10-org/","notification_templates":"/api/v2/organizations/106/notification_templates/","notification_templates_approvals":"/api/v2/organizations/106/notification_templates_approvals/","notification_templates_error":"/api/v2/organizations/106/notification_templates_error/","notification_templates_started":"/api/v2/organizations/106/notification_templates_started/","notification_templates_success":"/api/v2/organizations/106/notification_templates_success/","object_roles":"/api/v2/organizations/106/object_roles/","projects":"/api/v2/organizations/106/projects/","teams":"/api/v2/organizations/106/teams/","users":"/api/v2/organizations/106/users/","workflow_job_templates":"/api/v2/organizations/106/workflow_job_templates/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the organization","id":2411,"name":"Admin","user_only":true},"approval_role":{"description":"Can approve or deny a workflow approval node","id":2423,"name":"Approve"},"auditor_role":{"description":"Can view all aspects of the organization","id":2420,"name":"Auditor"},"credential_admin_role":{"description":"Can manage all credentials of the organization","id":2415,"name":"Credential Admin"},"execute_role":{"description":"May run any executable resources in the organization","id":2412,"name":"Execute"},"execution_environment_admin_role":{"description":"Can manage all execution environments of the organization","id":2419,"name":"Execution Environment Admin"},"inventory_admin_role":{"description":"Can manage all inventories of the organization","id":2414,"name":"Inventory Admin"},"job_template_admin_role":{"description":"Can manage all job templates of the organization","id":2418,"name":"Job Template Admin"},"member_role":{"description":"User is a member of the organization","id":2421,"name":"Member","user_only":true},"notification_admin_role":{"description":"Can manage all notifications of the organization","id":2417,"name":"Notification Admin"},"project_admin_role":{"description":"Can manage all projects of the organization","id":2413,"name":"Project Admin"},"read_role":{"description":"May view settings for the organization","id":2422,"name":"Read"},"workflow_admin_role":{"description":"Can manage all workflows of the organization","id":2416,"name":"Workflow Admin"}},"related_field_counts":{"admins":0,"inventories":0,"job_templates":0,"projects":0,"teams":0,"users":0},"resource":{"ansible_id":"ba9b378c-6aa7-47ac-9cff-26f4f49e538a","resource_type":"shared.organization"},"user_capabilities":{"delete":true,"edit":true}},"type":"organization","url":"/api/v2/organizations/106/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "3714"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/organizations/106/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 0ad4068bdec24890aa5c095a3c343184
+            X-Api-Time:
+                - 0.386s
+            X-Api-Total-Time:
+                - 0.398s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 404.12825ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/organizations/106/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 3724
+        body: '{"created":"2026-05-29T05:43:56.594225Z","custom_virtualenv":null,"default_environment":null,"description":"agentprovider eval r10 organization","id":106,"max_hosts":0,"modified":"2026-05-29T05:43:56.594234Z","name":"apeval-r10-org","related":{"access_list":"/api/v2/organizations/106/access_list/","activity_stream":"/api/v2/organizations/106/activity_stream/","admins":"/api/v2/organizations/106/admins/","applications":"/api/v2/organizations/106/applications/","created_by":"/api/v2/users/1/","credentials":"/api/v2/organizations/106/credentials/","execution_environments":"/api/v2/organizations/106/execution_environments/","galaxy_credentials":"/api/v2/organizations/106/galaxy_credentials/","instance_groups":"/api/v2/organizations/106/instance_groups/","inventories":"/api/v2/organizations/106/inventories/","job_templates":"/api/v2/organizations/106/job_templates/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/organizations/apeval-r10-org/","notification_templates":"/api/v2/organizations/106/notification_templates/","notification_templates_approvals":"/api/v2/organizations/106/notification_templates_approvals/","notification_templates_error":"/api/v2/organizations/106/notification_templates_error/","notification_templates_started":"/api/v2/organizations/106/notification_templates_started/","notification_templates_success":"/api/v2/organizations/106/notification_templates_success/","object_roles":"/api/v2/organizations/106/object_roles/","projects":"/api/v2/organizations/106/projects/","teams":"/api/v2/organizations/106/teams/","users":"/api/v2/organizations/106/users/","workflow_job_templates":"/api/v2/organizations/106/workflow_job_templates/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the organization","id":2411,"name":"Admin","user_only":true},"approval_role":{"description":"Can approve or deny a workflow approval node","id":2423,"name":"Approve"},"auditor_role":{"description":"Can view all aspects of the organization","id":2420,"name":"Auditor"},"credential_admin_role":{"description":"Can manage all credentials of the organization","id":2415,"name":"Credential Admin"},"execute_role":{"description":"May run any executable resources in the organization","id":2412,"name":"Execute"},"execution_environment_admin_role":{"description":"Can manage all execution environments of the organization","id":2419,"name":"Execution Environment Admin"},"inventory_admin_role":{"description":"Can manage all inventories of the organization","id":2414,"name":"Inventory Admin"},"job_template_admin_role":{"description":"Can manage all job templates of the organization","id":2418,"name":"Job Template Admin"},"member_role":{"description":"User is a member of the organization","id":2421,"name":"Member","user_only":true},"notification_admin_role":{"description":"Can manage all notifications of the organization","id":2417,"name":"Notification Admin"},"project_admin_role":{"description":"Can manage all projects of the organization","id":2413,"name":"Project Admin"},"read_role":{"description":"May view settings for the organization","id":2422,"name":"Read"},"workflow_admin_role":{"description":"Can manage all workflows of the organization","id":2416,"name":"Workflow Admin"}},"related_field_counts":{"admins":0,"hosts":0,"inventories":0,"job_templates":0,"projects":0,"teams":0,"users":0},"resource":{"ansible_id":"ba9b378c-6aa7-47ac-9cff-26f4f49e538a","resource_type":"shared.organization"},"user_capabilities":{"delete":true,"edit":true}},"type":"organization","url":"/api/v2/organizations/106/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "3724"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - ca3def3279b349448effabcb795e0c02
+            X-Api-Time:
+                - 0.314s
+            X-Api-Total-Time:
+                - 0.326s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 331.767334ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 126
+        host: localhost:30080
+        body: '{"default_environment":null,"description":"agentprovider eval r10 organization updated","max_hosts":5,"name":"apeval-r10-org"}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/organizations/106/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 3732
+        body: '{"created":"2026-05-29T05:43:56.594225Z","custom_virtualenv":null,"default_environment":null,"description":"agentprovider eval r10 organization updated","id":106,"max_hosts":5,"modified":"2026-05-29T05:43:58.065988Z","name":"apeval-r10-org","related":{"access_list":"/api/v2/organizations/106/access_list/","activity_stream":"/api/v2/organizations/106/activity_stream/","admins":"/api/v2/organizations/106/admins/","applications":"/api/v2/organizations/106/applications/","created_by":"/api/v2/users/1/","credentials":"/api/v2/organizations/106/credentials/","execution_environments":"/api/v2/organizations/106/execution_environments/","galaxy_credentials":"/api/v2/organizations/106/galaxy_credentials/","instance_groups":"/api/v2/organizations/106/instance_groups/","inventories":"/api/v2/organizations/106/inventories/","job_templates":"/api/v2/organizations/106/job_templates/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/organizations/apeval-r10-org/","notification_templates":"/api/v2/organizations/106/notification_templates/","notification_templates_approvals":"/api/v2/organizations/106/notification_templates_approvals/","notification_templates_error":"/api/v2/organizations/106/notification_templates_error/","notification_templates_started":"/api/v2/organizations/106/notification_templates_started/","notification_templates_success":"/api/v2/organizations/106/notification_templates_success/","object_roles":"/api/v2/organizations/106/object_roles/","projects":"/api/v2/organizations/106/projects/","teams":"/api/v2/organizations/106/teams/","users":"/api/v2/organizations/106/users/","workflow_job_templates":"/api/v2/organizations/106/workflow_job_templates/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the organization","id":2411,"name":"Admin","user_only":true},"approval_role":{"description":"Can approve or deny a workflow approval node","id":2423,"name":"Approve"},"auditor_role":{"description":"Can view all aspects of the organization","id":2420,"name":"Auditor"},"credential_admin_role":{"description":"Can manage all credentials of the organization","id":2415,"name":"Credential Admin"},"execute_role":{"description":"May run any executable resources in the organization","id":2412,"name":"Execute"},"execution_environment_admin_role":{"description":"Can manage all execution environments of the organization","id":2419,"name":"Execution Environment Admin"},"inventory_admin_role":{"description":"Can manage all inventories of the organization","id":2414,"name":"Inventory Admin"},"job_template_admin_role":{"description":"Can manage all job templates of the organization","id":2418,"name":"Job Template Admin"},"member_role":{"description":"User is a member of the organization","id":2421,"name":"Member","user_only":true},"notification_admin_role":{"description":"Can manage all notifications of the organization","id":2417,"name":"Notification Admin"},"project_admin_role":{"description":"Can manage all projects of the organization","id":2413,"name":"Project Admin"},"read_role":{"description":"May view settings for the organization","id":2422,"name":"Read"},"workflow_admin_role":{"description":"Can manage all workflows of the organization","id":2416,"name":"Workflow Admin"}},"related_field_counts":{"admins":0,"hosts":0,"inventories":0,"job_templates":0,"projects":0,"teams":0,"users":0},"resource":{"ansible_id":"ba9b378c-6aa7-47ac-9cff-26f4f49e538a","resource_type":"shared.organization"},"user_capabilities":{"delete":true,"edit":true}},"type":"organization","url":"/api/v2/organizations/106/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "3732"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - e6495d7419214c749f651730ad9c2f07
+            X-Api-Time:
+                - 0.336s
+            X-Api-Total-Time:
+                - 0.352s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 360.47725ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/organizations/106/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 3732
+        body: '{"created":"2026-05-29T05:43:56.594225Z","custom_virtualenv":null,"default_environment":null,"description":"agentprovider eval r10 organization updated","id":106,"max_hosts":5,"modified":"2026-05-29T05:43:58.065988Z","name":"apeval-r10-org","related":{"access_list":"/api/v2/organizations/106/access_list/","activity_stream":"/api/v2/organizations/106/activity_stream/","admins":"/api/v2/organizations/106/admins/","applications":"/api/v2/organizations/106/applications/","created_by":"/api/v2/users/1/","credentials":"/api/v2/organizations/106/credentials/","execution_environments":"/api/v2/organizations/106/execution_environments/","galaxy_credentials":"/api/v2/organizations/106/galaxy_credentials/","instance_groups":"/api/v2/organizations/106/instance_groups/","inventories":"/api/v2/organizations/106/inventories/","job_templates":"/api/v2/organizations/106/job_templates/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/organizations/apeval-r10-org/","notification_templates":"/api/v2/organizations/106/notification_templates/","notification_templates_approvals":"/api/v2/organizations/106/notification_templates_approvals/","notification_templates_error":"/api/v2/organizations/106/notification_templates_error/","notification_templates_started":"/api/v2/organizations/106/notification_templates_started/","notification_templates_success":"/api/v2/organizations/106/notification_templates_success/","object_roles":"/api/v2/organizations/106/object_roles/","projects":"/api/v2/organizations/106/projects/","teams":"/api/v2/organizations/106/teams/","users":"/api/v2/organizations/106/users/","workflow_job_templates":"/api/v2/organizations/106/workflow_job_templates/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the organization","id":2411,"name":"Admin","user_only":true},"approval_role":{"description":"Can approve or deny a workflow approval node","id":2423,"name":"Approve"},"auditor_role":{"description":"Can view all aspects of the organization","id":2420,"name":"Auditor"},"credential_admin_role":{"description":"Can manage all credentials of the organization","id":2415,"name":"Credential Admin"},"execute_role":{"description":"May run any executable resources in the organization","id":2412,"name":"Execute"},"execution_environment_admin_role":{"description":"Can manage all execution environments of the organization","id":2419,"name":"Execution Environment Admin"},"inventory_admin_role":{"description":"Can manage all inventories of the organization","id":2414,"name":"Inventory Admin"},"job_template_admin_role":{"description":"Can manage all job templates of the organization","id":2418,"name":"Job Template Admin"},"member_role":{"description":"User is a member of the organization","id":2421,"name":"Member","user_only":true},"notification_admin_role":{"description":"Can manage all notifications of the organization","id":2417,"name":"Notification Admin"},"project_admin_role":{"description":"Can manage all projects of the organization","id":2413,"name":"Project Admin"},"read_role":{"description":"May view settings for the organization","id":2422,"name":"Read"},"workflow_admin_role":{"description":"Can manage all workflows of the organization","id":2416,"name":"Workflow Admin"}},"related_field_counts":{"admins":0,"hosts":0,"inventories":0,"job_templates":0,"projects":0,"teams":0,"users":0},"resource":{"ansible_id":"ba9b378c-6aa7-47ac-9cff-26f4f49e538a","resource_type":"shared.organization"},"user_capabilities":{"delete":true,"edit":true}},"type":"organization","url":"/api/v2/organizations/106/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "3732"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 1da966e2142a46acac46826ba8aadd35
+            X-Api-Time:
+                - 0.289s
+            X-Api-Total-Time:
+                - 0.299s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 306.700416ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/organizations/106/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 3732
+        body: '{"created":"2026-05-29T05:43:56.594225Z","custom_virtualenv":null,"default_environment":null,"description":"agentprovider eval r10 organization updated","id":106,"max_hosts":5,"modified":"2026-05-29T05:43:58.065988Z","name":"apeval-r10-org","related":{"access_list":"/api/v2/organizations/106/access_list/","activity_stream":"/api/v2/organizations/106/activity_stream/","admins":"/api/v2/organizations/106/admins/","applications":"/api/v2/organizations/106/applications/","created_by":"/api/v2/users/1/","credentials":"/api/v2/organizations/106/credentials/","execution_environments":"/api/v2/organizations/106/execution_environments/","galaxy_credentials":"/api/v2/organizations/106/galaxy_credentials/","instance_groups":"/api/v2/organizations/106/instance_groups/","inventories":"/api/v2/organizations/106/inventories/","job_templates":"/api/v2/organizations/106/job_templates/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/organizations/apeval-r10-org/","notification_templates":"/api/v2/organizations/106/notification_templates/","notification_templates_approvals":"/api/v2/organizations/106/notification_templates_approvals/","notification_templates_error":"/api/v2/organizations/106/notification_templates_error/","notification_templates_started":"/api/v2/organizations/106/notification_templates_started/","notification_templates_success":"/api/v2/organizations/106/notification_templates_success/","object_roles":"/api/v2/organizations/106/object_roles/","projects":"/api/v2/organizations/106/projects/","teams":"/api/v2/organizations/106/teams/","users":"/api/v2/organizations/106/users/","workflow_job_templates":"/api/v2/organizations/106/workflow_job_templates/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the organization","id":2411,"name":"Admin","user_only":true},"approval_role":{"description":"Can approve or deny a workflow approval node","id":2423,"name":"Approve"},"auditor_role":{"description":"Can view all aspects of the organization","id":2420,"name":"Auditor"},"credential_admin_role":{"description":"Can manage all credentials of the organization","id":2415,"name":"Credential Admin"},"execute_role":{"description":"May run any executable resources in the organization","id":2412,"name":"Execute"},"execution_environment_admin_role":{"description":"Can manage all execution environments of the organization","id":2419,"name":"Execution Environment Admin"},"inventory_admin_role":{"description":"Can manage all inventories of the organization","id":2414,"name":"Inventory Admin"},"job_template_admin_role":{"description":"Can manage all job templates of the organization","id":2418,"name":"Job Template Admin"},"member_role":{"description":"User is a member of the organization","id":2421,"name":"Member","user_only":true},"notification_admin_role":{"description":"Can manage all notifications of the organization","id":2417,"name":"Notification Admin"},"project_admin_role":{"description":"Can manage all projects of the organization","id":2413,"name":"Project Admin"},"read_role":{"description":"May view settings for the organization","id":2422,"name":"Read"},"workflow_admin_role":{"description":"Can manage all workflows of the organization","id":2416,"name":"Workflow Admin"}},"related_field_counts":{"admins":0,"hosts":0,"inventories":0,"job_templates":0,"projects":0,"teams":0,"users":0},"resource":{"ansible_id":"ba9b378c-6aa7-47ac-9cff-26f4f49e538a","resource_type":"shared.organization"},"user_capabilities":{"delete":true,"edit":true}},"type":"organization","url":"/api/v2/organizations/106/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "3732"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 97b44e3e1a524cc697d93324c21a3057
+            X-Api-Time:
+                - 0.330s
+            X-Api-Total-Time:
+                - 0.345s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 352.204167ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/organizations/106/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 31620f7aeb544b2aa2850db5fcaa681b
+            X-Api-Time:
+                - 0.363s
+            X-Api-Total-Time:
+                - 0.398s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 401.998333ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/organizations/106/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 53
+        body: '{"detail":"No Organization matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "53"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 41d9782869f6443ebc905e3d1c9dfab7
+            X-Api-Time:
+                - 0.320s
+            X-Api-Total-Time:
+                - 0.333s
+        status: 404 Not Found
+        code: 404
+        duration: 338.609084ms
+
+provenance:
+  recorded_at: "2026-05-29T05:44:01Z"
+  host: "localhost:30080"
+  api_version: "nginx"

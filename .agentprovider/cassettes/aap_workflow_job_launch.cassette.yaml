@@ -1,0 +1,74 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/56/launch/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1943
+        body: '{"allow_simultaneous":false,"canceled_on":null,"created":"2026-05-29T05:50:08.807509Z","description":"fixture for workflow launch action","elapsed":0.0,"extra_vars":"{}","failed":false,"finished":null,"id":226,"ignored_fields":{},"inventory":null,"is_sliced_job":false,"job_args":"","job_cwd":"","job_env":{},"job_explanation":"","job_tags":null,"job_template":null,"launch_type":"manual","launched_by":{"id":1,"name":"admin","type":"user","url":"/api/v2/users/1/"},"limit":null,"modified":"2026-05-29T05:50:08.825300Z","name":"tf-demo-wfjt-fixture","related":{"activity_stream":"/api/v2/workflow_jobs/226/activity_stream/","cancel":"/api/v2/workflow_jobs/226/cancel/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_jobs/226/labels/","modified_by":"/api/v2/users/1/","notifications":"/api/v2/workflow_jobs/226/notifications/","relaunch":"/api/v2/workflow_jobs/226/relaunch/","unified_job_template":"/api/v2/workflow_job_templates/56/","workflow_job_template":"/api/v2/workflow_job_templates/56/","workflow_nodes":"/api/v2/workflow_jobs/226/workflow_nodes/"},"result_traceback":"","scm_branch":null,"skip_tags":null,"started":null,"status":"pending","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"organization":{"description":"","id":1,"name":"Default"},"unified_job_template":{"description":"fixture for workflow launch action","id":56,"name":"tf-demo-wfjt-fixture","unified_job_type":"workflow_job"},"user_capabilities":{"delete":true,"start":true},"workflow_job_template":{"description":"fixture for workflow launch action","id":56,"name":"tf-demo-wfjt-fixture"}},"type":"workflow_job","unified_job_template":56,"url":"/api/v2/workflow_jobs/226/","webhook_credential":null,"webhook_guid":"","webhook_service":"","work_unit_id":null,"workflow_job":226,"workflow_job_template":56}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1943"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/workflow_jobs/226/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 36bc146c64cf4760bf464fe981ae9c53
+            X-Api-Time:
+                - 0.373s
+            X-Api-Total-Time:
+                - 0.392s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 403.03475ms
+
+provenance:
+  recorded_at: "2026-05-29T05:50:09Z"
+  host: "localhost:30080"
+  api_version: "nginx"

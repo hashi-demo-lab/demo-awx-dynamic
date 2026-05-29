@@ -1,0 +1,338 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: awx_job_template
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  headers:
+    Accept: application/json
+    Content-Type: application/json
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+    failure_status: [401, 403]
+schema:
+  attributes:
+    id:
+      type: string
+      computed: true
+    name:
+      type: string
+      required: true
+    # foreign-key ids (settable; server leaves null when omitted -> optional only)
+    inventory:
+      type: number
+      optional: true
+    project:
+      type: number
+      optional: true
+    execution_environment:
+      type: number
+      optional: true
+    webhook_credential:
+      type: number
+      optional: true
+    # string knobs the server defaults to "" -> optional + computed
+    description:
+      type: string
+      optional: true
+      computed: true
+    job_type:
+      type: string
+      optional: true
+      computed: true
+    playbook:
+      type: string
+      optional: true
+      computed: true
+    scm_branch:
+      type: string
+      optional: true
+      computed: true
+    limit:
+      type: string
+      optional: true
+      computed: true
+    extra_vars:
+      type: string
+      optional: true
+      computed: true
+    job_tags:
+      type: string
+      optional: true
+      computed: true
+    skip_tags:
+      type: string
+      optional: true
+      computed: true
+    start_at_task:
+      type: string
+      optional: true
+      computed: true
+    host_config_key:
+      type: string
+      optional: true
+      computed: true
+    # numeric knobs the server defaults -> optional + computed
+    forks:
+      type: number
+      optional: true
+      computed: true
+    verbosity:
+      type: number
+      optional: true
+      computed: true
+    timeout:
+      type: number
+      optional: true
+      computed: true
+    job_slice_count:
+      type: number
+      optional: true
+      computed: true
+    # webhook_service: choice; server returns "" when omitted -> optional + computed
+    webhook_service:
+      type: string
+      optional: true
+      computed: true
+    # behavior toggles the server defaults to false -> optional + computed
+    force_handlers:
+      type: bool
+      optional: true
+      computed: true
+    use_fact_cache:
+      type: bool
+      optional: true
+      computed: true
+    survey_enabled:
+      type: bool
+      optional: true
+      computed: true
+    become_enabled:
+      type: bool
+      optional: true
+      computed: true
+    diff_mode:
+      type: bool
+      optional: true
+      computed: true
+    allow_simultaneous:
+      type: bool
+      optional: true
+      computed: true
+    prevent_instance_group_fallback:
+      type: bool
+      optional: true
+      computed: true
+    # the ask_*_on_launch family — settable launch-prompt toggles, server defaults false
+    ask_scm_branch_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_diff_mode_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_variables_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_limit_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_tags_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_skip_tags_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_job_type_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_verbosity_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_inventory_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_credential_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_execution_environment_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_labels_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_forks_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_job_slice_count_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_timeout_on_launch:
+      type: bool
+      optional: true
+      computed: true
+    ask_instance_groups_on_launch:
+      type: bool
+      optional: true
+      computed: true
+identity:
+  attribute: id
+  known_after: create
+ignore_server_fields:
+  - type
+  - url
+  - related
+  - summary_fields
+  - created
+  - modified
+  - organization
+  - last_job_run
+  - last_job_failed
+  - next_job_run
+  - status
+  - custom_virtualenv
+  - detail
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/job_templates/
+    body: &jt_body
+      - name
+      - description
+      - job_type
+      - inventory
+      - project
+      - playbook
+      - scm_branch
+      - forks
+      - limit
+      - verbosity
+      - extra_vars
+      - job_tags
+      - force_handlers
+      - skip_tags
+      - start_at_task
+      - timeout
+      - use_fact_cache
+      - execution_environment
+      - host_config_key
+      - ask_scm_branch_on_launch
+      - ask_diff_mode_on_launch
+      - ask_variables_on_launch
+      - ask_limit_on_launch
+      - ask_tags_on_launch
+      - ask_skip_tags_on_launch
+      - ask_job_type_on_launch
+      - ask_verbosity_on_launch
+      - ask_inventory_on_launch
+      - ask_credential_on_launch
+      - ask_execution_environment_on_launch
+      - ask_labels_on_launch
+      - ask_forks_on_launch
+      - ask_job_slice_count_on_launch
+      - ask_timeout_on_launch
+      - ask_instance_groups_on_launch
+      - survey_enabled
+      - become_enabled
+      - diff_mode
+      - allow_simultaneous
+      - job_slice_count
+      - webhook_service
+      - webhook_credential
+      - prevent_instance_group_fallback
+    expect_status: [201]
+  read:
+    method: GET
+    path: /api/v2/job_templates/${id}/
+    expect_status: [200]
+    not_found_status: [404]
+  update:
+    method: PATCH
+    path: /api/v2/job_templates/${id}/
+    body: *jt_body
+    expect_status: [200]
+    refresh_after: true
+  delete:
+    method: DELETE
+    path: /api/v2/job_templates/${id}/
+    expect_status: [202, 204]
+    not_found_status: [404]
+conformance:
+  example: &jt_example
+    name: apeval-r10-jt
+    description: agentprovider eval r10 job template
+    job_type: run
+    inventory: 1
+    project: 6
+    playbook: hello_world.yml
+    scm_branch: ""
+    forks: 0
+    limit: ""
+    verbosity: 0
+    extra_vars: ""
+    job_tags: ""
+    force_handlers: false
+    skip_tags: ""
+    start_at_task: ""
+    timeout: 0
+    use_fact_cache: false
+    execution_environment: null
+    host_config_key: ""
+    ask_scm_branch_on_launch: false
+    ask_diff_mode_on_launch: false
+    ask_variables_on_launch: false
+    ask_limit_on_launch: false
+    ask_tags_on_launch: false
+    ask_skip_tags_on_launch: false
+    ask_job_type_on_launch: false
+    ask_verbosity_on_launch: false
+    ask_inventory_on_launch: false
+    ask_credential_on_launch: false
+    ask_execution_environment_on_launch: false
+    ask_labels_on_launch: false
+    ask_forks_on_launch: false
+    ask_job_slice_count_on_launch: false
+    ask_timeout_on_launch: false
+    ask_instance_groups_on_launch: false
+    survey_enabled: false
+    become_enabled: false
+    diff_mode: false
+    allow_simultaneous: false
+    job_slice_count: 1
+    webhook_service: ""
+    webhook_credential: null
+    prevent_instance_group_fallback: false
+  update_to:
+    <<: *jt_example
+    description: agentprovider eval r10 job template updated
+    ask_variables_on_launch: true
+    verbosity: 1
+  expect:
+    id: { not_null: true }
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - optional_default_consistency
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - state_matches_expect
+    - import_reconstructs
+    - id_stable_across_update
