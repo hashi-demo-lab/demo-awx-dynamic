@@ -2,8 +2,8 @@
 
 All commands below use the `agentprovider` CLI; make sure it's available on your
 PATH before you start. The core authoring subcommands are `bootstrap`, `schema`,
-`invariants`, `validate`, `describe`, `preflight`, `record`, and `conform`, with
-`completeness` (coverage gate) and `refresh` (drift gate) alongside; serving an
+`invariants`, `validate`, `describe`, `introspect`, `preflight`, `record`, and
+`conform`, with `completeness` (coverage gate) and `refresh` (drift gate) alongside; serving an
 already-authored provider is separate (see `docs/RUNNING.md`).
 
 Run `agentprovider help` for the command listing, and `agentprovider help <command>`
@@ -14,8 +14,10 @@ Run `agentprovider help` for the command listing, and `agentprovider help <comma
 Most authoring subcommands emit JSON on stdout **by default** — this is what the
 loop reads. Pass `--format text` for human-readable output where the command
 supports it; `--json` is still accepted as an alias for `--format json` (the
-alias always forces JSON). `schema` is the deliberate exception: it emits the
+alias always forces JSON). `schema` is a deliberate exception: it emits the
 contract-file schema as `--format json` or `--format yaml`, with no text mode.
+`introspect` is the other deliberate exception: it defaults to text for humans,
+and supports `--json` / `--format json` for agents and scripts.
 
 On a **runtime** fatal error (exit 1) in JSON mode, a command prints a structured
 envelope to stdout:
@@ -126,6 +128,38 @@ JSON shape (default):
   ]
 }
 ```
+
+## introspect — discover live settable fields before authoring
+
+```
+agentprovider introspect <endpoint> --base-url <url>
+               [--auth-env <VAR>] [--allow-insecure] [--allow-private-host]
+               [--format json|text] [--json]
+```
+
+- `endpoint` must be a relative API path. Absolute URLs are rejected so credentials
+  cannot bypass the reviewed `--base-url`.
+- `--auth-env` takes the name of an environment variable containing a bearer token;
+  the token value is never passed on the command line.
+- Use `--allow-private-host` only for reviewed local/dev private hosts. Use
+  `--allow-insecure` only for reviewed credentialed `http://` targets; the normal
+  credentialed path should be HTTPS.
+- The command tries read-only `OPTIONS` first and parses DRF `actions.POST` /
+  update metadata into field suggestions. If `OPTIONS` is unavailable, it performs
+  one sample `GET` and marks the result `confidence: reduced`.
+- `--auth-env` is **bearer-only**; for a basic-auth API mint a token first. Use a
+  **write-scoped** token: DRF APIs (AWX/AAP) only return the `actions.POST`
+  descriptor on `OPTIONS` to a principal with add permission, so a read-only token
+  silently yields `source: sample, confidence: reduced`. Re-mint with write scope
+  to get `source: options, confidence: high`.
+- High-confidence `OPTIONS` rows may include copyable attribute snippets for
+  `required`, `optional+default`, `optional+computed`, or `computed` fields.
+  Sample-derived rows, nested paths, unknown requiredness, and malformed boolean
+  metadata are review-only and intentionally omit a copyable `attribute`.
+- It writes no files. Use it to guide bootstrapping and first-pass contract
+  authoring before `preflight` / `record`; if `completeness --metadata` or proof
+  emission needs a reusable DRF metadata file, save the reviewed full `OPTIONS`
+  envelope, or wrap a reviewed POST map as `{"actions":{"POST":...}}`.
 
 ## record — capture a replayable cassette
 

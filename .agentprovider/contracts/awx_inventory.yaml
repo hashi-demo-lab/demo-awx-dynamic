@@ -1,54 +1,99 @@
 apiVersion: agentprovider/v1
-kind: Resource
 type: awx_inventory
+kind: Resource
+
 connection:
     base_url: ${env.AWX}
     allow_insecure: true
     allow_private_host: true
     headers:
         Content-Type: application/json
-        Accept: application/json
     auth:
         type: basic
         username: ${env.AWX_USERNAME}
         password: ${env.AWX_PASSWORD}
-        failure_status: [401, 403]
+
 identity:
     attribute: id
     known_after: create
     response_field: id
+
 schema:
     attributes:
-        id: { computed: true, type: string }
-        name: { required: true, type: string }
-        description: { optional: true, computed: true, type: string }
-        organization: { required: true, type: number }
-        kind: { optional: true, computed: true, type: string }
-        host_filter: { optional: true, type: string }
-        variables: { optional: true, computed: true, type: string }
-        prevent_instance_group_fallback: { optional: true, computed: true, type: bool }
+        id:
+            computed: true
+            type: string
+        name:
+            required: true
+            type: string
+        description:
+            optional: true
+            default: ""
+            type: string
+        organization:
+            required: true
+            type: number
+        kind:
+            optional: true
+            default: ""
+            type: string
+        host_filter:
+            optional: true
+            computed: true
+            type: string
+        variables:
+            optional: true
+            default: ""
+            type: string
+        prevent_instance_group_fallback:
+            optional: true
+            default: false
+            type: bool
+
 lifecycle:
     create:
         method: POST
         path: /api/v2/inventories/
-        body: [name, description, organization, kind, variables, prevent_instance_group_fallback]
-        expect_status: [200, 201]
+        expect_status:
+            - 201
+        body:
+            - name
+            - description
+            - organization
+            - kind
+            - host_filter
+            - variables
+            - prevent_instance_group_fallback
     read:
         method: GET
-        path: /api/v2/inventories/${id}/
-        expect_status: [200]
-        not_found_status: [404]
+        path: "/api/v2/inventories/${id}/"
+        expect_status:
+            - 200
+        not_found_status:
+            - 404
     update:
         method: PATCH
-        path: /api/v2/inventories/${id}/
-        body: [name, description, organization, kind, variables, prevent_instance_group_fallback]
-        expect_status: [200]
+        path: "/api/v2/inventories/${id}/"
+        expect_status:
+            - 200
+        body:
+            - name
+            - description
+            - organization
+            - kind
+            - host_filter
+            - variables
+            - prevent_instance_group_fallback
         refresh_after: true
     delete:
         method: DELETE
-        path: /api/v2/inventories/${id}/
-        expect_status: [200, 202, 204]
-        not_found_status: [404]
+        path: "/api/v2/inventories/${id}/"
+        expect_status:
+            - 202
+            - 204
+        not_found_status:
+            - 404
+
 ignore_server_fields:
     - type
     - url
@@ -57,31 +102,34 @@ ignore_server_fields:
     - created
     - modified
     - has_active_failures
-    - total_hosts
-    - hosts_with_active_failures
-    - total_groups
     - has_inventory_sources
+    - total_hosts
+    - total_groups
     - total_inventory_sources
+    - hosts_with_active_failures
     - inventory_sources_with_failures
     - pending_deletion
     - detail
+
 conformance:
     example:
-        name: apeval-r11-inv
-        description: agentprovider eval r11 inventory
-        organization: 72
+        name: "apeval-fresh-inv-a7k2"
+        description: "apeval inventory for agentprovider conformance testing"
+        organization: 115
         kind: ""
         variables: ""
         prevent_instance_group_fallback: false
     update_to:
-        name: apeval-r11-inv
-        description: agentprovider eval r11 inventory updated
-        organization: 72
+        name: "apeval-fresh-inv-a7k2"
+        description: "apeval inventory updated description"
+        organization: 115
         kind: ""
+        host_filter: null
         variables: ""
         prevent_instance_group_fallback: false
     expect:
-        id: { not_null: true }
+        id:
+            not_null: true
     invariants:
         - id_is_computed_and_nonempty
         - create_echoes_inputs

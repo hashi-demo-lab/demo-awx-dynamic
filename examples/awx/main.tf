@@ -9,36 +9,30 @@ provider "dynamic" {}
 # ---- Resources (full CRUD) ----
 
 resource "dynamic_awx_organization" "org" {
-  name        = "apeval-r11-org-tf"
-  description = "agentprovider eval r11 org via terraform"
+  name        = "apeval-fresh-org-tf"
+  description = "fresh agentprovider build org via terraform"
   max_hosts   = 0
 }
 
 resource "dynamic_awx_inventory" "inv" {
-  name                            = "apeval-r11-inv-tf"
-  description                     = "agentprovider eval r11 inventory via terraform"
-  organization                    = dynamic_awx_organization.org.id
-  kind                            = ""
-  variables                       = ""
-  prevent_instance_group_fallback = false
+  name         = "apeval-fresh-inv-tf"
+  description  = "fresh agentprovider build inventory via terraform"
+  organization = dynamic_awx_organization.org.id
 }
 
 resource "dynamic_awx_host" "host" {
-  name        = "apeval-r11-host-tf"
-  description = "agentprovider eval r11 host via terraform"
+  name        = "apeval-fresh-host-tf"
+  description = "fresh agentprovider build host via terraform"
   inventory   = dynamic_awx_inventory.inv.id
   enabled     = true
-  instance_id = ""
-  variables   = ""
 }
 
 resource "dynamic_awx_job_template" "jt" {
-  name        = "apeval-r11-jt-tf"
-  description = "agentprovider eval r11 job template via terraform"
-  job_type    = "run"
-  inventory   = dynamic_awx_inventory.inv.id
-  project     = 6
-  playbook    = "hello_world.yml"
+  name      = "apeval-fresh-jt-tf"
+  job_type  = "run"
+  inventory = dynamic_awx_inventory.inv.id
+  project   = 6
+  playbook  = "hello_world.yml"
 }
 
 # ---- Data source: look up an existing job template by id ----
@@ -48,17 +42,15 @@ data "dynamic_awx_job_template_ds" "fixture" {
 }
 
 # ---- Actions ----
-# awx_job_launch targets the JT we created; trigger it from the sibling host
-# (a resource OTHER than the action target) to avoid a resource->action->resource cycle.
+# awx_job_launch targets job template 70 (a stable fixture); aap_workflow_job_launch
+# targets workflow_job_template 56. Triggered from a sibling host (NOT the action
+# targets) to avoid a resource -> action -> resource cycle.
 
 action "dynamic_awx_job_launch" "run_jt" {
   config {
-    template_id = dynamic_awx_job_template.jt.id
+    template_id = 70
   }
 }
-
-# aap_workflow_job_launch targets the pre-existing workflow_job_template fixture (id 56);
-# trigger it from the org resource (a sibling, not the action's target).
 
 action "dynamic_aap_workflow_job_launch" "run_wf" {
   config {
@@ -67,12 +59,10 @@ action "dynamic_aap_workflow_job_launch" "run_wf" {
 }
 
 resource "dynamic_awx_host" "trigger_host" {
-  name        = "apeval-r11-trigger-tf"
+  name        = "apeval-fresh-trigger-tf"
   description = "carries action triggers; sibling of action targets"
   inventory   = dynamic_awx_inventory.inv.id
   enabled     = true
-  instance_id = ""
-  variables   = ""
 
   lifecycle {
     action_trigger {

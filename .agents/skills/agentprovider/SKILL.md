@@ -78,11 +78,22 @@ For a reviewed local/dev target on a private host, add `--allow-private-host`.
 For credentialed `http://`, add `--allow-insecure` only after confirming the
 target is safe to receive bearer credentials over plaintext.
 
-`--auth-env` takes an environment variable **name**, not a token value. The
-command tries `OPTIONS` first and reuses the same DRF metadata parser as
-completeness; when `OPTIONS` is unavailable it falls back to one `GET` sample with
+`--auth-env` takes an environment variable **name**, not a token value, and is
+**bearer-only** (no basic-auth flag) — for a basic-auth API like AWX, mint a token
+first (`POST /api/v2/tokens/`) and point `--auth-env` at it. The command tries
+`OPTIONS` first and reuses the same DRF metadata parser as completeness; when
+`OPTIONS` is unavailable it falls back to one `GET` sample with
 `confidence: reduced`. Default output is human-readable text; use `--format json`
 or `--json` when another agent/tool will consume the result.
+
+**Use a token with *write* scope.** Many DRF APIs (AWX/AAP included) only expose
+the `actions.POST` descriptor in an `OPTIONS` response to a principal that has
+*add* permission. A read-only token silently drops introspect to
+`source: sample, confidence: reduced` (every field `unknown`, no copyable
+`attribute` snippet) — the low-value path. A write-scoped token returns
+`source: options, confidence: high` with real per-field shape suggestions. If you
+see `confidence: reduced` against an API you know serves `OPTIONS`, re-mint the
+token with write scope before authoring from the result.
 
 Treat high-confidence `OPTIONS` rows as authoring candidates (`required`,
 `optional+default`, `optional+computed`, or `computed`). Treat sample-derived

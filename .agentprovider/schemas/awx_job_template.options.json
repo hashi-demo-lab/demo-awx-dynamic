@@ -1,0 +1,421 @@
+{
+"actions": {
+"POST": {
+"name": {
+"type": "string",
+"required": true,
+"hidden": false,
+"label": "Name",
+"max_length": 512,
+"help_text": "Name of this job template.",
+"filterable": true
+},
+"description": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Description",
+"help_text": "Optional description of this job template.",
+"filterable": true,
+"default": ""
+},
+"job_type": {
+"type": "choice",
+"required": false,
+"hidden": false,
+"label": "Job type",
+"filterable": true,
+"default": "run",
+"choices": [
+[
+"run",
+"Run"
+],
+[
+"check",
+"Check"
+]
+]
+},
+"inventory": {
+"type": "id",
+"required": false,
+"hidden": false,
+"label": "Inventory",
+"filterable": true
+},
+"project": {
+"type": "id",
+"required": false,
+"hidden": false,
+"label": "Project",
+"filterable": true
+},
+"playbook": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Playbook",
+"max_length": 1024,
+"filterable": true,
+"default": ""
+},
+"scm_branch": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Scm branch",
+"help_text": "Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.",
+"max_length": 1024,
+"filterable": true,
+"default": ""
+},
+"forks": {
+"type": "integer",
+"required": false,
+"hidden": false,
+"label": "Forks",
+"min_value": 0,
+"max_value": 2147483647,
+"filterable": true,
+"default": 0
+},
+"limit": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Limit",
+"filterable": true,
+"default": ""
+},
+"verbosity": {
+"type": "choice",
+"required": false,
+"hidden": false,
+"label": "Verbosity",
+"filterable": true,
+"default": 0,
+"choices": [
+[
+0,
+"0 (Normal)"
+],
+[
+1,
+"1 (Verbose)"
+],
+[
+2,
+"2 (More Verbose)"
+],
+[
+3,
+"3 (Debug)"
+],
+[
+4,
+"4 (Connection Debug)"
+],
+[
+5,
+"5 (WinRM Debug)"
+]
+]
+},
+"extra_vars": {
+"type": "json",
+"required": false,
+"hidden": false,
+"label": "Extra vars",
+"filterable": true,
+"default": ""
+},
+"job_tags": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Job tags",
+"filterable": true,
+"default": ""
+},
+"force_handlers": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Force handlers",
+"filterable": true,
+"default": false
+},
+"skip_tags": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Skip tags",
+"max_length": 1024,
+"filterable": true,
+"default": ""
+},
+"start_at_task": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Start at task",
+"max_length": 1024,
+"filterable": true,
+"default": ""
+},
+"timeout": {
+"type": "integer",
+"required": false,
+"hidden": false,
+"label": "Timeout",
+"help_text": "The amount of time (in seconds) to run before the task is canceled.",
+"min_value": -2147483648,
+"max_value": 2147483647,
+"filterable": true,
+"default": 0
+},
+"use_fact_cache": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Use fact cache",
+"help_text": "If enabled, the service will act as an Ansible Fact Cache Plugin; persisting facts at the end of a playbook run to the database and caching facts for use by Ansible.",
+"filterable": true,
+"default": false
+},
+"execution_environment": {
+"type": "id",
+"required": false,
+"hidden": false,
+"label": "Execution environment",
+"help_text": "The container image to be used for execution.",
+"filterable": true
+},
+"host_config_key": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Host config key",
+"max_length": 1024,
+"filterable": true,
+"default": ""
+},
+"ask_scm_branch_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask scm branch on launch",
+"filterable": true,
+"default": false
+},
+"ask_diff_mode_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask diff mode on launch",
+"filterable": true,
+"default": false
+},
+"ask_variables_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask variables on launch",
+"filterable": true,
+"default": false
+},
+"ask_limit_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask limit on launch",
+"filterable": true,
+"default": false
+},
+"ask_tags_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask tags on launch",
+"filterable": true,
+"default": false
+},
+"ask_skip_tags_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask skip tags on launch",
+"filterable": true,
+"default": false
+},
+"ask_job_type_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask job type on launch",
+"filterable": true,
+"default": false
+},
+"ask_verbosity_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask verbosity on launch",
+"filterable": true,
+"default": false
+},
+"ask_inventory_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask inventory on launch",
+"filterable": true,
+"default": false
+},
+"ask_credential_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask credential on launch",
+"filterable": true,
+"default": false
+},
+"ask_execution_environment_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask execution environment on launch",
+"filterable": true,
+"default": false
+},
+"ask_labels_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask labels on launch",
+"filterable": true,
+"default": false
+},
+"ask_forks_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask forks on launch",
+"filterable": true,
+"default": false
+},
+"ask_job_slice_count_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask job slice count on launch",
+"filterable": true,
+"default": false
+},
+"ask_timeout_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask timeout on launch",
+"filterable": true,
+"default": false
+},
+"ask_instance_groups_on_launch": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Ask instance groups on launch",
+"filterable": true,
+"default": false
+},
+"survey_enabled": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Survey enabled",
+"filterable": true,
+"default": false
+},
+"become_enabled": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Become enabled",
+"filterable": true,
+"default": false
+},
+"diff_mode": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Diff mode",
+"help_text": "If enabled, textual changes made to any templated files on the host are shown in the standard output",
+"filterable": true,
+"default": false
+},
+"allow_simultaneous": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Allow simultaneous",
+"filterable": true,
+"default": false
+},
+"job_slice_count": {
+"type": "integer",
+"required": false,
+"hidden": false,
+"label": "Job slice count",
+"help_text": "The number of jobs to slice into at runtime. Will cause the Job Template to launch a workflow if value is greater than 1.",
+"min_value": 0,
+"max_value": 2147483647,
+"filterable": true,
+"default": 1
+},
+"webhook_service": {
+"type": "choice",
+"required": false,
+"hidden": false,
+"label": "Webhook service",
+"help_text": "Service that webhook requests will be accepted from",
+"filterable": true,
+"choices": [
+[
+"",
+"---------"
+],
+[
+"github",
+"GitHub"
+],
+[
+"gitlab",
+"GitLab"
+],
+[
+"bitbucket_dc",
+"BitBucket DataCenter"
+]
+]
+},
+"webhook_credential": {
+"type": "id",
+"required": false,
+"hidden": false,
+"label": "Webhook credential",
+"help_text": "Personal Access Token for posting back the status to the service API",
+"filterable": true
+},
+"prevent_instance_group_fallback": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Prevent instance group fallback",
+"help_text": "If enabled, the job template will prevent adding any inventory or organization instance groups to the list of preferred instances groups to run on.If this setting is enabled and you provided an empty list, the global instance groups will be applied.",
+"filterable": true,
+"default": false
+}
+}
+}
+}

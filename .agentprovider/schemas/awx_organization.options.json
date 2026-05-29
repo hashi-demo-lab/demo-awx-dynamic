@@ -1,0 +1,43 @@
+{
+"actions": {
+"POST": {
+"name": {
+"type": "string",
+"required": true,
+"hidden": false,
+"label": "Name",
+"max_length": 512,
+"help_text": "Name of this organization.",
+"filterable": true
+},
+"description": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Description",
+"help_text": "Optional description of this organization.",
+"filterable": true,
+"default": ""
+},
+"max_hosts": {
+"type": "integer",
+"required": false,
+"hidden": false,
+"label": "Max hosts",
+"help_text": "Maximum number of hosts allowed to be managed by this organization.",
+"min_value": 0,
+"max_value": 2147483647,
+"filterable": true,
+"default": 0
+},
+"default_environment": {
+"type": "id",
+"required": false,
+"hidden": false,
+"label": "Default environment",
+"help_text": "The default execution environment for jobs run by this organization.",
+"filterable": true
+}
+}
+}
+}

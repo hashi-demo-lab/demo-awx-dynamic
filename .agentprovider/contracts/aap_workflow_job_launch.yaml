@@ -1,80 +1,35 @@
 apiVersion: agentprovider/v1
-kind: Resource          # action-only -> Terraform Action dynamic_aap_workflow_job_launch
+kind: Resource
 type: aap_workflow_job
-
 connection:
   base_url: ${env.AWX}
   allow_insecure: true
   allow_private_host: true
   headers:
-    Accept: application/json
     Content-Type: application/json
   auth:
     type: basic
-    username: ${env.AWX_USERNAME}
-    password: ${env.AWX_PASSWORD}
-    failure_status: [401, 403]
-
+    username: "${env.AWX_USERNAME}"
+    password: "${env.AWX_PASSWORD}"
 schema:
   attributes:
-    workflow_template_id: { type: number, required: true }   # input, interpolated into path
-    workflow_job: { type: number, computed: true }           # server-assigned launched workflow job id
-    name:         { type: string, computed: true }           # inherited (stable)
-    launch_type:  { type: string, computed: true }           # 'manual' (stable)
-    status:       { type: string, computed: true }           # varies; output only
-
+    workflow_template_id: { type: number, required: true }
+    workflow_job_id:      { type: number, computed: true, field: id }
+    status:               { type: string, computed: true }
+    name:                 { type: string, computed: true }
 actions:
   launch:
     method: POST
     path: /api/v2/workflow_job_templates/${workflow_template_id}/launch/
     expect_status: [201]
-
-ignore_server_fields:
-  - ignored_fields
-  - id
-  - type
-  - url
-  - related
-  - summary_fields
-  - created
-  - modified
-  - description
-  - unified_job_template
-  - failed
-  - started
-  - finished
-  - canceled_on
-  - elapsed
-  - job_args
-  - job_cwd
-  - job_env
-  - job_explanation
-  - result_traceback
-  - launched_by
-  - work_unit_id
-  - workflow_job_template
-  - extra_vars
-  - allow_simultaneous
-  - job_template
-  - is_sliced_job
-  - inventory
-  - limit
-  - scm_branch
-  - webhook_service
-  - webhook_credential
-  - webhook_guid
-  - skip_tags
-  - job_tags
-  - detail
-
 conformance:
   action: launch
   example:
     workflow_template_id: 56
+    status: pending
     name: tf-demo-wfjt-fixture
-    launch_type: manual
   expect:
-    workflow_job: { not_null: true }
+    workflow_job_id: { not_null: true }
   invariants:
     - action_returns_expected
     - state_matches_expect

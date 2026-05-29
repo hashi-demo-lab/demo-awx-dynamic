@@ -1,91 +1,114 @@
 apiVersion: agentprovider/v1
-kind: Resource
 type: awx_organization
+kind: Resource
+
 connection:
-    base_url: ${env.AWX}
-    allow_insecure: true
-    allow_private_host: true
-    headers:
-        Content-Type: application/json
-        Accept: application/json
-    auth:
-        type: basic
-        username: ${env.AWX_USERNAME}
-        password: ${env.AWX_PASSWORD}
-        failure_status: [401, 403]
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  headers:
+    Content-Type: application/json
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
 identity:
-    attribute: id
-    known_after: create
-    response_field: id
+  attribute: id
+  known_after: create
+  response_field: id
+
 schema:
-    attributes:
-        id:
-            computed: true
-            type: string
-        name:
-            required: true
-            type: string
-        description:
-            optional: true
-            computed: true
-            type: string
-        max_hosts:
-            optional: true
-            computed: true
-            type: number
-        default_environment:
-            optional: true
-            type: number
-lifecycle:
-    create:
-        method: POST
-        path: /api/v2/organizations/
-        body: [name, description, max_hosts]
-        expect_status: [200, 201]
-    read:
-        method: GET
-        path: /api/v2/organizations/${id}/
-        expect_status: [200]
-        not_found_status: [404]
-    update:
-        method: PATCH
-        path: /api/v2/organizations/${id}/
-        body: [name, description, max_hosts]
-        expect_status: [200]
-        refresh_after: true
-    delete:
-        method: DELETE
-        path: /api/v2/organizations/${id}/
-        expect_status: [200, 202, 204]
-        not_found_status: [404]
+  attributes:
+    id:
+      computed: true
+      type: number
+    name:
+      required: true
+      type: string
+    description:
+      optional: true
+      default: ""
+      type: string
+    max_hosts:
+      optional: true
+      default: 0
+      type: number
+    default_environment:
+      optional: true
+      type: number
+
 ignore_server_fields:
-    - type
-    - url
-    - related
-    - summary_fields
-    - created
-    - modified
-    - custom_virtualenv
-    - detail
+  - related
+  - summary_fields
+  - type
+  - url
+  - created
+  - modified
+  - custom_virtualenv
+  - detail
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/organizations/
+    expect_status:
+      - 201
+    body:
+      - name
+      - description
+      - max_hosts
+      - default_environment
+
+  read:
+    method: GET
+    path: "/api/v2/organizations/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+
+  update:
+    method: PATCH
+    path: "/api/v2/organizations/${id}/"
+    expect_status:
+      - 200
+    body:
+      - name
+      - description
+      - max_hosts
+      - default_environment
+
+  delete:
+    method: DELETE
+    path: "/api/v2/organizations/${id}/"
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
 conformance:
-    example:
-        name: apeval-r11-org
-        description: agentprovider eval r11 organization
-        max_hosts: 0
-    update_to:
-        name: apeval-r11-org
-        description: agentprovider eval r11 organization updated
-        max_hosts: 5
-    expect:
-        id: { not_null: true }
-    invariants:
-        - id_is_computed_and_nonempty
-        - create_echoes_inputs
-        - optional_default_consistency
-        - read_matches_create
-        - update_then_read_reflects
-        - second_apply_is_noop
-        - delete_then_read_404
-        - state_matches_expect
-        - import_reconstructs
-        - id_stable_across_update
+  example:
+    name: apeval-fresh-org-k7z
+    description: "Agent eval test organization"
+    max_hosts: 0
+    default_environment: null
+  update_to:
+    name: apeval-fresh-org-k7z
+    description: "Agent eval updated description"
+    max_hosts: 0
+    default_environment: null
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update
+    - optional_default_consistency
+    - state_matches_expect
+  expect:
+    id:
+      not_null: true

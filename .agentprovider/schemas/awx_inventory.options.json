@@ -1,0 +1,82 @@
+{
+"actions": {
+"POST": {
+"name": {
+"type": "string",
+"required": true,
+"hidden": false,
+"label": "Name",
+"max_length": 512,
+"help_text": "Name of this inventory.",
+"filterable": true
+},
+"description": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Description",
+"help_text": "Optional description of this inventory.",
+"filterable": true,
+"default": ""
+},
+"organization": {
+"type": "id",
+"required": true,
+"hidden": false,
+"label": "Organization",
+"help_text": "Organization containing this inventory.",
+"filterable": true
+},
+"kind": {
+"type": "choice",
+"required": false,
+"hidden": false,
+"label": "Kind",
+"help_text": "Kind of inventory being represented.",
+"filterable": true,
+"default": "",
+"choices": [
+[
+"",
+"Hosts have a direct link to this inventory."
+],
+[
+"smart",
+"Hosts for inventory generated using the host_filter property."
+],
+[
+"constructed",
+"Parse list of source inventories with the constructed inventory plugin."
+]
+]
+},
+"host_filter": {
+"type": "string",
+"required": false,
+"hidden": false,
+"label": "Host filter",
+"help_text": "Filter that will be applied to the hosts of this inventory.",
+"filterable": true,
+"default": null
+},
+"variables": {
+"type": "json",
+"required": false,
+"hidden": false,
+"label": "Variables",
+"help_text": "Inventory variables in JSON or YAML format.",
+"filterable": true,
+"default": ""
+},
+"prevent_instance_group_fallback": {
+"type": "boolean",
+"required": false,
+"hidden": false,
+"label": "Prevent instance group fallback",
+"help_text": "If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on.If this setting is enabled and you provided an empty list, the global instance groups will be applied.",
+"filterable": true,
+"default": false
+}
+}
+}
+}

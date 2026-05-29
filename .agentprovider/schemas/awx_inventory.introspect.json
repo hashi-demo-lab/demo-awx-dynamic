@@ -1,0 +1,120 @@
+{
+  "command": "introspect",
+  "ok": true,
+  "endpoint": "/api/v2/inventories/",
+  "source": "options",
+  "confidence": "high",
+  "fields": [
+    {
+      "path": "description",
+      "required": false,
+      "required_known": true,
+      "type": "string",
+      "has_server_default": true,
+      "server_default": "",
+      "suggestion": "optional+default",
+      "attribute_name": "description",
+      "attribute": {
+        "default": "",
+        "optional": true,
+        "type": "string"
+      },
+      "source": "options",
+      "confidence": "high"
+    },
+    {
+      "path": "host_filter",
+      "required": false,
+      "required_known": true,
+      "type": "string",
+      "has_server_default": false,
+      "server_default": null,
+      "suggestion": "optional+computed",
+      "attribute_name": "host_filter",
+      "attribute": {
+        "computed": true,
+        "optional": true,
+        "type": "string"
+      },
+      "source": "options",
+      "confidence": "high"
+    },
+    {
+      "path": "kind",
+      "required": false,
+      "required_known": true,
+      "type": "string",
+      "has_server_default": true,
+      "server_default": "",
+      "suggestion": "optional+default",
+      "attribute_name": "kind",
+      "attribute": {
+        "default": "",
+        "optional": true,
+        "type": "string"
+      },
+      "source": "options",
+      "confidence": "high"
+    },
+    {
+      "path": "name",
+      "required": true,
+      "required_known": true,
+      "type": "string",
+      "has_server_default": false,
+      "server_default": null,
+      "suggestion": "required",
+      "attribute_name": "name",
+      "attribute": {
+        "required": true,
+        "type": "string"
+      },
+      "source": "options",
+      "confidence": "high"
+    },
+    {
+      "path": "organization",
+      "required": null,
+      "required_known": false,
+      "type": "string",
+      "has_server_default": false,
+      "server_default": null,
+      "suggestion": "review_descriptor_metadata",
+      "source": "options",
+      "confidence": "reduced",
+      "sample_derived_note": "descriptor boolean metadata was malformed; review before transcription"
+    },
+    {
+      "path": "prevent_instance_group_fallback",
+      "required": false,
+      "required_known": true,
+      "type": "bool",
+      "has_server_default": true,
+      "server_default": false,
+      "suggestion": "optional+default",
+      "attribute_name": "prevent_instance_group_fallback",
+      "attribute": {
+        "default": false,
+        "optional": true,
+        "type": "bool"
+      },
+      "source": "options",
+      "confidence": "high"
+    },
+    {
+      "path": "variables",
+      "required": null,
+      "required_known": false,
+      "type": "string",
+      "has_server_default": false,
+      "server_default": null,
+      "suggestion": "review_descriptor_metadata",
+      "source": "options",
+      "confidence": "reduced",
+      "sample_derived_note": "descriptor boolean metadata was malformed; review before transcription"
+    }
+  ],
+  "warnings": [
+    "credentialed http:// introspection allowed by --allow-insecure; bearer token may traverse plaintext"
+  ]
+}

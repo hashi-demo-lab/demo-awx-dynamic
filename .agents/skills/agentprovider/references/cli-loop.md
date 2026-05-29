@@ -147,6 +147,11 @@ agentprovider introspect <endpoint> --base-url <url>
 - The command tries read-only `OPTIONS` first and parses DRF `actions.POST` /
   update metadata into field suggestions. If `OPTIONS` is unavailable, it performs
   one sample `GET` and marks the result `confidence: reduced`.
+- `--auth-env` is **bearer-only**; for a basic-auth API mint a token first. Use a
+  **write-scoped** token: DRF APIs (AWX/AAP) only return the `actions.POST`
+  descriptor on `OPTIONS` to a principal with add permission, so a read-only token
+  silently yields `source: sample, confidence: reduced`. Re-mint with write scope
+  to get `source: options, confidence: high`.
 - High-confidence `OPTIONS` rows may include copyable attribute snippets for
   `required`, `optional+default`, `optional+computed`, or `computed` fields.
   Sample-derived rows, nested paths, unknown requiredness, and malformed boolean
