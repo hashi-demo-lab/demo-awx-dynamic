@@ -1,6 +1,6 @@
 {
   "skill_name": "agentprovider",
-  "notes": "Real-world eval set for the agentprovider skill. Each in-coverage eval points the agent at one of the byte-accurate recorded cassettes under fixtures-cassettes/ (one go-vcr .cassette.yaml per target, holding the real captured request/response interactions) and is proven objectively with `agentprovider conform <contract> fixtures-cassettes/<dir>.cassette.yaml --json` reaching overall_passed:true. Agents author a contract from the documented format; they MAY inspect the fixtures-cassettes/<dir>.cassette.yaml files (those are the 'sample responses' a user would hand over) but MUST NOT copy or read any file under contracts/ or contracts/corpus/ (the answer key) or the skill-snapshot. Baseline runs additionally must not read .agents/skills/agentprovider. Out-of-coverage evals carry a blocked_capability tag and feed gap ranking only (excluded from the efficacy delta). A separate LIVE, full-stack eval (real AWX target + terraform apply, not offline/CI-reproducible) lives in evals/awx-live.json.",
+  "notes": "Real-world eval set for the agentprovider skill. Each in-coverage eval points the agent at one of the byte-accurate recorded cassettes under fixtures-cassettes/ (one go-vcr .cassette.yaml per target, holding the real captured request/response interactions) and is proven objectively with `agentprovider conform <contract> fixtures-cassettes/<dir>.cassette.yaml --json` reaching overall_passed:true. Agents author a contract from the documented format; they MAY inspect the fixtures-cassettes/<dir>.cassette.yaml files (those are the 'sample responses' a user would hand over) but MUST NOT copy or read any file under contracts/ or contracts/corpus/ (the answer key) or the skill-snapshot. Baseline runs additionally must not read .agents/skills/agentprovider. Out-of-coverage evals carry a blocked_capability tag and feed gap ranking only (excluded from the efficacy delta). A separate LIVE, full-stack eval (real AWX target + terraform apply, not offline/CI-reproducible) lives in evals/awx-live.json. Assertion kind `optional_default_preferred` is a contract-shape check (judged like `numeric_types`/`no_greenwash_completeness`, not a conform-output field): the named server-defaulted scalar attribute must be declared `optional: true` with a static `default:` matching the server's literal and must NOT carry `computed: true`. Evals tagged `coverage: pending-fixture` are excluded from active runs and the efficacy delta until their fixture is authored (see the eval's `fixture_todo`).",
   "oracle": "agentprovider conform <contract> fixtures-cassettes/<dir>.cassette.yaml --json -> overall_passed",
   "evals": [
     {
@@ -136,6 +136,19 @@
         {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
         {"text": "completeness --min-completeness 90 reports passed:true (models the full returned surface)", "kind": "completeness_threshold_met"},
         {"text": "no green-washing: fields not deleted from the fixture and ignore_server_fields used only for genuinely-dropped fields", "kind": "no_greenwash_completeness"}
+      ]
+    },
+    {
+      "id": 12,
+      "name": "optional-default-over-computed",
+      "coverage": "pending-fixture",
+      "fixtures": "fixtures-cassettes/default_scalar.cassette.yaml",
+      "fixture_todo": "Synthetic CRUD cassette not yet authored. Needs a POST create whose body OMITS a settable scalar field that the create/read response returns as a stable, meaningful scalar literal (e.g. mode -> \"run\"), plus a server-assigned id. Must be byte-accurate replay-stable AND author-able by an independent agent. Excluded from active runs (coverage: pending-fixture) until authored. The CLI mechanism it asserts is already proven by Go round-trip tests in cli/agentprovider (a contract built from the optional+default promote suggestion passes optional_default_consistency); this eval adds the behavioral proof that an agent, given the skill doctrine, prefers optional+default over optional+computed.",
+      "prompt": "Author an agentprovider CRUD contract for fixtures-cassettes/default_scalar.cassette.yaml and prove it. Inspect the recorded interactions: the POST create body OMITS a settable scalar field that the create/read response returns as a stable, meaningful scalar literal (the server defaults it on omission). Model that field as an OPTIONAL attribute carrying a static default: equal to the server's literal (NOT optional+computed), so the unset value stays plan-known AND drift is still detected; model the server-assigned id as computed. Iterate until `agentprovider conform <contract> fixtures-cassettes/default_scalar.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "the server-defaulted scalar field is modeled optional:true with a static default: equal to the server's literal and is NOT marked computed:true — proving the agent preferred default over computed for a stable scalar server default", "kind": "optional_default_preferred"}
       ]
     }
   ]
