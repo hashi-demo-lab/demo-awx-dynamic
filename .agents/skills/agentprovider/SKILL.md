@@ -7,8 +7,8 @@ description: >-
   HTTP API: an OpenAPI spec or REST endpoints made into a provider/resource/data
   source, a short-lived token that never hits state, a counter's up/down verbs, or
   an async 202-poll create. Also triggers on agentprovider,
-  terraform-provider-dynamic, or `agentprovider bootstrap/record/conform/preflight`
-  (including repair-hint questions). Drives the bootstrap → introspect →
+  terraform-provider-dynamic, or `agentprovider bootstrap/introspect/record/conform/preflight`
+  (including repair-hint questions). Drives the introspect/bootstrap →
   preflight → record → conform → completeness/proof loop until the contract is
   proven against recorded responses. NOT
   for running an already-authored provider (docs/RUNNING.md), hand-writing a
@@ -24,18 +24,22 @@ a target API and **prove it correct** against recorded responses, using the
 `agentprovider` CLI's authoring seams. The contract is the unit of work; the
 conformance verdict is the definition of done.
 
-The mandatory loop, in order:
+The mandatory loop, in order. When a live schema-bearing endpoint exists, run
+`introspect` before seeding the draft; otherwise start at `bootstrap` and note
+why live discovery was unavailable.
 
 ```
-bootstrap (seed)  →  schema/invariants/describe/validate (authoring introspection)  →  preflight  →  record (capture a cassette)  →  conform (machine verdict)  →  apply repair_hints  →  re-run until overall_passed  →  completeness/classification (coverage + field repair gate)  →  conform --mutation-check --emit-proof  →  Terraform apply (runtime proof)
+introspect (live field discovery, no writes, when available)  →  bootstrap (seed)  →  schema/invariants/describe/validate (authoring introspection)  →  preflight  →  record (capture a cassette)  →  conform (machine verdict)  →  apply repair_hints  →  re-run until overall_passed  →  completeness/classification (coverage + field repair gate)  →  conform --mutation-check --emit-proof  →  Terraform apply (runtime proof)
 ```
 
-**`bootstrap` is step 1 and is mandatory — do not skip it.** Every new or changed
-contract MUST be seeded with `agentprovider bootstrap` (from an OpenAPI spec or a
-sample JSON response) before you record. `record` *replays an existing contract*,
-so a contract has to exist first — there is no "record first" mode, and
+**`bootstrap` is the mandatory draft-creation step — do not skip it.** Every new
+or changed contract MUST be seeded with `agentprovider bootstrap` (from an OpenAPI
+spec or a sample JSON response) before you record. `record` *replays an existing
+contract*, so a contract has to exist first — there is no "record first" mode, and
 hand-writing the YAML from scratch to bypass `bootstrap` is **not** the default
-path. _Narrow exception:_ if you deliberately hand-author instead of
+path. Run `introspect` first when the live API can describe its settable surface;
+then use those findings to guide the bootstrap inputs and first repair pass.
+_Narrow exception:_ if you deliberately hand-author instead of
 bootstrapping, you MUST (a) state that and why in your summary, and (b) confirm the
 draft loads under strict decoding before recording — bootstrap output is valid by
 construction, whereas hand-written YAML is exactly where load errors creep in
@@ -43,7 +47,7 @@ construction, whereas hand-written YAML is exactly where load errors creep in
 paths).
 
 `conform` returning `overall_passed` is the correctness loop; `completeness` is a
-mandatory follow-on gate (step 4) that checks the contract models enough of the
+mandatory follow-on gate that checks the contract models enough of the
 API surface and classifies missing fields for repair. Do not skip completeness
 when claiming a contract is done or proven.
 For Terraform-provider authoring tasks, do not print or report `PROVEN` until all
@@ -57,10 +61,40 @@ only wants to *run* an existing provider, that's `docs/RUNNING.md`, not this ski
 
 ## The loop in detail
 
-### 1. Seed a draft with `agentprovider bootstrap` — REQUIRED FIRST STEP
+### 1. Discover live settable fields with `agentprovider introspect`
 
-**Always start here for a new or changed contract. Do not hand-author from scratch
-to skip `bootstrap`** (see the narrow exception in the loop note above).
+Run `introspect` before authoring or bootstrapping when the API can describe its
+create/update surface live (for example, a DRF endpoint with `OPTIONS` metadata),
+or when you only have a sample endpoint and need a reduced-confidence field map
+to review. It is read-only and writes no contract, cassette, metadata file, or
+proof.
+
+```bash
+agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --auth-env AWX_TOKEN
+agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --format json
+```
+
+For a reviewed local/dev target on a private host, add `--allow-private-host`.
+For credentialed `http://`, add `--allow-insecure` only after confirming the
+target is safe to receive bearer credentials over plaintext.
+
+`--auth-env` takes an environment variable **name**, not a token value. The
+command tries `OPTIONS` first and reuses the same DRF metadata parser as
+completeness; when `OPTIONS` is unavailable it falls back to one `GET` sample with
+`confidence: reduced`. Default output is human-readable text; use `--format json`
+or `--json` when another agent/tool will consume the result.
+
+Treat high-confidence `OPTIONS` rows as authoring candidates (`required`,
+`optional+default`, `optional+computed`, or `computed`). Treat sample-derived
+rows, nested paths, and malformed descriptor metadata as review-only signals: they
+intentionally do not include a copyable `attribute` snippet until you confirm
+requiredness, settable status, type, and object/list shape.
+
+### 2. Seed a draft with `agentprovider bootstrap` — REQUIRED DRAFT STEP
+
+**Always run this for a new or changed contract after live discovery when
+available. Do not hand-author from scratch to skip `bootstrap`** (see the narrow
+exception in the loop note above).
 
 Turn whatever the user has into a first-draft contract. The draft is a starting
 point to *repair*, not a finished contract — bootstrap fills in what the spec
@@ -141,7 +175,7 @@ id (the common single-path-param by-id case is auto-detected; see above),
 timestamps), `auth`, `async`, `pagination`, `carry_on_read`/`normalize`,
 ephemeral `renew`/`close` paths, and an action's real expected output value.
 
-### 2. Preflight, then record a cassette with `agentprovider record`
+### 3. Preflight, then record a cassette with `agentprovider record`
 
 Before recording, run:
 
@@ -198,7 +232,7 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
   that the real secret (the password/token) is absent; don't be alarmed by an
   incidental match.
 
-### 3. Get a machine verdict with `agentprovider conform`
+### 4. Get a machine verdict with `agentprovider conform`
 
 ```bash
 agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml
@@ -226,7 +260,7 @@ A contract must **declare the invariants it wants** under `conformance.invariant
 invariants is not a pass). Start from the standard set in
 `references/repair-hints.md`.
 
-### 4. Check completeness with `agentprovider completeness`
+### 5. Check completeness with `agentprovider completeness`
 
 This step is mandatory after `conform` passes and before any final Terraform
 runtime proof. Run it for every freshly authored or changed contract. If
@@ -350,9 +384,10 @@ schema**, which lists *every* accepted input the cassette can't see:
 ```bash
 # OpenAPI: you already have the spec
 agentprovider completeness contracts/widget.yaml <cassette> --openapi spec.yaml --operation createWidget
-# DRF / Django-REST API (no OpenAPI): capture the OPTIONS body once, then feed it
-curl -s -X OPTIONS -u "$USER:$PASS" https://api.example.com/api/v2/widgets/ | \
-  python3 -c 'import sys,json; json.dump(json.load(sys.stdin)["actions"]["POST"], sys.stdout)' > widget.options.json
+# DRF / Django-REST API (no OpenAPI): use introspect for discovery before
+# authoring. If a reusable proof gate needs --metadata, save the reviewed full
+# OPTIONS envelope (or wrap a reviewed POST map as {"actions":{"POST":...}}).
+agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --auth-env AWX_TOKEN --format json
 agentprovider completeness contracts/widget.yaml <cassette> --metadata widget.options.json --min-settable-coverage 90
 ```
 
@@ -361,7 +396,7 @@ just the ones you happen to send), `--min-settable-coverage <pct>` makes a thin
 contract exit non-zero, and — crucially — **`conform --mutation-check --emit-proof`
 takes the same `--metadata`/`--openapi` and _refuses to write the proof_** with
 `green-washing refusal: ignored N settable inputs …`. So **whenever the API serves a
-schema (OpenAPI, or a DRF `OPTIONS` `actions.POST` map), pass it to both
+schema (OpenAPI, or a DRF `OPTIONS` envelope containing `actions.POST` metadata), pass it to both
 `completeness` and `emit-proof`** — a green-washed contract then *cannot* be proven,
 turning the prose guard above into a mechanical gate. (Credential and read-only
 fields are excluded automatically, so a sensitive or server-assigned field in
@@ -390,7 +425,7 @@ apply to action/ephemeral kinds — prove them at `conform`, not with a sidecar 
 `record --suggest` also flags `unmodeled_fields` and field-level suggestions so
 you catch gaps at record time. It still does not edit the contract for you.
 
-### 5. Emit proof only after targeted mutation evidence
+### 6. Emit proof only after targeted mutation evidence
 
 After `conform` and `completeness` pass, run:
 
@@ -636,9 +671,9 @@ Read these as needed — don't load them all up front:
 - `references/contract-format.md` — every contract block and field, with the
   newer capabilities (query/basic/oauth2 auth, async redirect/expiry,
   carry_on_read, normalize, pagination metadata + start-index).
-- `references/cli-loop.md` — exact `bootstrap` / `record` / `conform` /
-  `completeness` flags and the stable JSON shapes (emitted by default; `--format
-  text` for human output).
+- `references/cli-loop.md` — exact `bootstrap` / `introspect` / `record` /
+  `conform` / `completeness` flags and the stable JSON shapes (including
+  `introspect`'s text default and JSON mode for agents).
 - `references/repair-hints.md` — the standard invariant set, what each invariant
   actually compares, and the repair-hint catalog (symptom → fix → why).
 - `references/terraform-usage.md` — the HCL consumption surface: resource / data
@@ -649,11 +684,12 @@ Read these as needed — don't load them all up front:
 
 Done means, in this exact order:
 
-1. Every fresh or changed contract was seeded with `agentprovider bootstrap` (or, if deliberately hand-authored, that exception is stated in the summary and the draft was confirmed to load under strict decoding).
-2. Fresh or changed contracts are recorded with `agentprovider record` against the intended target.
-3. `agentprovider conform <contract> <cassette>` returns `overall_passed: true` (JSON by default) with a non-empty `conformance.invariants` set for every contract.
-4. `agentprovider completeness <contract> <cassette>` is run for every contract, and any important `missing` fields are modeled or explicitly judged out of scope — with settable inputs modeled as `optional`(`+computed`) attributes, not swept into `ignore_server_fields` to inflate the number (green-washing). A resource/data source should expose the practitioner-relevant settable inputs the API accepts, not a thin handful.
-5. For provider-authoring tasks, the Terraform example that consumes the contracts applies successfully against the intended runtime.
-6. The cassette is redacted and reviewed, and credentials are sourced from env/provider config, not committed.
+1. Fresh or changed contracts with a live schema-bearing endpoint used `agentprovider introspect` for read-only field discovery before bootstrapping/authoring, or the summary states why no live discovery path existed.
+2. Every fresh or changed contract was seeded with `agentprovider bootstrap` (or, if deliberately hand-authored, that exception is stated in the summary and the draft was confirmed to load under strict decoding).
+3. Fresh or changed contracts are recorded with `agentprovider record` against the intended target.
+4. `agentprovider conform <contract> <cassette>` returns `overall_passed: true` (JSON by default) with a non-empty `conformance.invariants` set for every contract.
+5. `agentprovider completeness <contract> <cassette>` is run for every contract, and any important `missing` fields are modeled or explicitly judged out of scope — with settable inputs modeled as `optional`(`+computed`) attributes, not swept into `ignore_server_fields` to inflate the number (green-washing). A resource/data source should expose the practitioner-relevant settable inputs the API accepts, not a thin handful.
+6. For provider-authoring tasks, the Terraform example that consumes the contracts applies successfully against the intended runtime.
+7. The cassette is redacted and reviewed, and credentials are sourced from env/provider config, not committed.
 
 Only report `PROVEN` after all applicable steps above are complete.
