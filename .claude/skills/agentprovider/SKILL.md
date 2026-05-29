@@ -7,9 +7,10 @@ description: >-
   HTTP API: an OpenAPI spec or REST endpoints made into a provider/resource/data
   source, a short-lived token that never hits state, a counter's up/down verbs, or
   an async 202-poll create. Also triggers on agentprovider,
-  terraform-provider-dynamic, or `agentprovider bootstrap/record/conform`
-  (including repair-hint questions). Drives the bootstrap → record → conform →
-  self-correct loop until the contract is proven against recorded responses. NOT
+  terraform-provider-dynamic, or `agentprovider bootstrap/record/conform/preflight`
+  (including repair-hint questions). Drives the bootstrap → introspect →
+  preflight → record → conform → completeness/proof loop until the contract is
+  proven against recorded responses. NOT
   for running an already-authored provider (docs/RUNNING.md), hand-writing a
   provider with terraform-plugin-framework, editing the engine internals, or
   debugging an existing third-party Terraform provider.
@@ -20,13 +21,13 @@ description: >-
 agentprovider builds a Terraform provider by **interpreting a declarative YAML
 contract at runtime** — there is no per-API Go to write. Author one contract for
 a target API and **prove it correct** against recorded responses, using the
-`agentprovider` CLI's three seams. The contract is the unit of work; the
+`agentprovider` CLI's authoring seams. The contract is the unit of work; the
 conformance verdict is the definition of done.
 
 The mandatory loop, in order:
 
 ```
-bootstrap (seed)  →  record (capture a cassette)  →  conform (machine verdict)  →  apply repair_hints  →  re-run until overall_passed  →  completeness (coverage gate)  →  Terraform apply (runtime proof)
+bootstrap (seed)  →  schema/invariants/describe/validate (authoring introspection)  →  preflight  →  record (capture a cassette)  →  conform (machine verdict)  →  apply repair_hints  →  re-run until overall_passed  →  completeness/classification (coverage + field repair gate)  →  conform --mutation-check --emit-proof  →  Terraform apply (runtime proof)
 ```
 
 **`bootstrap` is step 1 and is mandatory — do not skip it.** Every new or changed
@@ -43,7 +44,8 @@ paths).
 
 `conform` returning `overall_passed` is the correctness loop; `completeness` is a
 mandatory follow-on gate (step 4) that checks the contract models enough of the
-API surface. Do not skip completeness when claiming a contract is done or proven.
+API surface and classifies missing fields for repair. Do not skip completeness
+when claiming a contract is done or proven.
 For Terraform-provider authoring tasks, do not print or report `PROVEN` until all
 contracts conform, completeness has been checked for every contract, and the
 Terraform example has applied successfully.
@@ -107,18 +109,49 @@ carries placeholder `renew`/`close` paths, and an action draft carries placehold
 `conformance.example` output values — both must be repaired before `conform` passes
 (see `references/repair-hints.md`).
 
-Then read the draft and fill the gaps by hand against the contract format — see
-`references/contract-format.md` for every block and field. Common things
+Then read the draft and fill the gaps. Ask the CLI for authoritative rules before
+reading Go source or mirrored prose:
+
+```bash
+agentprovider schema --format json
+agentprovider invariants contracts/widget.yaml
+agentprovider describe 'schema.attributes.<name>.type'
+agentprovider describe conformance.invariants
+agentprovider validate contracts/widget.yaml
+```
+
+`agentprovider schema` emits the JSON Schema for the **whole contract file
+format**. Use it for editor autocomplete, agent-side structural checks, or
+validating bootstrap output before semantic checks. `--format yaml` emits the
+same schema as YAML. Do not confuse the contract format schema with the
+contract's own `schema.attributes` block: `schema.attributes` defines
+Terraform-facing attributes; the contract format schema validates the YAML
+document shape. Use `agentprovider describe <field-path>` for authoring help on
+individual fields. Semantic checks such as pagination consistency, credential
+sensitivity, and conformance coverage still come from `agentprovider validate` /
+`conform`.
+
+Use `references/contract-format.md` as narrative context. Common things
 bootstrap can't infer: `identity.response_field` for a genuinely non-conventional
 id (the common single-path-param by-id case is auto-detected; see above),
 `refresh_after` (empty write responses), `ignore_server_fields` (server
 timestamps), `auth`, `async`, `pagination`, `carry_on_read`/`normalize`,
 ephemeral `renew`/`close` paths, and an action's real expected output value.
 
-### 2. Record a cassette with `agentprovider record`
+### 2. Preflight, then record a cassette with `agentprovider record`
+
+Before recording, run:
+
+```bash
+agentprovider preflight contracts/widget.yaml --stage record --base-url "$BASE_URL"
+```
+
+Preflight reports blockers, warnings, expectations, and exact next commands. It
+is advisory unless you choose to use it; it does not mutate the contract.
 
 One live pass captures byte-accurate responses into a replayable cassette and
-(with `--suggest`) proposes refinements such as `ignore_server_fields` candidates.
+(with `--suggest`) proposes refinements such as `ignore_server_fields`
+candidates, unmodeled fields, and field-level probe/repair suggestions.
 
 ```bash
 agentprovider record contracts/widget.yaml --base-url https://api.example.com --suggest \
@@ -154,12 +187,14 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
 ### 3. Get a machine verdict with `agentprovider conform`
 
 ```bash
-agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --json
+agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml
 ```
 
-The JSON is stable: `{contract, overall_passed, results[], repair_hints[],
-summary}`. Each failing result carries `expected`, `actual`, `contract_path`, and
-`suggested_fix`; `repair_hints` ranks unique fixes in failure order. Loop:
+`conform` emits JSON on stdout **by default** (pass `--format text` for the concise
+human verdict; `--json` is still accepted as an alias). The JSON is stable:
+`{contract, overall_passed, results[], repair_hints[], summary}`. Each failing
+result carries `expected`, `actual`, `contract_path`, and `suggested_fix`;
+`repair_hints` ranks unique fixes in failure order. Loop:
 
 1. If `overall_passed` is true — done.
 2. Otherwise apply the top `repair_hint` (see `references/repair-hints.md` for what
@@ -183,23 +218,42 @@ contract can pass every invariant while modeling only a handful of an endpoint's
 fields. After it conforms, measure how much of the API surface you actually model:
 
 ```bash
-# offline: diff against the fields recorded in the cassette
-agentprovider completeness contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --json
+# offline: diff against the fields recorded in the cassette (JSON by default)
+agentprovider completeness contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml
+agentprovider completeness contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --openapi spec.yaml --operation createWidget --format text
 # dynamic: diff against what the live API returns right now
 agentprovider completeness contracts/widget.yaml --base-url https://api.example.com --min-completeness 90
 ```
 
 It reports `completeness_percent`, the `missing` fields (the API returns them but
-no attribute models them), and `extra` (modeled but not seen — usually fine). The
-reference field set is generic and dynamic: the fields the API *actually returns*,
-from the cassette (offline) or a live read (`--base-url`). `--min-completeness`
-makes it a gate (non-zero exit below the threshold). Model the missing fields you
-care about (as `computed` for server-owned values, `optional` for settable ones),
-or add genuinely irrelevant ones to `ignore_server_fields`; then re-record and
-re-check. Weigh `missing` by **practitioner relevance, not count** — some entries
-are artifacts of a response shape you don't model (an error/`detail` envelope, a
-delete body) and aren't worth modeling. Note: response-union can't see *write-only*
-inputs the server never echoes — model those from the API's docs.
+no attribute models them), and `extra` (modeled but not seen — usually fine). It
+also emits `fields[]` classifications and `suggestions[]` review artifacts. Use
+those before source-diving or making name-based schema edits:
+
+- `optional` / `optional_computed_defaulted` with high confidence can become a
+  schema attribute suggestion. A field **already modeled** `optional` (not
+  `computed`) that the cassette shows the server defaults is surfaced as a
+  `promote_to_optional_computed` correction (a `promote_schema_attribute`
+  suggestion carrying `optional: true, computed: true`) — apply it, or the
+  `optional_default_consistency` conform gate will fail closed.
+- `volatile` / `ignore_server_field` candidates usually belong in
+  `ignore_server_fields`.
+- `needs_probe` means the current evidence is not enough to promote the field.
+  Add `--probe-field <path> --allow-probes` for read-only evidence, and add
+  `--allow-mutations` only when you explicitly accept create/delete probe risk.
+- `--emit-judge-input`, `--judge-input`, and `--judge-command` are advisory only;
+  model output must never determine proof readiness.
+
+The reference field set is generic and dynamic: recorded request/response bodies,
+cassette responses, OpenAPI request/response schemas, optional metadata/docs
+evidence, or a live read (`--base-url`). `--min-completeness` makes it a gate
+(non-zero exit below the threshold). Model the missing fields you care about, or
+add genuinely irrelevant ones to `ignore_server_fields`; then re-record as
+needed, re-run `conform`, and re-check completeness. Weigh `missing` by
+**practitioner relevance, not count** — some entries are artifacts of a response
+shape you don't model (an error/`detail` envelope, a delete body) and aren't
+worth modeling. Note: response-union can't see *write-only* inputs the server
+never echoes — model those from the API's docs/specs.
 
 Completeness is a **resource / data-source** gate. An **action-only or ephemeral**
 contract models only the verb's inputs plus a few computed outputs, so its
@@ -207,8 +261,29 @@ completeness against a full read payload is **low by design — not a defect**. 
 an action by `action_returns_expected` (does it project the outputs you claimed?),
 not by a percentage, and don't point `--min-completeness` at one.
 
-`record --suggest` also flags `unmodeled_fields` (recorded response fields with no
-matching attribute) so you catch gaps at record time.
+`record --suggest` also flags `unmodeled_fields` and field-level suggestions so
+you catch gaps at record time. It still does not edit the contract for you.
+
+### 5. Emit proof only after targeted mutation evidence
+
+After `conform` and `completeness` pass, run:
+
+```bash
+agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --mutation-check --emit-proof
+```
+
+`--mutation-check` mutates contract-relevant response evidence first: computed
+outputs pinned in `conformance.example`, `conformance.expect` leaves, identity
+response fields, `field:`-mapped schema attributes, and status-sensitive invariant
+responses. Ignored metadata and fallback response scalars are diagnostic only; a
+proof pass requires at least one targeted mutation to make `conform` fail. If the
+CLI reports `MUTATION CHECK INCONCLUSIVE`, add a real asserted output or
+`conformance.expect` matcher instead of weakening the invariant set. A failed
+targeted mutation check refuses `--emit-proof` and removes any stale
+`<contract>.proven.json`. New proof sidecars must carry
+`mutation_status: "passed_targeted"`; legacy boolean-only `mutation_check: true`
+sidecars are not enough for `--require-proven` and should be regenerated with
+`conform --mutation-check --emit-proof`.
 
 ## Get these right up front
 
@@ -292,14 +367,21 @@ the *why* and the symptom→fix mapping for each.
   `lifecycle.renew` and `lifecycle.close`). Open inputs go in `conformance.example`;
   computed outputs must come from the open response. If a credential is redacted in
   the fixture, set the example to the redacted form so the replay matches.
-- **Action** — declare `action_returns_expected` and include action inputs plus at
-  least one expected computed output in `conformance.example`, so replay proves
-  the action projection rather than only proving the HTTP call did not error. An
-  **action-only** contract is a `kind: Resource` with `actions` and **no `create`
-  lifecycle**: the engine registers it as a Terraform Action (`dynamic_<type>_<verb>`),
-  not a managed resource, so it is exempt from the CRUD coverage floor. Omit `body`
-  on an action that POSTs nothing. See `references/contract-format.md` (actions) for
-  the contract and `references/terraform-usage.md` for the HCL.
+- **Action** — declare `action_returns_expected` and pin **stable** computed
+  outputs (`status`, `name`) in `conformance.example` for it; declare
+  `state_matches_expect` and put **server-assigned id-shaped** computed outputs
+  in `conformance.expect.<attr>: {not_null: true}` (assert presence without
+  freezing the per-run value). `bootstrap --kind action` emits this split by
+  default; pinning a server-assigned id (e.g. `*_id`) in `conformance.example`
+  is the failure mode `record` now warns about — it passes the frozen cassette
+  but fails the next re-record. A config-only action proof with neither a
+  stable pin nor a `not_null` expect is vacuous and should fail closed.
+  An **action-only** contract is a `kind: Resource` with `actions` and **no
+  `create` lifecycle**: the engine registers it as a Terraform Action
+  (`dynamic_<type>_<verb>`), not a managed resource, so it is exempt from the
+  CRUD coverage floor. Omit `body` on an action that POSTs nothing. See
+  `references/contract-format.md` (actions) for the full worked contract and
+  `references/terraform-usage.md` for the HCL.
 
 ## Two outcomes you must distinguish
 
@@ -357,7 +439,8 @@ Read these as needed — don't load them all up front:
   newer capabilities (query/basic/oauth2 auth, async redirect/expiry,
   carry_on_read, normalize, pagination metadata + start-index).
 - `references/cli-loop.md` — exact `bootstrap` / `record` / `conform` /
-  `completeness` flags and the stable `--json` shapes.
+  `completeness` flags and the stable JSON shapes (emitted by default; `--format
+  text` for human output).
 - `references/repair-hints.md` — the standard invariant set, what each invariant
   actually compares, and the repair-hint catalog (symptom → fix → why).
 - `references/terraform-usage.md` — the HCL consumption surface: resource / data
@@ -370,8 +453,8 @@ Done means, in this exact order:
 
 1. Every fresh or changed contract was seeded with `agentprovider bootstrap` (or, if deliberately hand-authored, that exception is stated in the summary and the draft was confirmed to load under strict decoding).
 2. Fresh or changed contracts are recorded with `agentprovider record` against the intended target.
-3. `agentprovider conform <contract> <cassette> --json` returns `overall_passed: true` with a non-empty `conformance.invariants` set for every contract.
-4. `agentprovider completeness <contract> <cassette> --json` is run for every contract, and any important `missing` fields are modeled or explicitly judged out of scope.
+3. `agentprovider conform <contract> <cassette>` returns `overall_passed: true` (JSON by default) with a non-empty `conformance.invariants` set for every contract.
+4. `agentprovider completeness <contract> <cassette>` is run for every contract, and any important `missing` fields are modeled or explicitly judged out of scope.
 5. For provider-authoring tasks, the Terraform example that consumes the contracts applies successfully against the intended runtime.
 6. The cassette is redacted and reviewed, and credentials are sourced from env/provider config, not committed.
 

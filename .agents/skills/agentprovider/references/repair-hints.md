@@ -17,6 +17,7 @@ none.
 | `read_matches_create` | a read after create returns the same state | resources |
 | `update_then_read_reflects` | an update is visible on the next read | resources with update |
 | `second_apply_is_noop` | re-applying identical config plans nothing (no perpetual diff) | resources; drift contracts |
+| `optional_default_consistency` | no `optional` (non-`computed`) attribute is one the server defaults when omitted — the offline guard against Terraform's "inconsistent result after apply" (null→default) | **auto-selected** for any resource with a `create` lifecycle |
 | `delete_then_read_404` | after delete, a read is not-found | resources with delete |
 | `nested_object_preserved` | a nested object round-trips through create/read | contracts with object attributes |
 | `server_fields_ignored` | `ignore_server_fields` entries don't cause a diff | contracts with server-injected fields |
@@ -60,6 +61,14 @@ don't trip them.
   updated values. Requires `update_to` to list the **full** body (see the catalog).
 - `second_apply_is_noop` — re-projecting the read state against the config produces
   no diff (no churn on a second apply).
+- `optional_default_consistency` — a **static** check (no engine drive): for every
+  attribute declared `optional` and **not** `computed`, it inspects the recorded
+  **create** request/response pair. If the field was omitted from the create body
+  but came back non-null in the response, the server defaults it — and Terraform
+  will reject the null→default at apply ("inconsistent result after apply"). Fix:
+  declare that attribute `optional: true, computed: true`. Auto-selected for any
+  create-lifecycle resource, so it catches the bug **offline**, before a real apply.
+  (Keys on the create interaction only; update-omit defaults are out of scope.)
 - `id_stable_across_update` — the identity value is unchanged from create through
   update (Terraform's identity-stability expectation).
 - `delete_then_read_404` — after `delete`, a `read` returns a `not_found_status`.
@@ -152,14 +161,29 @@ don't trip them.
   cassette (or will 404 live). A `--response`-seeded ephemeral also has an empty
   `open.body` — add at least one real input attribute before recording.
 - **bootstrapped action: `action_returns_expected` fails with actual ≠ `PLACEHOLDER`**
-  → `bootstrap --kind action` seeds each computed output in `conformance.example` with
-  a literal `PLACEHOLDER` (or `0`/`false`). After recording, read the cassette response
-  and replace each placeholder with the real value the action returns, then re-run
-  `conform`. *Why:* the seed declares the proof's *shape*; the invariant compares the
-  example value against the recorded response, so a placeholder fails closed until you
-  supply the true value. `action_returns_expected` proves output projection only — for
-  a state-changing verb, add an effect invariant too (the counter `action_*_changes_*`
-  pattern).
+  → `bootstrap --kind action` seeds **stable** computed outputs in
+  `conformance.example` with a literal `PLACEHOLDER` (or `0`/`false`). After
+  recording, read the cassette response and replace each placeholder with the
+  real value the action returns (status, name, anything that doesn't change per
+  run), then re-run `conform`. *Why:* the seed declares the proof's *shape*; the
+  invariant compares the example value against the recorded response, so a
+  placeholder fails closed until you supply the true value. Server-assigned
+  id-shaped outputs are already routed into `conformance.expect.<attr>: {not_null:
+  true}` — leave them there, don't move them into `example`. `action_returns_expected`
+  proves output projection only — for a state-changing verb, add an effect
+  invariant too (the counter `action_*_changes_*` pattern).
+- **`record` warning: `conformance.example pins X but the live run observed Y`** →
+  move `X` out of `conformance.example` and into `conformance.expect.X: {not_null:
+  true}`, then make sure `state_matches_expect` is in the contract's `invariants`
+  list. *Why:* the pinned value is server-assigned and changes each invocation;
+  pinning it as a literal makes `conform` pass against the frozen cassette but
+  fail the moment the cassette is re-recorded. The `not_null` matcher asserts
+  presence without freezing the value, and `state_matches_expect` (now driving
+  action contracts too) is the invariant that walks `expect`. `bootstrap --kind
+  action` emits this shape by default for id-shaped outputs; the warning catches
+  hand-written contracts that bypass the bootstrap default. The warning is
+  non-fatal — exit 0, recorded cassette is still written — but ignoring it sets
+  up the next re-record to fail.
 - **contract won't load (validation error)** → fix the named key/shape; this is the
   *cannot-express* path, not a fixable invariant failure. If the API genuinely needs
   something the format lacks, stop and report the engine gap rather than weakening
@@ -171,3 +195,11 @@ A passing run with no invariants, or one where you removed/weakened an invariant
 until it passed, is not proof. If a real capability is missing (auth not actually
 exercised, a shape the format can't express), that's a genuine gap to surface — not
 something to hide behind a green `overall_passed`.
+
+`conform --mutation-check --emit-proof` must also pass with targeted evidence.
+The mutation check does not accept ignored metadata or arbitrary fallback scalar
+changes as proof: it must kill `conform` by mutating an asserted output,
+`conformance.expect` leaf, identity response field, mapped schema field, or
+status-sensitive invariant response. If it reports inconclusive, add a real
+assertion surface and re-record/re-run; do not delete the invariant to make the
+proof sidecar appear.

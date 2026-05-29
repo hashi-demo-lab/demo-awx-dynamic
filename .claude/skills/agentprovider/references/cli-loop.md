@@ -1,12 +1,72 @@
 # agentprovider CLI authoring loop
 
 All commands below use the `agentprovider` CLI; make sure it's available on your
-PATH before you start. The core authoring subcommands are `bootstrap`, `record`,
-and `conform`, with `completeness` (coverage gate) and `refresh` (drift gate)
-alongside; serving an already-authored provider is separate (see `docs/RUNNING.md`).
+PATH before you start. The core authoring subcommands are `bootstrap`, `schema`,
+`invariants`, `validate`, `describe`, `preflight`, `record`, and `conform`, with
+`completeness` (coverage gate) and `refresh` (drift gate) alongside; serving an
+already-authored provider is separate (see `docs/RUNNING.md`).
 
 Run `agentprovider help` for the command listing, and `agentprovider help <command>`
 (or `agentprovider <command> -h`) for a command's flags.
+
+## Output format
+
+Most authoring subcommands emit JSON on stdout **by default** — this is what the
+loop reads. Pass `--format text` for human-readable output where the command
+supports it; `--json` is still accepted as an alias for `--format json` (the
+alias always forces JSON). `schema` is the deliberate exception: it emits the
+contract-file schema as `--format json` or `--format yaml`, with no text mode.
+
+On a **runtime** fatal error (exit 1) in JSON mode, a command prints a structured
+envelope to stdout:
+
+```json
+{ "command": "record", "ok": false, "error": "load contract: ..." }
+```
+
+`conform` instead folds contract load/validation failures into its `results[]`
+stream as a `contract_validation` entry, so there is one parse path for all of its
+failures. **Usage / flag errors** (missing arguments, an unknown flag, an invalid
+`--format` value) are reported as a usage line on **stderr** with exit code **2**,
+following the usual CLI convention — branch on the exit code (2 = bad invocation,
+1 = runtime failure, 0 = success).
+
+## schema / invariants / validate / describe — authoring introspection
+
+Use these before reading Go source:
+
+```bash
+agentprovider schema --format json
+agentprovider schema --format yaml
+agentprovider invariants --kind resource
+agentprovider invariants contracts/widget.yaml
+agentprovider validate contracts/widget.yaml
+agentprovider describe 'schema.attributes.<name>.default'
+agentprovider describe conformance.invariants
+```
+
+- `schema` emits the whole contract-file JSON Schema. Use `--format json`
+  (default) for editor/agent validation, or `--format yaml` for the same schema
+  as YAML. It validates document shape, not semantic cross-field rules.
+- `invariants --kind ...` returns catalog and conditional guidance; `invariants
+  <contract.yaml>` returns the concrete required floor, recommended standard
+  invariants, and missing entries for that contract.
+- `validate` runs the same strict decode and validation path as record/conform,
+  but as a standalone structured check.
+- `describe <field-path>` returns authoring help for one field path. Quote
+  placeholder paths such as `'schema.attributes.<name>.default'` in shells.
+
+## preflight — readiness check
+
+```bash
+agentprovider preflight contracts/widget.yaml --stage record --base-url "$BASE_URL"
+agentprovider preflight contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --stage proof --mutation-check
+```
+
+Preflight emits `ready`, `stage`, `blockers[]`, `warnings[]`,
+`expectations[]`, and `next[]` as JSON by default. It predicts blockers before
+record, conform, completeness, or proof, but it does not mutate contracts and it
+does not add hidden gates to other commands.
 
 ## bootstrap — seed a draft contract
 
@@ -15,7 +75,7 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
                    | --response <file.json|-> [--type <name>]
                    [--kind resource|datasource|ephemeral|action] [--action <verb>])
                    [--alias <param>=<attribute>]... [--ignore <name>]...
-                   [--type <name>] [--out <path>]
+                   [--type <name>] [--out <path>] [--format json|text] [--json]
 ```
 
 - `--openapi <spec>`: OpenAPI v3 spec; pick the resource anchor with `--operation`
@@ -52,11 +112,27 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
   `renew`/`close` paths and action drafts carry placeholder `conformance.example`
   output values you must replace before `conform` passes (see `repair-hints.md`).
 
+JSON shape (default):
+
+```json
+{
+  "command": "bootstrap",
+  "ok": true,
+  "contract": ".agentprovider/contracts/widget.yaml",
+  "type": "widget",
+  "next": [
+    "agentprovider record .agentprovider/contracts/widget.yaml --base-url <real-api-base-url> --out .agentprovider/cassettes/widget.cassette --suggest",
+    "agentprovider conform .agentprovider/contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml"
+  ]
+}
+```
+
 ## record — capture a replayable cassette
 
 ```
 agentprovider record <contract.yaml> --base-url <url>
                [--out <cassette-path>] [--force] [--allow-mutations] [--suggest]
+               [--format json|text] [--json]
 ```
 
 - `--base-url` (required): where to record against. For an unreviewed bootstrapped
@@ -65,8 +141,9 @@ agentprovider record <contract.yaml> --base-url <url>
   create/update/delete and ephemeral renew/close are skipped (read-side only); an
   ephemeral contract's `lifecycle.open` still runs either way (it's how the
   ephemeral value is obtained).
-- `--suggest`: print contract-refinement suggestions inferred from the responses
-  (e.g. `ignore_server_fields` candidates from fields that change between reads).
+- `--suggest`: print contract-refinement suggestions inferred from the responses,
+  including legacy identity/ignore/unmodeled projections and field-level
+  classification suggestions.
 - `--out`: defaults to `.agentprovider/cassettes/<type>.cassette.yaml`. `--force`
   overwrites.
 - Secrets (auth headers, query secrets, OAuth2 tokens, `client_secret`) are
@@ -81,19 +158,65 @@ agentprovider record <contract.yaml> --base-url <url>
   `action_returns_expected`. No special flag is needed — `record` keys off the
   contract shape.
 
+JSON shape (default). `suggestions` is present only with `--suggest`:
+
+```json
+{
+  "command": "record",
+  "ok": true,
+  "cassette": ".agentprovider/cassettes/widget.cassette.yaml",
+  "next": "agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml",
+  "suggestions": {
+    "identity_response_field": ["_id"],
+    "ignore_server_fields": ["createdAt"],
+    "server_assigned_fields": ["_id"],
+    "unmodeled_fields": ["etag"],
+    "field_suggestions": [
+      {
+        "path": "etag",
+        "action": "gather_probe_evidence",
+        "confidence": "medium",
+        "classification": "needs_probe",
+        "evidence": ["omit accepted", "non-default write accepted", "read back supplied value", "second read stable"]
+      }
+    ]
+  }
+}
+```
+
 ## conform — the machine verdict (the loop driver)
 
 ```
 agentprovider conform <contract.yaml> <cassette.yaml>
-               [--json] [--emit-proof] [--mutation-check]
+               [--format json|text] [--json] [--emit-proof] [--mutation-check] [--uplift]
                [--strict-freshness] [--max-cassette-age <dur>] [--reference-version <v>]
 ```
 
-- `--json`: stable machine-readable output (use this in the loop).
+- `--format json|text`: output format; **`json` is the default** (what the loop
+  reads). `--format text` gives the concise human verdict; `--json` is an accepted
+  alias for `--format json`.
+- `--uplift`: additively add any missing **standard** invariants for the contract's
+  kind/lifecycle to the contract file (a byte-level splice that preserves the rest of
+  the file), then conform the uplifted contract. Without `--uplift`, conform only
+  **warns** on stderr about missing non-floor standard invariants (non-fatal; the
+  stdout JSON verdict and exit code are unchanged). If the contract was already proven
+  (a `<contract>.proven.json` exists), a passing uplift re-attests automatically and a
+  failing uplift removes the stale proof — either way conform prints the complete
+  `agentprovider conform <contract> <cassette> --mutation-check --emit-proof` command to reproduce it.
 - `--emit-proof`: on a passing run, write a `<contract>.proven.json` attestation
-  binding the proof to the contract's content hash.
-- `--mutation-check`: after a passing run, perturb the cassette and require at
-  least one invariant to fail (proves the invariant set is non-vacuous).
+  binding the proof to the contract's content hash. Proof emission requires a
+  passing `--mutation-check` run and 100% completeness. New sidecars record
+  `mutation_status: "passed_targeted"`; boolean-only legacy mutation sidecars
+  must be regenerated before they satisfy `--require-proven`.
+- `--mutation-check`: after a passing run, plan cassette mutations from
+  contract-relevant obligations first: computed outputs pinned in
+  `conformance.example`, `conformance.expect` leaves, identity response fields,
+  `field:`-mapped schema attributes, and status-sensitive invariant responses.
+  A pass requires at least one targeted mutation to make `conform` fail. Ignored
+  metadata and fallback response scalars do not count as proof evidence; no
+  targeted sites or budget-truncated targeted sets report inconclusive. A failed
+  targeted mutation check refuses proof emission and removes any stale
+  `<contract>.proven.json`.
 - `--strict-freshness`: fail (not warn) when the cassette is stale or its recorded
   API version differs from `--reference-version`.
 - `--max-cassette-age <dur>`: warn when the cassette's `recorded_at` is older than
@@ -101,7 +224,7 @@ agentprovider conform <contract.yaml> <cassette.yaml>
 - `--reference-version <v>`: expected API version; a mismatch with the cassette's
   recorded `api_version` is flagged.
 
-Stable JSON shape:
+Stable JSON shape (emitted by default):
 
 ```json
 {
@@ -131,30 +254,61 @@ false.
 ## completeness — does the contract model the full API surface?
 
 ```
-agentprovider completeness <contract.yaml> [<cassette-or-fixtures-dir>] [--base-url <url>] [--min-completeness <pct>] [--json]
+agentprovider completeness <contract.yaml> [<cassette-or-fixtures-dir>] [--base-url <url>]
+               [--openapi <spec>] [--operation <opId> | --path <path> --method <method>]
+               [--metadata <json>] [--docs-evidence <json>] [--provider-schema <json>]
+               [--probe-field <path>] [--allow-probes] [--allow-mutations]
+               [--judge-input <path>] [--judge-command <cmd>] [--emit-judge-input]
+               [--min-completeness <pct>] [--format json|text] [--json]
 ```
 
 Diffs the contract's modeled fields (`attr.field` ∪ `identity.response_field` ∪
-`ignore_server_fields`) against the fields the API actually exposes. The reference
-field set is generic and dynamic — there is no vendor schema parsing:
+`ignore_server_fields`) against response fields the API actually exposes. The
+summary gate (`advertised`, `missing`, `completeness_percent`, `passed`) stays
+response-based; supplemental request/spec/docs/probe evidence feeds `fields[]`
+and `suggestions[]`.
 
-- **offline**: pass a go-vcr cassette / fixtures dir → unions the fields in the
-  recorded responses.
+- **offline**: pass a go-vcr cassette / fixtures dir → unions recorded response
+  fields for the summary gate and recorded request/response fields for
+  classification evidence.
 - **dynamic**: pass `--base-url` → issues a read-only GET against the contract's
   collection endpoint and unions what the live API returns right now.
+- **spec/examples**: add `--openapi`, `--metadata`, `--docs-evidence`, or
+  `--provider-schema` to merge deterministic or advisory evidence without
+  treating docs/spec text as proof of writeability.
 
 `--min-completeness <pct>` makes it a gate (exit 1 below threshold; default 0 =
-report-only). Stable JSON: `{contract, kind, source, advertised, modeled,
-completeness_percent, threshold, passed, missing[], extra[]}`. `missing` =
+report-only). Stable JSON (emitted by default): `{contract, kind, source,
+advertised, modeled, completeness_percent, threshold, passed, missing[], extra[],
+fields[], suggestions[], judge?}`.
+`missing` =
 advertised but unmodeled (model them, or add to `ignore_server_fields`); `extra` =
 modeled but not seen in responses (a warning, never fails the gate — covers
 write-only inputs and synthesized remaps). Limitation: response-union can't see
 write-only inputs the server never echoes; model those from the API's docs.
 
+`fields[]` carries deterministic classifications:
+
+- `optional` / `optional_computed_defaulted` only becomes high-confidence when
+  behavior shows omission succeeds, a supplied non-default value is accepted,
+  the value reads back, and a second read is stable.
+- `computed`, `response_only`, `volatile`, and `ignore_server_field` keep
+  server-owned or unstable fields out of optional inputs.
+- `needs_probe` names missing evidence. By default probes do not run; use
+  `--probe-field <path> --allow-probes` for read-only evidence and add
+  `--allow-mutations` only when live create/delete probe risk is acceptable.
+
+`suggestions[]` is a reviewable patch plan, not an auto-repair. After applying a
+suggestion, re-record if request shape changed, rerun `conform`, rerun
+`completeness`, and only then proceed to proof. `--emit-judge-input`,
+`--judge-input`, and `--judge-command` place model assistance under `judge`; it
+is labeled advisory and cannot change classifications, thresholds, mutation
+checks, proof sidecars, or served-provider readiness.
+
 ## refresh — drift gate against the committed cassette
 
 ```
-agentprovider refresh <contract.yaml> --base-url <url> [--cassette <path>] [--allow-mutations]
+agentprovider refresh <contract.yaml> --base-url <url> [--cassette <path>] [--allow-mutations] [--format json|text] [--json]
 ```
 
 Re-records the contract against the live API into a temp cassette and diffs it
@@ -169,3 +323,16 @@ not part of the bootstrap→conform authoring loop.
   standard cassette path).
 - `--allow-mutations`: permit mutating calls during the re-record (same meaning as
   in `record`).
+
+JSON shape (default). `drifted` is true and the exit code is non-zero when any
+drift is found; `drift` entries are secret-sanitized:
+
+```json
+{
+  "command": "refresh",
+  "ok": true,
+  "cassette": ".agentprovider/cassettes/widget.cassette.yaml",
+  "drifted": true,
+  "drift": ["GET /widgets/1: status 200 -> 404", "POST /widgets: response body changed"]
+}
+```

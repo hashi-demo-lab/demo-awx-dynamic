@@ -1,12 +1,36 @@
 # agentprovider contract format
 
-**This file is the complete authoring reference.** It documents every block and
-field you need to write or repair a contract — author entirely from here. ("From
-here" means use this to *repair the `bootstrap` draft*; it is not licence to skip
-`bootstrap`, which is a mandatory first step — see SKILL.md.) If
-something you need to express isn't covered, that's a gap to report. Strict
-decoding is on — an **unknown key fails the load**, so a typo'd field is caught
-immediately rather than silently ignored.
+This file is narrative context for repairing a bootstrapped draft. The
+authoritative, machine-readable contract schema and validation rules come from
+the CLI:
+
+```bash
+agentprovider schema --format json
+agentprovider invariants contracts/widget.yaml
+agentprovider describe 'schema.attributes.<name>.type'
+agentprovider describe conformance.invariants
+agentprovider validate contracts/widget.yaml
+```
+
+For editor integration or agent-side structural validation, write the contract
+schema to a file:
+
+```bash
+agentprovider schema --format json > agentprovider-contract.schema.json
+agentprovider schema --format yaml
+```
+
+`agentprovider schema` emits a JSON Schema document for the whole YAML contract
+file. It validates structure, not every semantic rule: cross-field rules still
+come from `agentprovider validate`, behavioral proof still comes from `conform`,
+field-level format help comes from `agentprovider describe <field-path>`, and
+evidence-backed missing-field repair guidance comes from
+`agentprovider completeness` classifications and suggestions.
+
+Use this reference to understand the shape and examples, not as licence to skip
+`bootstrap`, which is a mandatory first step — see SKILL.md. Strict decoding is
+on: an **unknown key fails the load**, so a typo'd field is caught immediately
+rather than silently ignored.
 
 ## Top level
 
@@ -118,6 +142,10 @@ Field reference:
   Terraform then accepts either your value or the server's without a plan
   inconsistency. Using `default` (or plain `optional`) for a server-supplied value
   causes a "Provider produced inconsistent result after apply" error on first apply.
+  The `optional_default_consistency` conform invariant now catches this **offline**
+  (it's auto-selected for create-lifecycle resources): if the recorded create
+  omits the field but the response returns it non-null, `conform` fails with a fix
+  pointing at `optional + computed` — so you no longer need a live `apply` to find it.
 - `description`: human-readable attribute description (surfaced in the generated schema).
 - `carry_on_read`: preserve an **optional, non-computed** input in state when a
   read omits it (the server accepts but doesn't echo it) — prevents a perpetual
@@ -281,10 +309,25 @@ actions:
 **Action-only contracts (no CRUD).** A `kind: Resource` may declare `actions` and
 **no `create` lifecycle**. The engine then registers it as a Terraform **Action**
 (named `dynamic_<type>_<verb>`), not a managed resource — so it's exempt from the
-CRUD invariant coverage floor and is proven with `action_returns_expected` instead
-of the CRUD set. This is the idiomatic way to model an imperative verb (launch a
-job, rotate a key, start/stop) that creates no Terraform-managed object. See
+CRUD invariant coverage floor and is proven with `action_returns_expected` plus
+(when the action returns a server-assigned id) `state_matches_expect`, instead
+of the CRUD set. This is the idiomatic way to model an imperative verb (launch
+a job, rotate a key, start/stop) that creates no Terraform-managed object. See
 `terraform-usage.md` for how this surfaces in HCL.
+
+Two-pronged action proof:
+
+- **Stable** computed outputs (`status`, `name` — values that don't change per
+  invocation) go in `conformance.example`. `action_returns_expected` does a
+  literal compare against the action result.
+- **Server-assigned id-shaped** outputs (the new run id, the launched job id —
+  values the server assigns fresh each invocation) go in
+  `conformance.expect.<attr>: {not_null: true}`. `state_matches_expect`
+  (now driving action contracts too, not just datasources/resources) checks
+  presence without freezing the per-run value. Pinning a server-assigned id in
+  `conformance.example` passes the frozen cassette but breaks the next
+  re-record — `record` now warns about this at record time. `bootstrap --kind
+  action` emits this split by default.
 
 Complete action-only contract, end to end (copy this shape — there is nothing
 else to it):
@@ -299,8 +342,8 @@ connection:
 schema:
   attributes:
     pipeline_id: { type: number, required: true }                # input, interpolated into the path
-    run_id:      { type: number, computed: true, field: id }     # computed OUTPUT (response field `id`)
-    status:      { type: string, computed: true }                # computed output
+    run_id:      { type: number, computed: true, field: id }     # computed OUTPUT (response field `id`) — server-assigned
+    status:      { type: string, computed: true }                # computed output — stable
 actions:
   start:
     method: POST
@@ -311,13 +354,18 @@ conformance:
   action: start                        # which verb the proof drives
   example:
     pipeline_id: 7
-    run_id: 29                         # an EXPECTED computed output (from the recorded response)
-  invariants: [action_returns_expected]
+    status: pending                    # stable: every started run begins pending — pinned literal
+  expect:
+    run_id: { not_null: true }         # server-assigned per run — assert presence, never pin a literal
+  invariants:
+    - action_returns_expected          # literal compare on the example pin (status)
+    - state_matches_expect             # not_null check on the expect entry (run_id)
 ```
 
-This contract registers the Terraform Action `dynamic_job_run_start`. The proof is
-non-vacuous only because `conformance.example` asserts a computed output (`run_id`)
-— an example with inputs alone proves nothing and fails closed.
+This contract registers the Terraform Action `dynamic_job_run_start`. The proof
+is non-vacuous because `conformance.example` asserts a stable computed output
+(`status`) AND `conformance.expect` asserts the server-assigned id is present —
+an action contract with neither is vacuous and fails closed.
 
 ## conformance
 
