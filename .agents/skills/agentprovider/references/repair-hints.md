@@ -65,10 +65,14 @@ don't trip them.
   attribute declared `optional` and **not** `computed`, it inspects the recorded
   **create** request/response pair. If the field was omitted from the create body
   but came back non-null in the response, the server defaults it — and Terraform
-  will reject the null→default at apply ("inconsistent result after apply"). Fix:
-  declare that attribute `optional: true, computed: true`. Auto-selected for any
-  create-lifecycle resource, so it catches the bug **offline**, before a real apply.
-  (Keys on the create interaction only; update-omit defaults are out of scope.)
+  will reject the null→default at apply ("inconsistent result after apply"). Fix
+  (two branches): if the omitted-create response is a **stable scalar literal**,
+  declare `optional: true, default: <that literal>` (preferred — plan-known and
+  drift-detecting; the declared default must equal the recorded value); otherwise,
+  for a non-pinnable default (object/list, canonicalized, variable), declare
+  `optional: true, computed: true`. Auto-selected for any create-lifecycle resource,
+  so it catches the bug **offline**, before a real apply. (Keys on the create
+  interaction only; update-omit defaults are out of scope.)
 - `id_stable_across_update` — the identity value is unchanged from create through
   update (Terraform's identity-stability expectation).
 - `delete_then_read_404` — after `delete`, a `read` returns a `not_found_status`.
@@ -98,6 +102,15 @@ don't trip them.
 - **perpetual diff on an optional input the read omits** → set `carry_on_read: true`
   on that optional attribute. *Why:* the API accepts but doesn't echo it; carrying
   the practitioner value forward avoids a null-vs-set diff.
+- **`optional_default_consistency` fails, or `completeness` emits a
+  `promote_schema_attribute` hint ("set default:&lt;v&gt; on &lt;path&gt; to keep it
+  plan-known and preserve drift detection") on a server-defaulted optional** → add
+  `default: <that scalar literal>` to the existing optional attribute (do **not** add
+  `computed:`); for a non-pinnable default (object/list, canonicalized, variable) use
+  `optional: true, computed: true` instead. *Why:* a static `default:` keeps the unset
+  value plan-known **and** preserves drift detection, where `computed` is drift-blind;
+  the CLI sources the literal from the recorded omit-create response, so it matches
+  what the conform gate validates.
 - **perpetual diff on a server-normalized value (lowercased email, sorted list)** →
   set `normalize: lowercase` / `normalize: sort` on the attribute. *Why:* store the
   server's normalized form so the planned and actual values match.
