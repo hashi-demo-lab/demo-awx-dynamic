@@ -79,7 +79,7 @@ Enter
 #     18m captures a complete session and leaves it idle on the final frame. If
 #     the agent needs longer on a given take, raise this and re-record. ---
 Sleep 2s
-Sleep 18m
+Sleep 15m
 
 # --- exit the Claude TUI back to the shell, then play the closing card. The
 #     agent leaves us at Claude's idle input prompt; Ctrl+C twice quits it (the

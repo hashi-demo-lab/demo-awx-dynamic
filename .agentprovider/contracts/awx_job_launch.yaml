@@ -1,6 +1,7 @@
 apiVersion: agentprovider/v1
-kind: Resource
+kind: Resource          # action-only: no create lifecycle -> registers as Terraform Action dynamic_awx_job_launch
 type: awx_job
+
 connection:
   base_url: ${env.AWX}
   allow_insecure: true
@@ -13,34 +14,88 @@ connection:
     username: ${env.AWX_USERNAME}
     password: ${env.AWX_PASSWORD}
     failure_status: [401, 403]
+
 schema:
   attributes:
-    template_id:
-      type: number
-      required: true
-    job_id:
-      type: number
-      computed: true
-      field: id
-    status:
-      type: string
-      computed: true
-    job_type:
-      type: string
-      computed: true
+    template_id: { type: number, required: true }                 # input, interpolated into path
+    job:         { type: number, computed: true }                 # server-assigned launched job id
+    name:        { type: string, computed: true }                 # inherited from template (stable)
+    job_type:    { type: string, computed: true }                 # inherited (stable)
+    launch_type: { type: string, computed: true }                 # 'manual' for API launch (stable)
+    status:      { type: string, computed: true }                 # job status (varies; output only)
+
 actions:
   launch:
     method: POST
     path: /api/v2/job_templates/${template_id}/launch/
     expect_status: [201]
+    # no body: empty POST launch
+
+ignore_server_fields:
+  - id
+  - type
+  - url
+  - related
+  - summary_fields
+  - ignored_fields
+  - created
+  - modified
+  - description
+  - inventory
+  - project
+  - playbook
+  - scm_branch
+  - forks
+  - limit
+  - verbosity
+  - extra_vars
+  - job_tags
+  - force_handlers
+  - skip_tags
+  - start_at_task
+  - timeout
+  - use_fact_cache
+  - organization
+  - unified_job_template
+  - execution_environment
+  - failed
+  - started
+  - finished
+  - canceled_on
+  - elapsed
+  - job_args
+  - job_cwd
+  - job_env
+  - job_explanation
+  - execution_node
+  - controller_node
+  - result_traceback
+  - event_processing_finished
+  - launched_by
+  - work_unit_id
+  - job_template
+  - passwords_needed_to_start
+  - allow_simultaneous
+  - artifacts
+  - scm_revision
+  - instance_group
+  - diff_mode
+  - job_slice_number
+  - job_slice_count
+  - webhook_service
+  - webhook_credential
+  - webhook_guid
+  - detail
+
 conformance:
   action: launch
   example:
-    template_id: 7
-    status: pending
+    template_id: 70
+    name: ap-demo-jt-05290835
     job_type: run
+    launch_type: manual
   expect:
-    job_id: { not_null: true }
+    job: { not_null: true }
   invariants:
     - action_returns_expected
     - state_matches_expect

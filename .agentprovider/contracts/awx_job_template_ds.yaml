@@ -1,59 +1,54 @@
 apiVersion: agentprovider/v1
 kind: DataSource
 type: awx_job_template_ds
+
 connection:
   base_url: ${env.AWX}
   allow_insecure: true
   allow_private_host: true
   headers:
     Accept: application/json
-    Content-Type: application/json
   auth:
     type: basic
     username: ${env.AWX_USERNAME}
     password: ${env.AWX_PASSWORD}
     failure_status: [401, 403]
+
 schema:
   attributes:
-    id:
-      type: string
-      required: true
-    name:
-      type: string
-      computed: true
-    description:
-      type: string
-      computed: true
-    job_type:
-      type: string
-      computed: true
-    inventory:
-      type: number
-      computed: true
-    project:
-      type: number
-      computed: true
-    playbook:
-      type: string
-      computed: true
-    organization:
-      type: number
-      computed: true
-    status:
-      type: string
-      computed: true
-    forks:
-      type: number
-      computed: true
-    verbosity:
-      type: number
-      computed: true
-    survey_enabled:
-      type: bool
-      computed: true
-    ask_variables_on_launch:
-      type: bool
-      computed: true
+    id: { type: number, required: true }   # lookup key, interpolated into the read path
+    name: { type: string, computed: true }
+    description: { type: string, computed: true }
+    job_type: { type: string, computed: true }
+    playbook: { type: string, computed: true }
+    scm_branch: { type: string, computed: true }
+    limit: { type: string, computed: true }
+    extra_vars: { type: string, computed: true }
+    job_tags: { type: string, computed: true }
+    skip_tags: { type: string, computed: true }
+    start_at_task: { type: string, computed: true }
+    status: { type: string, computed: true }
+    inventory: { type: number, computed: true }
+    project: { type: number, computed: true }
+    forks: { type: number, computed: true }
+    verbosity: { type: number, computed: true }
+    timeout: { type: number, computed: true }
+    job_slice_count: { type: number, computed: true }
+    force_handlers: { type: bool, computed: true }
+    use_fact_cache: { type: bool, computed: true }
+    survey_enabled: { type: bool, computed: true }
+    become_enabled: { type: bool, computed: true }
+    diff_mode: { type: bool, computed: true }
+    allow_simultaneous: { type: bool, computed: true }
+    prevent_instance_group_fallback: { type: bool, computed: true }
+
+lifecycle:
+  read:
+    method: GET
+    path: /api/v2/job_templates/${id}/
+    expect_status: [200]
+    not_found_status: [404]
+
 ignore_server_fields:
   - type
   - url
@@ -61,30 +56,15 @@ ignore_server_fields:
   - summary_fields
   - created
   - modified
-  - scm_branch
-  - limit
-  - extra_vars
-  - job_tags
-  - force_handlers
-  - skip_tags
-  - start_at_task
-  - timeout
-  - use_fact_cache
+  - organization
   - last_job_run
   - last_job_failed
   - next_job_run
   - execution_environment
   - host_config_key
-  - custom_virtualenv
-  - job_slice_count
-  - webhook_service
-  - webhook_credential
-  - prevent_instance_group_fallback
-  - become_enabled
-  - diff_mode
-  - allow_simultaneous
   - ask_scm_branch_on_launch
   - ask_diff_mode_on_launch
+  - ask_variables_on_launch
   - ask_limit_on_launch
   - ask_tags_on_launch
   - ask_skip_tags_on_launch
@@ -98,23 +78,18 @@ ignore_server_fields:
   - ask_job_slice_count_on_launch
   - ask_timeout_on_launch
   - ask_instance_groups_on_launch
+  - custom_virtualenv
+  - webhook_service
+  - webhook_credential
   - detail
-lifecycle:
-  read:
-    method: GET
-    path: /api/v2/job_templates/${id}/
-    expect_status: [200]
-    not_found_status: [404]
+
 conformance:
   example:
-    id: "7"
-    name: Demo Job Template
+    id: 70
+    name: ap-demo-jt-05290835
     job_type: run
     playbook: hello_world.yml
+    project: 6
+    inventory: 117
   invariants:
     - read_returns_expected
-    - state_matches_expect
-  expect:
-    id: { not_null: true }
-    name: { not_null: true }
-    project: { not_null: true }

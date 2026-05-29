@@ -4,101 +4,93 @@ terraform {
   }
 }
 
-provider "dynamic" {
-  # Contracts are read at runtime from AGENTPROVIDER_CONTRACTS.
-  # base_url + credentials come from each contract via ${env.AWX*}.
-}
+provider "dynamic" {}
 
-# --- Resources (full CRUD) -------------------------------------------------
+# ---- Resources (full CRUD) ----
 
 resource "dynamic_awx_organization" "org" {
-  name        = "apeval-r10-org"
-  description = "agentprovider eval r10 organization"
+  name        = "apeval-r11-org-tf"
+  description = "agentprovider eval r11 org via terraform"
+  max_hosts   = 0
 }
 
 resource "dynamic_awx_inventory" "inv" {
-  name         = "apeval-r10-inv"
-  description  = "agentprovider eval r10 inventory"
-  organization = dynamic_awx_organization.org.id # FK via computed id
+  name                            = "apeval-r11-inv-tf"
+  description                     = "agentprovider eval r11 inventory via terraform"
+  organization                    = dynamic_awx_organization.org.id
+  kind                            = ""
+  variables                       = ""
+  prevent_instance_group_fallback = false
 }
 
 resource "dynamic_awx_host" "host" {
-  name        = "apeval-r10-host"
-  description = "agentprovider eval r10 host"
-  inventory   = dynamic_awx_inventory.inv.id # FK via computed id
+  name        = "apeval-r11-host-tf"
+  description = "agentprovider eval r11 host via terraform"
+  inventory   = dynamic_awx_inventory.inv.id
   enabled     = true
+  instance_id = ""
+  variables   = ""
 }
 
 resource "dynamic_awx_job_template" "jt" {
-  name        = "apeval-r10-jt"
-  description = "agentprovider eval r10 job template"
+  name        = "apeval-r11-jt-tf"
+  description = "agentprovider eval r11 job template via terraform"
   job_type    = "run"
-  project     = 6 # existing Demo Project
   inventory   = dynamic_awx_inventory.inv.id
+  project     = 6
   playbook    = "hello_world.yml"
-
-  # behavior + launch-prompt toggles (settable knobs)
-  ask_variables_on_launch = true
 }
 
-# --- Data source (lookup existing job_template by id) ----------------------
+# ---- Data source: look up an existing job template by id ----
 
-data "dynamic_awx_job_template_ds" "demo" {
-  id = "7" # existing Demo Job Template
+data "dynamic_awx_job_template_ds" "fixture" {
+  id = "70"
 }
 
-# --- Actions ---------------------------------------------------------------
+# ---- Actions ----
+# awx_job_launch targets the JT we created; trigger it from the sibling host
+# (a resource OTHER than the action target) to avoid a resource->action->resource cycle.
 
-# awx_job_launch targets existing job_template 7 (Demo)
-action "dynamic_awx_job_launch" "demo_launch" {
+action "dynamic_awx_job_launch" "run_jt" {
   config {
-    template_id = 7
+    template_id = dynamic_awx_job_template.jt.id
   }
 }
 
-# aap_workflow_job_launch targets existing workflow_job_template 56
-action "dynamic_aap_workflow_job_launch" "wf_launch" {
+# aap_workflow_job_launch targets the pre-existing workflow_job_template fixture (id 56);
+# trigger it from the org resource (a sibling, not the action's target).
+
+action "dynamic_aap_workflow_job_launch" "run_wf" {
   config {
     workflow_template_id = 56
   }
 }
 
-# Triggers live on resources OTHER than the action targets (no cycle):
-# the job launch fires after the host is created; the workflow launch
-# after the job_template is created.
 resource "dynamic_awx_host" "trigger_host" {
-  name      = "apeval-r10-host-trigger"
-  inventory = dynamic_awx_inventory.inv.id
-  enabled   = true
+  name        = "apeval-r11-trigger-tf"
+  description = "carries action triggers; sibling of action targets"
+  inventory   = dynamic_awx_inventory.inv.id
+  enabled     = true
+  instance_id = ""
+  variables   = ""
 
   lifecycle {
     action_trigger {
       events  = [after_create]
-      actions = [action.dynamic_awx_job_launch.demo_launch]
+      actions = [action.dynamic_awx_job_launch.run_jt]
     }
-  }
-}
-
-resource "dynamic_awx_job_template" "trigger_jt" {
-  name      = "apeval-r10-jt-trigger"
-  job_type  = "run"
-  project   = 6
-  inventory = dynamic_awx_inventory.inv.id
-  playbook  = "hello_world.yml"
-
-  lifecycle {
     action_trigger {
       events  = [after_create]
-      actions = [action.dynamic_aap_workflow_job_launch.wf_launch]
+      actions = [action.dynamic_aap_workflow_job_launch.run_wf]
     }
   }
 }
 
-# --- Outputs ---------------------------------------------------------------
+# ---- Outputs ----
 
-output "organization_id" { value = dynamic_awx_organization.org.id }
+output "org_id" { value = dynamic_awx_organization.org.id }
 output "inventory_id" { value = dynamic_awx_inventory.inv.id }
 output "host_id" { value = dynamic_awx_host.host.id }
 output "job_template_id" { value = dynamic_awx_job_template.jt.id }
-output "data_source_name" { value = data.dynamic_awx_job_template_ds.demo.name }
-output "data_source_project" { value = data.dynamic_awx_job_template_ds.demo.project }
+output "ds_jt_name" { value = data.dynamic_awx_job_template_ds.fixture.name }
+output "ds_jt_status" { value = data.dynamic_awx_job_template_ds.fixture.status }

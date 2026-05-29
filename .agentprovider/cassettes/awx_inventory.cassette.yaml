@@ -6,9 +6,9 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 175
+        content_length: 157
         host: localhost:30080
-        body: '{"description":"agentprovider eval r10 inventory","host_filter":null,"kind":"","name":"apeval-r10-inv","organization":1,"prevent_instance_group_fallback":false,"variables":""}'
+        body: '{"description":"agentprovider eval r11 inventory","kind":"","name":"apeval-r11-inv","organization":72,"prevent_instance_group_fallback":false,"variables":""}'
         headers:
             Accept:
                 - application/json
@@ -24,8 +24,8 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2361
-        body: '{"created":"2026-05-29T05:45:03.260729Z","description":"agentprovider eval r10 inventory","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":147,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T05:45:03.260737Z","name":"apeval-r10-inv","organization":1,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/147/access_list/","activity_stream":"/api/v2/inventories/147/activity_stream/","ad_hoc_commands":"/api/v2/inventories/147/ad_hoc_commands/","copy":"/api/v2/inventories/147/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/147/groups/","hosts":"/api/v2/inventories/147/hosts/","instance_groups":"/api/v2/inventories/147/instance_groups/","inventory_sources":"/api/v2/inventories/147/inventory_sources/","job_templates":"/api/v2/inventories/147/job_templates/","labels":"/api/v2/inventories/147/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r10-inv++Default/","object_roles":"/api/v2/inventories/147/object_roles/","organization":"/api/v2/organizations/1/","root_groups":"/api/v2/inventories/147/root_groups/","script":"/api/v2/inventories/147/script/","tree":"/api/v2/inventories/147/tree/","update_inventory_sources":"/api/v2/inventories/147/update_inventory_sources/","variable_data":"/api/v2/inventories/147/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2426,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2424,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2428,"name":"Read"},"update_role":{"description":"May update the inventory","id":2425,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2427,"name":"Use"}},"organization":{"description":"","id":1,"name":"Default"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/147/","variables":""}'
+        content_length: 2454
+        body: '{"created":"2026-05-29T09:40:46.627332Z","description":"agentprovider eval r11 inventory","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":150,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T09:40:46.627339Z","name":"apeval-r11-inv","organization":72,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/150/access_list/","activity_stream":"/api/v2/inventories/150/activity_stream/","ad_hoc_commands":"/api/v2/inventories/150/ad_hoc_commands/","copy":"/api/v2/inventories/150/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/150/groups/","hosts":"/api/v2/inventories/150/hosts/","instance_groups":"/api/v2/inventories/150/instance_groups/","inventory_sources":"/api/v2/inventories/150/inventory_sources/","job_templates":"/api/v2/inventories/150/job_templates/","labels":"/api/v2/inventories/150/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r11-inv++ap-demo-org-05290835/","object_roles":"/api/v2/inventories/150/object_roles/","organization":"/api/v2/organizations/72/","root_groups":"/api/v2/inventories/150/root_groups/","script":"/api/v2/inventories/150/script/","tree":"/api/v2/inventories/150/tree/","update_inventory_sources":"/api/v2/inventories/150/update_inventory_sources/","variable_data":"/api/v2/inventories/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2505,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2503,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2507,"name":"Read"},"update_role":{"description":"May update the inventory","id":2504,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2506,"name":"Use"}},"organization":{"description":"Created by terraform-provider-dynamic via agentprovider contract","id":72,"name":"ap-demo-org-05290835"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/150/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -36,11 +36,11 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2361"
+                - "2454"
             Content-Type:
                 - application/json
             Location:
-                - /api/v2/inventories/147/
+                - /api/v2/inventories/150/
             Pragma:
                 - no-cache
             Server:
@@ -56,18 +56,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 32354b067cbc47be9d0e256b21a02575
+                - 5541988a03824b3089a2fc5831186f46
             X-Api-Time:
-                - 0.449s
+                - 0.280s
             X-Api-Total-Time:
-                - 0.471s
+                - 0.290s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 201 Created
         code: 201
-        duration: 482.696458ms
+        duration: 295.917875ms
     - id: 1
       request:
         proto: HTTP/1.1
@@ -84,14 +84,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/147/
+        url: http://localhost:30080/api/v2/inventories/150/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2361
-        body: '{"created":"2026-05-29T05:45:03.260729Z","description":"agentprovider eval r10 inventory","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":147,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T05:45:03.260737Z","name":"apeval-r10-inv","organization":1,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/147/access_list/","activity_stream":"/api/v2/inventories/147/activity_stream/","ad_hoc_commands":"/api/v2/inventories/147/ad_hoc_commands/","copy":"/api/v2/inventories/147/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/147/groups/","hosts":"/api/v2/inventories/147/hosts/","instance_groups":"/api/v2/inventories/147/instance_groups/","inventory_sources":"/api/v2/inventories/147/inventory_sources/","job_templates":"/api/v2/inventories/147/job_templates/","labels":"/api/v2/inventories/147/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r10-inv++Default/","object_roles":"/api/v2/inventories/147/object_roles/","organization":"/api/v2/organizations/1/","root_groups":"/api/v2/inventories/147/root_groups/","script":"/api/v2/inventories/147/script/","tree":"/api/v2/inventories/147/tree/","update_inventory_sources":"/api/v2/inventories/147/update_inventory_sources/","variable_data":"/api/v2/inventories/147/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2426,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2424,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2428,"name":"Read"},"update_role":{"description":"May update the inventory","id":2425,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2427,"name":"Use"}},"organization":{"description":"","id":1,"name":"Default"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/147/","variables":""}'
+        content_length: 2454
+        body: '{"created":"2026-05-29T09:40:46.627332Z","description":"agentprovider eval r11 inventory","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":150,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T09:40:46.627339Z","name":"apeval-r11-inv","organization":72,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/150/access_list/","activity_stream":"/api/v2/inventories/150/activity_stream/","ad_hoc_commands":"/api/v2/inventories/150/ad_hoc_commands/","copy":"/api/v2/inventories/150/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/150/groups/","hosts":"/api/v2/inventories/150/hosts/","instance_groups":"/api/v2/inventories/150/instance_groups/","inventory_sources":"/api/v2/inventories/150/inventory_sources/","job_templates":"/api/v2/inventories/150/job_templates/","labels":"/api/v2/inventories/150/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r11-inv++ap-demo-org-05290835/","object_roles":"/api/v2/inventories/150/object_roles/","organization":"/api/v2/organizations/72/","root_groups":"/api/v2/inventories/150/root_groups/","script":"/api/v2/inventories/150/script/","tree":"/api/v2/inventories/150/tree/","update_inventory_sources":"/api/v2/inventories/150/update_inventory_sources/","variable_data":"/api/v2/inventories/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2505,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2503,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2507,"name":"Read"},"update_role":{"description":"May update the inventory","id":2504,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2506,"name":"Use"}},"organization":{"description":"Created by terraform-provider-dynamic via agentprovider contract","id":72,"name":"ap-demo-org-05290835"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/150/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -102,7 +102,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2361"
+                - "2454"
             Content-Type:
                 - application/json
             Pragma:
@@ -120,26 +120,26 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 8e8d6284ff6c4145a75ad013e8aff24f
+                - 48af8ff41d684e549060d27361977580
             X-Api-Time:
-                - 0.327s
+                - 0.248s
             X-Api-Total-Time:
-                - 0.338s
+                - 0.256s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 341.754209ms
+        duration: 261.143125ms
     - id: 2
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 182
+        content_length: 165
         host: localhost:30080
-        body: '{"description":"agentprovider eval r10 inventory updated","host_filter":null,"kind":"","name":"apeval-r10-inv","organization":1,"prevent_instance_group_fallback":true,"variables":""}'
+        body: '{"description":"agentprovider eval r11 inventory updated","kind":"","name":"apeval-r11-inv","organization":72,"prevent_instance_group_fallback":false,"variables":""}'
         headers:
             Accept:
                 - application/json
@@ -149,14 +149,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/147/
+        url: http://localhost:30080/api/v2/inventories/150/
         method: PATCH
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2368
-        body: '{"created":"2026-05-29T05:45:03.260729Z","description":"agentprovider eval r10 inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":147,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T05:45:04.850475Z","name":"apeval-r10-inv","organization":1,"pending_deletion":false,"prevent_instance_group_fallback":true,"related":{"access_list":"/api/v2/inventories/147/access_list/","activity_stream":"/api/v2/inventories/147/activity_stream/","ad_hoc_commands":"/api/v2/inventories/147/ad_hoc_commands/","copy":"/api/v2/inventories/147/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/147/groups/","hosts":"/api/v2/inventories/147/hosts/","instance_groups":"/api/v2/inventories/147/instance_groups/","inventory_sources":"/api/v2/inventories/147/inventory_sources/","job_templates":"/api/v2/inventories/147/job_templates/","labels":"/api/v2/inventories/147/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r10-inv++Default/","object_roles":"/api/v2/inventories/147/object_roles/","organization":"/api/v2/organizations/1/","root_groups":"/api/v2/inventories/147/root_groups/","script":"/api/v2/inventories/147/script/","tree":"/api/v2/inventories/147/tree/","update_inventory_sources":"/api/v2/inventories/147/update_inventory_sources/","variable_data":"/api/v2/inventories/147/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2426,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2424,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2428,"name":"Read"},"update_role":{"description":"May update the inventory","id":2425,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2427,"name":"Use"}},"organization":{"description":"","id":1,"name":"Default"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/147/","variables":""}'
+        content_length: 2462
+        body: '{"created":"2026-05-29T09:40:46.627332Z","description":"agentprovider eval r11 inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":150,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T09:40:47.761829Z","name":"apeval-r11-inv","organization":72,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/150/access_list/","activity_stream":"/api/v2/inventories/150/activity_stream/","ad_hoc_commands":"/api/v2/inventories/150/ad_hoc_commands/","copy":"/api/v2/inventories/150/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/150/groups/","hosts":"/api/v2/inventories/150/hosts/","instance_groups":"/api/v2/inventories/150/instance_groups/","inventory_sources":"/api/v2/inventories/150/inventory_sources/","job_templates":"/api/v2/inventories/150/job_templates/","labels":"/api/v2/inventories/150/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r11-inv++ap-demo-org-05290835/","object_roles":"/api/v2/inventories/150/object_roles/","organization":"/api/v2/organizations/72/","root_groups":"/api/v2/inventories/150/root_groups/","script":"/api/v2/inventories/150/script/","tree":"/api/v2/inventories/150/tree/","update_inventory_sources":"/api/v2/inventories/150/update_inventory_sources/","variable_data":"/api/v2/inventories/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2505,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2503,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2507,"name":"Read"},"update_role":{"description":"May update the inventory","id":2504,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2506,"name":"Use"}},"organization":{"description":"Created by terraform-provider-dynamic via agentprovider contract","id":72,"name":"ap-demo-org-05290835"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/150/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -167,7 +167,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2368"
+                - "2462"
             Content-Type:
                 - application/json
             Pragma:
@@ -185,18 +185,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 165d7ff280364aee96c71a27eac64a42
+                - caeb9b1bce234ed8b225e07474c5e624
             X-Api-Time:
-                - 0.326s
+                - 0.271s
             X-Api-Total-Time:
-                - 0.344s
+                - 0.284s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 347.203417ms
+        duration: 287.786542ms
     - id: 3
       request:
         proto: HTTP/1.1
@@ -213,14 +213,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/147/
+        url: http://localhost:30080/api/v2/inventories/150/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2368
-        body: '{"created":"2026-05-29T05:45:03.260729Z","description":"agentprovider eval r10 inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":147,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T05:45:04.850475Z","name":"apeval-r10-inv","organization":1,"pending_deletion":false,"prevent_instance_group_fallback":true,"related":{"access_list":"/api/v2/inventories/147/access_list/","activity_stream":"/api/v2/inventories/147/activity_stream/","ad_hoc_commands":"/api/v2/inventories/147/ad_hoc_commands/","copy":"/api/v2/inventories/147/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/147/groups/","hosts":"/api/v2/inventories/147/hosts/","instance_groups":"/api/v2/inventories/147/instance_groups/","inventory_sources":"/api/v2/inventories/147/inventory_sources/","job_templates":"/api/v2/inventories/147/job_templates/","labels":"/api/v2/inventories/147/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r10-inv++Default/","object_roles":"/api/v2/inventories/147/object_roles/","organization":"/api/v2/organizations/1/","root_groups":"/api/v2/inventories/147/root_groups/","script":"/api/v2/inventories/147/script/","tree":"/api/v2/inventories/147/tree/","update_inventory_sources":"/api/v2/inventories/147/update_inventory_sources/","variable_data":"/api/v2/inventories/147/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2426,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2424,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2428,"name":"Read"},"update_role":{"description":"May update the inventory","id":2425,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2427,"name":"Use"}},"organization":{"description":"","id":1,"name":"Default"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/147/","variables":""}'
+        content_length: 2462
+        body: '{"created":"2026-05-29T09:40:46.627332Z","description":"agentprovider eval r11 inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":150,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T09:40:47.761829Z","name":"apeval-r11-inv","organization":72,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/150/access_list/","activity_stream":"/api/v2/inventories/150/activity_stream/","ad_hoc_commands":"/api/v2/inventories/150/ad_hoc_commands/","copy":"/api/v2/inventories/150/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/150/groups/","hosts":"/api/v2/inventories/150/hosts/","instance_groups":"/api/v2/inventories/150/instance_groups/","inventory_sources":"/api/v2/inventories/150/inventory_sources/","job_templates":"/api/v2/inventories/150/job_templates/","labels":"/api/v2/inventories/150/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r11-inv++ap-demo-org-05290835/","object_roles":"/api/v2/inventories/150/object_roles/","organization":"/api/v2/organizations/72/","root_groups":"/api/v2/inventories/150/root_groups/","script":"/api/v2/inventories/150/script/","tree":"/api/v2/inventories/150/tree/","update_inventory_sources":"/api/v2/inventories/150/update_inventory_sources/","variable_data":"/api/v2/inventories/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2505,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2503,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2507,"name":"Read"},"update_role":{"description":"May update the inventory","id":2504,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2506,"name":"Use"}},"organization":{"description":"Created by terraform-provider-dynamic via agentprovider contract","id":72,"name":"ap-demo-org-05290835"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/150/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -231,7 +231,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2368"
+                - "2462"
             Content-Type:
                 - application/json
             Pragma:
@@ -249,18 +249,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 5ee6fdc9c85f486aa49efe83a3f9b7d0
+                - d112f3db267940879ec89764d01bff67
             X-Api-Time:
-                - 0.343s
+                - 0.250s
             X-Api-Total-Time:
-                - 0.354s
+                - 0.258s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 358.3815ms
+        duration: 263.491792ms
     - id: 4
       request:
         proto: HTTP/1.1
@@ -277,14 +277,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/147/
+        url: http://localhost:30080/api/v2/inventories/150/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2368
-        body: '{"created":"2026-05-29T05:45:03.260729Z","description":"agentprovider eval r10 inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":147,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T05:45:04.850475Z","name":"apeval-r10-inv","organization":1,"pending_deletion":false,"prevent_instance_group_fallback":true,"related":{"access_list":"/api/v2/inventories/147/access_list/","activity_stream":"/api/v2/inventories/147/activity_stream/","ad_hoc_commands":"/api/v2/inventories/147/ad_hoc_commands/","copy":"/api/v2/inventories/147/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/147/groups/","hosts":"/api/v2/inventories/147/hosts/","instance_groups":"/api/v2/inventories/147/instance_groups/","inventory_sources":"/api/v2/inventories/147/inventory_sources/","job_templates":"/api/v2/inventories/147/job_templates/","labels":"/api/v2/inventories/147/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r10-inv++Default/","object_roles":"/api/v2/inventories/147/object_roles/","organization":"/api/v2/organizations/1/","root_groups":"/api/v2/inventories/147/root_groups/","script":"/api/v2/inventories/147/script/","tree":"/api/v2/inventories/147/tree/","update_inventory_sources":"/api/v2/inventories/147/update_inventory_sources/","variable_data":"/api/v2/inventories/147/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2426,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2424,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2428,"name":"Read"},"update_role":{"description":"May update the inventory","id":2425,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2427,"name":"Use"}},"organization":{"description":"","id":1,"name":"Default"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/147/","variables":""}'
+        content_length: 2462
+        body: '{"created":"2026-05-29T09:40:46.627332Z","description":"agentprovider eval r11 inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":150,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T09:40:47.761829Z","name":"apeval-r11-inv","organization":72,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/150/access_list/","activity_stream":"/api/v2/inventories/150/activity_stream/","ad_hoc_commands":"/api/v2/inventories/150/ad_hoc_commands/","copy":"/api/v2/inventories/150/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/150/groups/","hosts":"/api/v2/inventories/150/hosts/","instance_groups":"/api/v2/inventories/150/instance_groups/","inventory_sources":"/api/v2/inventories/150/inventory_sources/","job_templates":"/api/v2/inventories/150/job_templates/","labels":"/api/v2/inventories/150/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-r11-inv++ap-demo-org-05290835/","object_roles":"/api/v2/inventories/150/object_roles/","organization":"/api/v2/organizations/72/","root_groups":"/api/v2/inventories/150/root_groups/","script":"/api/v2/inventories/150/script/","tree":"/api/v2/inventories/150/tree/","update_inventory_sources":"/api/v2/inventories/150/update_inventory_sources/","variable_data":"/api/v2/inventories/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2505,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2503,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2507,"name":"Read"},"update_role":{"description":"May update the inventory","id":2504,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2506,"name":"Use"}},"organization":{"description":"Created by terraform-provider-dynamic via agentprovider contract","id":72,"name":"ap-demo-org-05290835"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/150/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -295,7 +295,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2368"
+                - "2462"
             Content-Type:
                 - application/json
             Pragma:
@@ -313,18 +313,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 7f598fe30a0848f5a85b82874432727e
+                - 1cf080947c5044518c5b2b1066e53d14
             X-Api-Time:
-                - 0.396s
+                - 0.249s
             X-Api-Total-Time:
-                - 0.408s
+                - 0.257s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 411.597334ms
+        duration: 261.827583ms
     - id: 5
       request:
         proto: HTTP/1.1
@@ -341,7 +341,7 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/147/
+        url: http://localhost:30080/api/v2/inventories/150/
         method: DELETE
       response:
         proto: HTTP/1.1
@@ -369,14 +369,14 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 546998ba27b84b968fd94abf45c3441a
+                - 7fb9021571fb4c5ba86333b18b37883d
             X-Api-Time:
-                - 0.346s
+                - 0.319s
             X-Api-Total-Time:
-                - 0.365s
+                - 0.346s
         status: 202 Accepted
         code: 202
-        duration: 372.796083ms
+        duration: 356.832792ms
     - id: 6
       request:
         proto: HTTP/1.1
@@ -393,7 +393,7 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/147/
+        url: http://localhost:30080/api/v2/inventories/150/
         method: GET
       response:
         proto: HTTP/1.1
@@ -423,16 +423,16 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - a89f142bcc924331a33e45e4520fe00d
+                - c0e2bac04a6945a7b1f5a94342ed4455
             X-Api-Time:
-                - 0.335s
+                - 0.238s
             X-Api-Total-Time:
-                - 0.346s
+                - 0.247s
         status: 404 Not Found
         code: 404
-        duration: 349.383084ms
+        duration: 253.353334ms
 
 provenance:
-  recorded_at: "2026-05-29T05:45:08Z"
+  recorded_at: "2026-05-29T09:40:50Z"
   host: "localhost:30080"
   api_version: "nginx"

@@ -1,6 +1,6 @@
 {
   "contract": "awx_job_template",
-  "contract_hash": "sha256:cd8ee660bd2abb952b2199b8a24f5da498e3146c3b02665b12748b1aeb09f9a4",
+  "contract_hash": "sha256:4cebd065de2725eb26d5362e658c18b0a04619353d3ba0ffaf3011d7c88dbaa1",
   "overall_passed": true,
   "invariants": [
     "id_is_computed_and_nonempty",
@@ -18,6 +18,6 @@
   "mutation_status": "passed_targeted",
   "completeness_percent": 100,
   "cassette": "../cassettes/awx_job_template.cassette.yaml",
-  "cassette_hash": "sha256:f0d3eb45c38f6652d0834bdeb79f72cad08fa93f0eac3f3f66030597242e0b0d",
-  "generated_at": "2026-05-29T05:48:01Z"
+  "cassette_hash": "sha256:bb4d55f85fb0f71ca06c2123df6bf294debe73b6640dc5a66a0703aed09f7e8b",
+  "generated_at": "2026-05-29T09:45:17Z"
 }
