@@ -11,7 +11,6 @@
 # Needs local AWX-on-Docker/kind, codex auth, and the demo-built agentprovider
 # and terraform-provider-dynamic binaries.
 Output demo/agentprovider-awx-v2.gif
-Output demo/agentprovider-awx-v2.mp4
 
 Set Shell bash
 Set FontSize 18

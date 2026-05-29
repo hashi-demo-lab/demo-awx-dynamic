@@ -22,9 +22,24 @@ clear
 printf '\n'
 
 # --- recap: what the agent just did ---------------------------------------
-printf '  %b✓%b  inventory resource     %b%bagentprovider conform%b  →  %b6/6 invariants%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.45
-printf '  %b✓%b  job-launch action      %b%bagentprovider conform%b  →  %baction_returns_expected%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.45
-printf '  %b✓%b  terraform apply        %b%blive AWX%b  →  %binventory created · job launched%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.7
+printf '  %b✓%b  bootstrap              %b%bagentprovider bootstrap --response%b  →  %bseeded draft contract%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
+printf '  %b✓%b  record                 %b%bagentprovider record%b  →  %bbyte-accurate cassette (go-vcr) + redacted auth%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
+printf '  %b✓%b  conform inventory      %b%bagentprovider conform%b  →  %b8/8 invariants%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
+printf '  %b✓%b  completeness gate      %b%b--min-completeness 90%b  →  %b100%% of the live API surface%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
+printf '  %b✓%b  conform action         %b%bagentprovider conform%b  →  %baction_returns_expected · state_matches_expect%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
+printf '  %b✓%b  terraform apply        %b%blive AWX%b  →  %binventory created · job launched%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.70
+printf '\n'
+
+# --- for the agent authoring this -----------------------------------------
+# Bullet content locked by the plan at ~/.claude/plans/foamy-gathering-crown.md.
+# Visual grammar: dim rule + lavender claim + dim explanation, inverting the
+# recap's green-check pattern so the panels read as distinct sections.
+printf '  %b──  for the agent authoring this  ──────────────────────────────────%b\n' "$D$P" "$X"; sleep 0.30
+printf '  %b•%b  %bdeterministic mapping%b              %b— any HTTP API → Terraform provider, in YAML%b\n' "$PL" "$X" "$PL" "$X" "$D" "$X"; sleep 0.40
+printf '  %b•%b  %bone engine, many contracts%b         %b— no per-API Go to write%b\n' "$PL" "$X" "$PL" "$X" "$D" "$X"; sleep 0.40
+printf '  %b•%b  %bbyte-accurate replay (go-vcr)%b      %b— record once, prove; deterministic CI%b\n' "$PL" "$X" "$PL" "$X" "$D" "$X"; sleep 0.40
+printf '  %b•%b  %bthe contract carries its own proof%b %b— conform returns a verdict; repair_hints self-correct%b\n' "$PL" "$X" "$PL" "$X" "$D" "$X"; sleep 0.40
+printf '  %b%bnext:%b %bpromote contracts into a generated Go provider%b\n' "  " "$D" "$X" "$PL" "$X"; sleep 0.60
 printf '\n\n'
 
 # --- THE END banner (reveal + purple shimmer) -----------------------------
@@ -43,5 +58,5 @@ for line in "${BANNER[@]}"; do printf '\r  %b%s%b\n' "$PB" "$line" "$X"; done
 printf '\n'
 printf '  %bagentprovider%b  %b·%b  agent-first Terraform provider generation\n' "$PB" "$X" "$D" "$X"
 sleep 0.4
-printf '  %bthe agentprovider-author skill drives the agentprovider CLI — record · validate · run%b\n' "$D" "$X"
+printf '  %bthe agentprovider skill drives the agentprovider CLI — record · validate · check completeness · run%b\n' "$D" "$X"
 sleep 1.6

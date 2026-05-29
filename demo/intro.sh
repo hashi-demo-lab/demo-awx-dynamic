@@ -84,16 +84,24 @@ sleep 0.5
 
 # --- (5) the message: agent-first, agent-browser analogy ------------------
 printf '\n'
-printf '  %blike agent-browser: an %bagent skill with a CLI%b%b — but for Terraform providers.%b\n' "$D" "$PB" "$X" "$D" "$X"
+printf '  %blike agent-browser: an %b%b%b%s%b%b — but for Terraform providers.%b\n' "$D" "$X" "$B" "$PL" "agent skill with a CLI" "$X" "$D" "$X"
 sleep 0.7
-printf '  the %bagentprovider-author%b skill drives the %bagentprovider%b CLI:  record a live API %b·%b validate the contract %b·%b run it%b\n' \
-  "$PB" "$X" "$PB" "$X" "$D" "$X" "$D" "$X" "$X"
+printf '  the %b%b%s%b skill drives the %b%b%s%b CLI%b\n' \
+  "$B" "$PL" "agentprovider" "$X" "$B" "$PL" "agentprovider" "$X" "$X"
 sleep 1.0
+
+# --- (5b) the promise (paired with the outro's "for the agent" panel) -----
+# One line setting up the three beats the outro then proves. The `next:`
+# prefix marks generated-Go as roadmap; the outro mirrors the same `next:`.
+printf '\n'
+printf '  %b──%b  %b%b%s%b  %b·%b  %b%b%s%b  %b·%b  %b%b%s%b\n' \
+  "$D$P" "$X" "$B" "$PL" "deterministic mapping: any HTTP API → Terraform provider" "$X" "$D" "$X" "$B" "$PL" "YAML now" "$X" "$D" "$X" "$B" "$PL" "Go next" "$X"
+sleep 0.9
 
 # --- (6) pipeline + proven pulse ------------------------------------------
 printf '\n  '
-steps=("record" "conform" "run")
-for i in 0 1 2; do
+steps=("record" "conform" "completeness" "run")
+for i in 0 1 2 3; do
   [ "$i" -gt 0 ] && { printf '%b  ─▶  %b' "$D" "$X"; sleep 0.16; }
   printf '%b%b%s%b' "$B" "$PL" "${steps[$i]}" "$X"; sleep 0.3
 done

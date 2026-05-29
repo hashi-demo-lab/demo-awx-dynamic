@@ -1,30 +1,43 @@
 #!/usr/bin/env bash
-# Render the agentprovider AWX demo (VHS → gif + mp4).
-# Builds the CLI to demo/bin, verifies AWX is reachable, then runs vhs.
+# Render the agentprovider AWX demo (VHS → gif, then ffmpeg → mp4).
+# Builds the CLI/provider from source, verifies AWX is reachable, then runs vhs.
 #
-#   demo/record-awx.sh                       # v3 tape, http://localhost:30080
+#   demo/record-awx.sh                       # v3 take 2 tape, http://localhost:30080
 #   demo/record-awx.sh demo/agentprovider-awx.tape   # render a specific tape
 #   AWX=http://host:port demo/record-awx.sh
+#   AGENTPROVIDER_SOURCE=/path/to/terraform-provider-dynamic demo/record-awx.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT=$PWD
 
-# Which tape to render (default: the v3 Claude Code demo). The gif/mp4 names are
-# derived from the tape's basename, matching each tape's own Output directives.
-TAPE="${1:-demo/agentprovider-awx-v3.tape}"
+# Which tape to render. Tapes only ask VHS for a gif; the mp4 name is derived
+# from the tape basename and produced below with ffmpeg, which is much faster
+# than VHS's native mp4 export.
+TAPE="${1:-demo/agentprovider-awx-v3-take2.tape}"
 if [ ! -f "$TAPE" ]; then
   echo "tape not found: $TAPE" >&2
   exit 1
 fi
 BASE="demo/$(basename "$TAPE" .tape)"
 
+SOURCE="${AGENTPROVIDER_SOURCE:-/Users/simon.lynch/git/research-dynamic-provider/terraform-provider-dynamic}"
+if [ ! -f "$SOURCE/go.mod" ]; then
+  echo "agentprovider source not found at $SOURCE" >&2
+  echo "Set AGENTPROVIDER_SOURCE to the terraform-provider-dynamic source directory." >&2
+  exit 1
+fi
+export GOCACHE="${GOCACHE:-/private/tmp/demo-awx-gocache}"
+
 echo "==> building agentprovider → demo/bin/agentprovider"
-( cd terraform-provider-dynamic && go build -o "$ROOT/demo/bin/agentprovider" ./cli/agentprovider )
+mkdir -p demo/bin
+( cd "$SOURCE" && go build -o "$ROOT/demo/bin/agentprovider" ./cli/agentprovider )
+cp demo/bin/agentprovider agentprovider
 export PATH="$ROOT/demo/bin:$PATH"
 
 echo "==> building terraform-provider-dynamic → demo/awx/tf/bin/"
 mkdir -p demo/awx/tf/bin
-( cd terraform-provider-dynamic && go build -o "$ROOT/demo/awx/tf/bin/terraform-provider-dynamic" . )
+( cd "$SOURCE" && go build -o "$ROOT/demo/awx/tf/bin/terraform-provider-dynamic" . )
+cp demo/awx/tf/bin/terraform-provider-dynamic terraform-provider-dynamic
 
 if [ ! -f demo/awx/.admin_password ]; then
   echo "missing demo/awx/.admin_password (the local AWX admin credential)" >&2
@@ -56,10 +69,12 @@ done
 echo "==> AWX up at $AWX; rendering $TAPE"
 vhs "$TAPE"
 
-# VHS's native mp4 export is unreliable here; transcode the gif → a clean,
-# self-contained mp4 (even dimensions + yuv420p for broad player support).
+# VHS's native mp4 export is slow here; transcode only the first 10 minutes of
+# the gif into a clean, self-contained mp4 (even dimensions + yuv420p for broad
+# player support).
 echo "==> transcoding $BASE.mp4 from the gif"
-ffmpeg -y -i "$BASE.gif" -movflags +faststart -pix_fmt yuv420p \
-  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -c:v libx264 -crf 20 \
+ffmpeg -y -t 600 -i "$BASE.gif" \
+  -vf "fps=30,scale=trunc(iw/2)*2:trunc(ih/2)*2" \
+  -movflags +faststart -pix_fmt yuv420p -c:v libx264 \
   "$BASE.mp4"
 echo "==> wrote $BASE.gif and $BASE.mp4"

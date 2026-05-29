@@ -6,7 +6,6 @@
 # Render with: demo/record-awx.sh  (builds CLI + provider, checks AWX, runs vhs).
 
 Output demo/agentprovider-awx.gif
-Output demo/agentprovider-awx.mp4
 
 Set Shell "bash"
 Set FontSize 15
