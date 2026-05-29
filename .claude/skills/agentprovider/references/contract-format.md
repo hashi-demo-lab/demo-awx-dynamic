@@ -134,18 +134,41 @@ Field reference:
   whole mechanism, for resources, data sources, ephemerals, and actions alike.
 - `sensitive`: keep out of plan/CLI output. **Required on any credential-bearing
   attribute** — the transport redactor cannot reach attribute values.
-- `default`: a literal default for an `optional` attribute. Only `string` and
-  `bool` defaults are accepted — a `number` (or collection) attribute with
-  `default` is rejected at load. **Do not use `default` to absorb a value the
-  *server* fills in when you omit it** (e.g. a server-defaulted `retries: 3`).
-  For that, declare the attribute `optional: true, computed: true` (no `default`):
-  Terraform then accepts either your value or the server's without a plan
-  inconsistency. Using `default` (or plain `optional`) for a server-supplied value
+- `default`: a literal default for an `optional` attribute. **`string`, `number`,
+  and `bool` defaults are all accepted** (collections/objects are not). **Prefer
+  `default:` to absorb a stable, server-supplied default** — e.g. a server-defaulted
+  `retries: 3`, `job_type: "run"`, `verbosity: 0`. A static default keeps the unset
+  value **plan-known** (not `(known after apply)`) **and preserves drift detection**,
+  which is strictly better than `optional + computed` for any field whose server
+  default is a known scalar literal (including `0` / `false` / `""`):
+
+  ```yaml
+  # server defaults retries→3 when omitted; pin it so the plan knows the value
+  # AND Terraform still detects a remote drift away from 3:
+  retries: { type: number, optional: true, default: 3 }
+  ```
+
+  Use `optional: true, computed: true` (no `default`) **only** when the server's
+  default is *not* a pinnable scalar — a canonicalized form of your input, or an
+  object/list/variable/environment-dependent value — where there is no stable
+  literal to declare. `computed` is apply-safe but **drift-blind** on the unset
+  field, so reserve it for that case.
+
+  Marking a server-defaulted field plain `optional` (no `default`, no `computed`)
   causes a "Provider produced inconsistent result after apply" error on first apply.
-  The `optional_default_consistency` conform invariant now catches this **offline**
-  (it's auto-selected for create-lifecycle resources): if the recorded create
-  omits the field but the response returns it non-null, `conform` fails with a fix
-  pointing at `optional + computed` — so you no longer need a live `apply` to find it.
+  The `optional_default_consistency` conform invariant catches this **offline**
+  (auto-selected for create-lifecycle resources): if the recorded create omits the
+  field but the response returns it non-null, `conform` fails — fix it by declaring
+  `default: <the server's literal>` (preferred) or `optional + computed`. A declared
+  `default:` must match the omitted-create response value, so the invariant also
+  rejects a declared default that conflicts with the recorded evidence.
+
+  **YAML shape ≠ generated schema.** A declared `default:` forces the generated
+  terraform-plugin-framework attribute to optional+computed+default (the framework
+  requires a default to be computed). Keep `computed:` **absent** in the contract
+  YAML anyway: `optional_default_consistency` keys on the `optional`-not-`computed`
+  attributes, and the drift-detection advantage comes from the default being a
+  plan-known literal — not from the absence of the `computed:` key.
 - `description`: human-readable attribute description (surfaced in the generated schema).
 - `carry_on_read`: preserve an **optional, non-computed** input in state when a
   read omits it (the server accepts but doesn't echo it) — prevents a perpetual

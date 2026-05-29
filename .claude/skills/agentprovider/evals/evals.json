@@ -1,0 +1,155 @@
+{
+  "skill_name": "agentprovider",
+  "notes": "Real-world eval set for the agentprovider skill. Each in-coverage eval points the agent at one of the byte-accurate recorded cassettes under fixtures-cassettes/ (one go-vcr .cassette.yaml per target, holding the real captured request/response interactions) and is proven objectively with `agentprovider conform <contract> fixtures-cassettes/<dir>.cassette.yaml --json` reaching overall_passed:true. Agents author a contract from the documented format; they MAY inspect the fixtures-cassettes/<dir>.cassette.yaml files (those are the 'sample responses' a user would hand over) but MUST NOT copy or read any file under contracts/ or contracts/corpus/ (the answer key) or the skill-snapshot. Baseline runs additionally must not read .agents/skills/agentprovider. Out-of-coverage evals carry a blocked_capability tag and feed gap ranking only (excluded from the efficacy delta). A separate LIVE, full-stack eval (real AWX target + terraform apply, not offline/CI-reproducible) lives in evals/awx-live.json. Assertion kind `optional_default_preferred` is a contract-shape check (judged like `numeric_types`/`no_greenwash_completeness`, not a conform-output field): the named server-defaulted scalar attribute must be declared `optional: true` with a static `default:` matching the server's literal and must NOT carry `computed: true`. Evals tagged `coverage: pending-fixture` are excluded from active runs and the efficacy delta until their fixture is authored (see the eval's `fixture_todo`).",
+  "oracle": "agentprovider conform <contract> fixtures-cassettes/<dir>.cassette.yaml --json -> overall_passed",
+  "evals": [
+    {
+      "id": 1,
+      "name": "crud-nonconventional-id",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/crudcrud.cassette.yaml",
+      "prompt": "Author an agentprovider CRUD contract and prove it. Inspect the recorded request/response captures under fixtures-cassettes/crudcrud.cassette.yaml (the recorded interactions: create.json, read.json, update.*, delete.*, created_id.txt) to learn the API shape: POST creates and returns the id under a field named `_id` (not `id`); GET /<id> reads; PUT /<id> updates and returns an EMPTY body; DELETE then GET returns 404. Build agentprovider (cd terraform-provider-dynamic && go build -o /tmp/agentprovider ./cli/agentprovider), author contracts/_eval_crudcrud.yaml from the contract format, and iterate until `/tmp/agentprovider conform contracts/_eval_crudcrud.yaml fixtures-cassettes/crudcrud.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any file under contracts/ except the one you create.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "identity.response_field set to _id (non-conventional id inferred)", "kind": "identity_remap"},
+        {"text": "lifecycle.update uses refresh_after (empty PUT body handled)", "kind": "refresh_after"},
+        {"text": "no live credential committed in contract or cassette", "kind": "no_secret"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "nested-object-patch",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/restful.cassette.yaml",
+      "prompt": "Author an agentprovider CRUD contract for an API with NESTED objects and a PATCH-style update, and prove it. Inspect fixtures-cassettes/restful.cassette.yaml (the recorded interactions: create.json, read.json, patch.json, update.*, delete.*, id.txt) to learn the shape: the resource has a nested object attribute, update is a partial PATCH, and the server returns extra fields that must not cause a perpetual diff. Build agentprovider, author contracts/_eval_restful.yaml from the contract format (use a nested attribute and ignore_server_fields as needed), and iterate until `/tmp/agentprovider conform contracts/_eval_restful.yaml fixtures-cassettes/restful.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "contract models the nested object (not flattened/dynamic)", "kind": "nested_object"},
+        {"text": "server-only fields suppressed so second_apply_is_noop passes", "kind": "diff_suppression"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "async-create-poll",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/async.cassette.yaml",
+      "prompt": "Author an agentprovider contract for an ASYNC resource and prove it. Inspect fixtures-cassettes/async.cassette.yaml (the recorded interactions: create.json/status, poll1..poll3, read.*, update.*, delete.*) to learn the shape: create returns 202 then the resource is polled to a terminal status before it is ready; update and delete are also long-running. Build agentprovider, author contracts/_eval_async.yaml using the contract's async block, and iterate until `/tmp/agentprovider conform contracts/_eval_async.yaml fixtures-cassettes/async.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "lifecycle.create declares an async poll block", "kind": "async_block"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "custom-actions-counter",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/counter.cassette.yaml",
+      "prompt": "Author an agentprovider contract for a non-CRUD counter API with custom actions and prove it. Inspect fixtures-cassettes/counter.cassette.yaml (the recorded interactions: create.json, read.json, incr.json, decr.json) to learn the shape: besides create/read there are custom verbs to increment and decrement a value. Build agentprovider, author contracts/_eval_counter.yaml using the actions block, and iterate until `/tmp/agentprovider conform contracts/_eval_counter.yaml fixtures-cassettes/counter.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "contract declares custom actions (incr/decr) under actions", "kind": "actions_block"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "numeric-id-typed",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/dummyjson.cassette.yaml",
+      "prompt": "Author an agentprovider contract for an API with a NUMERIC id and typed fields (numbers that must stay numbers, not strings), and prove it. Inspect fixtures-cassettes/dummyjson.cassette.yaml (the recorded interactions: create.json, read.json, update.*, delete.*) to learn the shape: id is numeric, and fields like price/stock are numbers; the server may not persist writes (read-after-write can differ). Build agentprovider, author contracts/_eval_dummyjson.yaml with correct attribute types, and iterate until `/tmp/agentprovider conform ... --json` reports overall_passed:true (use `/tmp/agentprovider conform contracts/_eval_dummyjson.yaml fixtures-cassettes/dummyjson.cassette.yaml --json`). If a numeric field cannot be kept numeric through create/read/update with the contract format, STOP and report it precisely as a possible engine limitation rather than forcing a string. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true OR a precise type-fidelity gap is reported", "kind": "conform_or_gap"},
+        {"text": "numeric fields declared as number type (not string)", "kind": "numeric_types"}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "auth-failure-surfaced",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/reqres.cassette.yaml",
+      "prompt": "Author an agentprovider contract for an API that requires an API key, where the recorded fixture is an UNAUTHENTICATED 401 response. Inspect fixtures-cassettes/reqres.cassette.yaml (the recorded interactions: noauth.json/status). The point of this contract is that a missing/invalid credential surfaces as a clear, distinct authentication error rather than a generic failure or a green-washed pass. Build agentprovider, author contracts/_eval_reqres.yaml declaring the auth scheme and an invariant that asserts the auth failure is surfaced, and run `/tmp/agentprovider conform contracts/_eval_reqres.yaml fixtures-cassettes/reqres.cassette.yaml --json`. A correct outcome is that the contract loads and the 401 is surfaced as an authentication diagnostic (not silently passed). Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "auth scheme declared with credential sourced from env/provider (not literal)", "kind": "auth_declared"},
+        {"text": "401 surfaced as a distinct authentication diagnostic, not green-washed", "kind": "auth_failure_surfaced"}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "readonly-datasource-urlrefs",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/swapi.cassette.yaml",
+      "prompt": "Author an agentprovider DATA SOURCE contract (read-only) and prove it. Inspect fixtures-cassettes/swapi.cassette.yaml (the recorded interactions: read.json/request/status) to learn the shape: a GET returns an object whose fields include scalars that arrive as strings needing coercion and URL references to related resources. Build agentprovider, author contracts/_eval_swapi.yaml as kind: DataSource with read-side conformance invariants, and iterate until `/tmp/agentprovider conform contracts/_eval_swapi.yaml fixtures-cassettes/swapi.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "kind is DataSource with read projection and no create/update/delete", "kind": "datasource_shape"}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "graphql-mutation",
+      "coverage": "out-of-coverage",
+      "blocked_capability": "graphql",
+      "fixtures": null,
+      "prompt": "Author an agentprovider contract for a GraphQL API whose create is a POST of a GraphQL mutation document with variables and whose read is a POST query, with the id extracted from data.createX.id. Build agentprovider and attempt it. If the contract format cannot express a GraphQL mutation body / POST-query read, STOP and report the gap precisely rather than green-washing a contract that does not actually round-trip. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "if GraphQL cannot be expressed, the agent reports the gap rather than green-washing", "kind": "gap_reported"}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "computed-datasource-openmeteo",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/openmeteo.cassette.yaml",
+      "prompt": "Author an agentprovider DATA SOURCE contract for a computed read-only API and prove it. Inspect fixtures-cassettes/openmeteo.cassette.yaml (the recorded interactions: read.json/request/status): a GET takes latitude/longitude inputs as query params and returns computed outputs (resolved_latitude, elevation, timezone, etc.); note the server may snap inputs (latitude 52.52 -> resolved_latitude 52.5). Author kind: DataSource using the native read-only invariant (read_returns_expected) with at least one expected computed output in conformance.example, and iterate until `/tmp/agentprovider conform <contract> fixtures-cassettes/openmeteo.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "kind DataSource proven via read_returns_expected with a computed output", "kind": "read_returns_expected"}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "ephemeral-token-lifecycle",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures-cassettes/auth_token.cassette.yaml",
+      "prompt": "Author an agentprovider EPHEMERAL resource contract for a token lifecycle and prove it. Inspect fixtures-cassettes/auth_token.cassette.yaml (the recorded interactions: open.json/request, renew.json/request, close.body/request): the API opens a session token, renews it, and closes it. Author kind: Ephemeral with lifecycle open/renew/close and a conformance invariant proving the lifecycle, then run `/tmp/agentprovider conform <contract> fixtures-cassettes/auth_token.cassette.yaml --json`. If the contract format/invariant library cannot prove an ephemeral open/renew/close lifecycle, STOP and report the gap precisely (which invariant is missing) rather than green-washing. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true OR a precise missing-ephemeral-invariant gap is reported", "kind": "conform_or_gap"},
+        {"text": "kind Ephemeral with open/renew/close lifecycle", "kind": "ephemeral_shape"}
+      ]
+    },
+    {
+      "id": 11,
+      "name": "contract-completeness",
+      "coverage": "in-coverage",
+      "fixtures": "fixtures/restful",
+      "prompt": "Author an agentprovider CRUD contract for fixtures/restful/ and prove it BOTH correct AND complete. Inspect the recorded responses to learn the full field surface, then author contracts/_eval_completeness.yaml modeling every field the API returns (settable inputs as required/optional, server-owned values as computed; nested objects modeled, not flattened), using ignore_server_fields only for fields you deliberately drop. Iterate until `/tmp/agentprovider conform contracts/_eval_completeness.yaml fixtures/restful --json` reports overall_passed:true AND `/tmp/agentprovider completeness contracts/_eval_completeness.yaml fixtures/restful --min-completeness 90 --json` reports passed:true. Do NOT raise the percentage by deleting fields from the fixture or by over-using ignore_server_fields to hide unmodeled fields — model them. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "completeness --min-completeness 90 reports passed:true (models the full returned surface)", "kind": "completeness_threshold_met"},
+        {"text": "no green-washing: fields not deleted from the fixture and ignore_server_fields used only for genuinely-dropped fields", "kind": "no_greenwash_completeness"}
+      ]
+    },
+    {
+      "id": 12,
+      "name": "optional-default-over-computed",
+      "coverage": "pending-fixture",
+      "fixtures": "fixtures-cassettes/default_scalar.cassette.yaml",
+      "fixture_todo": "Synthetic CRUD cassette not yet authored. Needs a POST create whose body OMITS a settable scalar field that the create/read response returns as a stable, meaningful scalar literal (e.g. mode -> \"run\"), plus a server-assigned id. Must be byte-accurate replay-stable AND author-able by an independent agent. Excluded from active runs (coverage: pending-fixture) until authored. The CLI mechanism it asserts is already proven by Go round-trip tests in cli/agentprovider (a contract built from the optional+default promote suggestion passes optional_default_consistency); this eval adds the behavioral proof that an agent, given the skill doctrine, prefers optional+default over optional+computed.",
+      "prompt": "Author an agentprovider CRUD contract for fixtures-cassettes/default_scalar.cassette.yaml and prove it. Inspect the recorded interactions: the POST create body OMITS a settable scalar field that the create/read response returns as a stable, meaningful scalar literal (the server defaults it on omission). Model that field as an OPTIONAL attribute carrying a static default: equal to the server's literal (NOT optional+computed), so the unset value stays plan-known AND drift is still detected; model the server-assigned id as computed. Iterate until `agentprovider conform <contract> fixtures-cassettes/default_scalar.cassette.yaml --json` reports overall_passed:true. Do NOT read or copy any existing file under contracts/.",
+      "assertions": [
+        {"text": "authored contract loads with no validation error", "kind": "conform_loads"},
+        {"text": "conform reports overall_passed:true", "kind": "conform_overall_passed"},
+        {"text": "the server-defaulted scalar field is modeled optional:true with a static default: equal to the server's literal and is NOT marked computed:true — proving the agent preferred default over computed for a stable scalar server default", "kind": "optional_default_preferred"}
+      ]
+    }
+  ]
+}

@@ -173,16 +173,17 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
 - **`--suggest` is resource-tuned** — its `unmodeled_fields` /
   `ignore_server_fields` suggestions target a create/update surface, so weigh them
   lightly on a read-only data source and ignore any that don't fit the kind.
-- **A "conformance.example pins X but the live run observed X-updated … will fail
-  conform on re-record" warning is a false positive for any field you deliberately
-  change in `update_to`.** `record` compares your `example` against the *last*
-  value it saw — the post-update one — but `conform` checks `example` against the
-  **create-time** response and `update_to` against the updated one, so an
-  `example` ≠ `update_to` is correct by design and conform passes. **Do not follow
-  the warning's suggestion** to move the field into `conformance.expect.<f>:
-  {not_null: true}`: that drops the create-time *value* check in
-  `create_echoes_inputs` and weakens the proof. Keep the create value in `example`
-  and the updated value in `update_to`.
+- **The "conformance.example pins X but the live run observed … will fail conform
+  on re-record" stale-pin warning now compares against the *create-time*
+  observation** (not the post-update one), so a field you deliberately change in
+  `update_to` **no longer trips it** — keep the create value in `example` and the
+  updated value in `update_to` as normal. If the warning *does* fire now, it is
+  real: the pinned **computed output** genuinely diverged from the create-time
+  response between runs (a server-assigned / volatile value — an id, a timestamp,
+  a token). That is the one case where you **should** follow the suggestion and
+  move the field to `conformance.expect.<f>: {not_null: true}` (proven by
+  `state_matches_expect`) rather than pinning a value that won't reproduce. Pin
+  only stable computed values in `example`; never pin a volatile/id-shaped one.
 - **Security — recording sends real credentials to `base_url`.** For a freshly
   bootstrapped, unreviewed contract, record against a **user-controlled staging
   `--base-url`**, never an embedded production URL you haven't read. The engine
@@ -253,9 +254,16 @@ those before source-diving or making name-based schema edits:
 - `optional` / `optional_computed_defaulted` with high confidence can become a
   schema attribute suggestion. A field **already modeled** `optional` (not
   `computed`) that the cassette shows the server defaults is surfaced as a
-  `promote_to_optional_computed` correction (a `promote_schema_attribute`
-  suggestion carrying `optional: true, computed: true`) — apply it, or the
-  `optional_default_consistency` conform gate will fail closed.
+  `promote_to_optional_computed` correction. When the recorded omit-create
+  response is a **stable scalar literal**, the suggestion now carries
+  `optional: true` + `default: <literal>` (text: *"set default:&lt;v&gt; on &lt;path&gt;
+  to keep it plan-known and preserve drift detection"*) — the CLI pins the literal
+  from that create-filtered value. When the default isn't a pinnable scalar
+  (object/list, canonicalized, variable), it falls back to a `promote_schema_attribute`
+  carrying `optional: true, computed: true`. Apply whichever it emits, or the
+  `optional_default_consistency` conform gate fails closed. Prefer `default:` over
+  `computed:` whenever a literal is offered — see the four-way rubric under "Get
+  these right up front".
 - `volatile` / `ignore_server_field` candidates usually belong in
   `ignore_server_fields`.
 - `needs_probe` means the current evidence is not enough to promote the field.
@@ -281,13 +289,17 @@ that decides its class: **does the API accept this field as a create/update
 input?** (Check the request schema — OpenAPI request body, an `OPTIONS`/`POST`
 field listing, or the create-body the API documents.) If yes, it is a
 **practitioner knob** and belongs in `schema.attributes` as `optional: true`, *not*
-in `ignore_server_fields`. Add `computed: true` **only** when the server *supplies a
-value you didn't send* — a default (`""`, `0`, `false`) or a canonicalized form of
-your input — so Terraform accepts the server value without a perpetual diff. Do
-**not** mark a field computed merely because the server echoes it back: an optional
-input the server leaves null/absent when omitted should stay `optional`-only, or
-`computed` will silently suppress drift detection on a real input (see the
-attribute-marking note under "Get these right up front"). Reserve `ignore_server_fields` for fields the practitioner
+in `ignore_server_fields`. When the server *supplies a value you didn't send*, the
+field is server-defaulted and must absorb that value — but **prefer
+`optional + default: <literal>` over `optional + computed`** whenever the omit-default
+is a **stable scalar** (a string/number/bool literal, including `""`, `0`, `false`,
+`"run"`): a static default keeps the unset value plan-known **and** preserves drift
+detection, where `computed` is drift-blind on the unset field. Reserve
+`optional + computed` for defaults that can't be pinned to a literal — a
+canonicalized form of your input, or an object/list/variable default. Do **not**
+mark a field computed merely because the server echoes it back: an optional input
+the server leaves **null/absent** when omitted should stay `optional`-only (plain).
+Reserve `ignore_server_fields` for fields the practitioner
 can never set — timestamps, `related`/`_links`, `summary_fields`, computed status,
 counters, error envelopes (`detail`). **A foreign-key / reference id is a settable
 input, not server-owned** — `*_credential`, `execution_environment`,
@@ -317,6 +329,44 @@ ignore only the genuinely server-owned remainder. A quick self-check on any
 contract: count the `optional`/`optional+computed` attributes against the API's
 settable-input list — if you're modeling a handful while ignoring dozens of
 settable fields, you green-washed, not completed.
+
+**Let the tool measure green-washing, not just your judgement.** `completeness`
+reports a **`settable_coverage`** ratio and an **`ignored_settable`** list on every
+run — it derives "settable" from the **recorded create/update request bodies in the
+cassette**, so you get the signal for free with no extra flag. Read it on every
+resource: a `settable_coverage` below `1` (or a non-empty `ignored_settable`) means
+you parked a field you are *actually sending* into `ignore_server_fields` — model it
+`optional` instead.
+
+But understand the **blind spot**: cassette-derived settable only sees fields the
+contract *already sends*. An input the API accepts that you never modeled and never
+sent leaves **no request-body evidence**, so it is invisible — `settable_coverage`
+reads a false `1.0` even when you've dumped a dozen real knobs. That false-green is
+exactly the green-washing failure mode, and it is sample-dependent on a verbose
+object (the same prose guidance has produced both 0 and 22 dumped toggles on
+different runs). **The fix that makes quality reproducible is to feed a request
+schema**, which lists *every* accepted input the cassette can't see:
+
+```bash
+# OpenAPI: you already have the spec
+agentprovider completeness contracts/widget.yaml <cassette> --openapi spec.yaml --operation createWidget
+# DRF / Django-REST API (no OpenAPI): capture the OPTIONS body once, then feed it
+curl -s -X OPTIONS -u "$USER:$PASS" https://api.example.com/api/v2/widgets/ | \
+  python3 -c 'import sys,json; json.dump(json.load(sys.stdin)["actions"]["POST"], sys.stdout)' > widget.options.json
+agentprovider completeness contracts/widget.yaml <cassette> --metadata widget.options.json --min-settable-coverage 90
+```
+
+With a schema fed, `ignored_settable` now names every accepted input you dumped (not
+just the ones you happen to send), `--min-settable-coverage <pct>` makes a thin
+contract exit non-zero, and — crucially — **`conform --mutation-check --emit-proof`
+takes the same `--metadata`/`--openapi` and _refuses to write the proof_** with
+`green-washing refusal: ignored N settable inputs …`. So **whenever the API serves a
+schema (OpenAPI, or a DRF `OPTIONS` `actions.POST` map), pass it to both
+`completeness` and `emit-proof`** — a green-washed contract then *cannot* be proven,
+turning the prose guard above into a mechanical gate. (Credential and read-only
+fields are excluded automatically, so a sensitive or server-assigned field in
+`ignore_server_fields` never trips it.) Only when the API exposes **no** schema at
+all do you fall back to the cassette-only signal plus the one-test judgement above.
 
 This guard is about **settable inputs**, which only exist on a contract with a
 create/update body (resources). A **read-only DataSource or Ephemeral has no
@@ -351,7 +401,12 @@ agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cass
 `--emit-proof` gates on **two** things: a passing `--mutation-check` *and* **100%
 completeness** (every recorded field is either modeled or in `ignore_server_fields`)
 — below that it refuses with `completeness N% is below proof threshold 100%` and
-writes no sidecar. The sidecar, when written, is named `<type>.proven.json` — the
+writes no sidecar. **If you also pass `--metadata`/`--openapi`** (recommended when
+the API has a request schema), it adds a third gate: it refuses with a
+`green-washing refusal: ignored N settable inputs …` and writes no sidecar when a
+settable input is parked in `ignore_server_fields` — so a thin contract can't be
+proven. With no request-schema flag this gate is skipped and emit-proof behaves
+exactly as before (offline cassette-only proofs are unaffected). The sidecar, when written, is named `<type>.proven.json` — the
 contract file's `.yaml` extension is **replaced**, not appended (a contract
 `awx_org.yaml` yields `awx_org.proven.json`, not `awx_org.yaml.proven.json`). On a verbose API you reach 100% not by modeling every field but
 by routing the **server-owned envelope** (relation links, summary blocks, URLs,
@@ -431,15 +486,33 @@ the *why* and the symptom→fix mapping for each.
   the API field under another name with `field:` (attribute `value`, `field: count`).
 - **Object/nested attributes need an explicit `required`/`optional`/`computed`
   marker** — including the fields *inside* an object.
-- **`computed` is for server-supplied values, not every optional.** Mark an
-  optional input `optional: true, computed: true` *only* when the server fills it in
-  when you omit it — a default (`description→""`, `max_hosts→0`) or a canonicalized
-  form of your input. An optional input the server leaves null/absent when omitted
-  stays `optional`-only. Reflexively marking every optional `computed` (e.g. to make
-  `optional_default_consistency` stop complaining) is a quality regression: a
-  `computed` attribute won't report drift when it's unset, so you lose change
-  detection on genuine inputs. Let the CLI's `promote_to_optional_computed` hint —
-  which fires on exactly the server-defaulted fields — tell you which ones need it.
+- **Pick the attribute shape by what the server does when the field is OMITTED**
+  (the four-way rubric). Reflexively marking every optional `computed` is a quality
+  regression — a `computed` attribute reports no drift when it's unset, so you lose
+  change detection on genuine inputs. Decide instead:
+  - **Server rejects omission** → `required`.
+  - **Server returns null/absent** (genuinely unset) → `optional` (plain). Drift-detecting.
+    Use this *only* when you've confirmed the server returns null/absent on omit.
+  - **Server returns a stable scalar literal** (string/number/bool — including `""`,
+    `0`, `false`, `"run"`) → **`optional: true, default: <literal>`** (no `computed:`
+    key). **Preferred:** plan-known **and** drift-detecting. The CLI auto-suggests
+    this for *meaningful* scalars (`"run"`, `1`, `3`); for `0`/`false`/`""` it stays
+    silent (its `IsMeaningfulDefaultValue` heuristic skips them), so **you** declare
+    the `default:` from the API's docs/observed behavior.
+  - **Server returns a non-pinnable default** (object/list/map, a canonicalized form
+    of your input, an env-dependent/variable value) → `optional: true, computed: true`.
+    Apply-safe but drift-blind on the unset field — the accepted cost when no stable
+    literal exists.
+  - **Pure server-owned output** (never settable) → `computed` only.
+  - Note: a server that echoes **any** value on omit (even `0`/`false`/`""`) is
+    server-defaulting — never leave it plain `optional` (that re-introduces "Provider
+    produced inconsistent result after apply"); it needs `default:` or `computed`.
+  - **YAML shape ≠ generated schema.** A declared `default:` forces the *generated*
+    framework attribute to optional+computed+default (the framework requires it), so
+    keep `computed:` **absent** in the contract YAML — `optional_default_consistency`
+    checks exactly the `optional`-not-`computed` attributes, and the drift-detection
+    win comes from the default being a plan-known literal, not from the missing key.
+  See `references/contract-format.md` (`default:`) for the worked example.
 - **An action's input attribute must not map to the same API field as a computed
   output** — a by-id action that interpolates `${id}` into its path is the classic
   trap: if a computed output already maps `field: id` (the id the action returns),
@@ -458,6 +531,10 @@ the *why* and the symptom→fix mapping for each.
   which yields `dynamic_awx_job_launch_launch` and a plan-time "no action schema for
   …" error after you've already recorded. The verb lives in the action, not the
   type — split the desired name at the trailing verb and put the stem in `type`.
+  `validate` and `preflight` now emit a non-fatal advisory when `type` ends in a
+  declared verb (naming the doubled id and the split fix), so you catch this before
+  recording — but the contract still loads, so heed the advisory rather than relying
+  on it to block.
 - **Action contracts need a real computed output check** — for action-only
   contracts, declare `action_returns_expected` and put at least one computed
   response field in `conformance.example` (for example `run_id`). A config-only

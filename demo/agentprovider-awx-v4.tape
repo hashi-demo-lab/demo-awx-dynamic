@@ -57,12 +57,12 @@ Type "demo/intro.sh" Enter
 Sleep 14s
 Type "clear" Enter
 
-# --- open Claude Code: Opus 4.8 on medium effort, permissions skipped so the
+# --- open Claude Code: Opus 4.8 on low effort, permissions skipped so the
 #     session runs unattended. Sleep lets the TUI fully initialize before the
 #     prompt is submitted. ---
 Sleep 1s
-Type "# Claude Code: Opus 4.8, medium effort" Enter
-Type `clauded --model claude-opus-4-8 --effort medium` Enter
+Type "# Claude Code: Opus 4.8, low effort" Enter
+Type `clauded --model claude-opus-4-8 --effort low` Enter
 Sleep 5s
 
 # --- human handoff: minimal prompt. Internal tech demo — we intentionally want
