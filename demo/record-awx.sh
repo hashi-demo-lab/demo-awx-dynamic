@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Render the agentprovider AWX demo (VHS → gif, then ffmpeg → mp4).
+# Render the agentprovider AWX demo (VHS → mp4 directly).
 # Builds the CLI/provider from source, verifies AWX is reachable, then runs vhs.
 #
 #   demo/record-awx.sh                       # v3 take 2 tape, http://localhost:30080
@@ -10,15 +10,22 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT=$PWD
 
-# Which tape to render. Tapes only ask VHS for a gif; the mp4 name is derived
-# from the tape basename and produced below with ffmpeg, which is much faster
-# than VHS's native mp4 export.
-TAPE="${1:-demo/agentprovider-awx-v3-take2.tape}"
+# Which tape to render. Tapes output mp4 directly (VHS-native h264) — gif
+# palettegen chokes on long (12+ min) captures, so we skip it entirely.
+TAPE="${1:-demo/agentprovider-awx-v5.tape}"
 if [ ! -f "$TAPE" ]; then
   echo "tape not found: $TAPE" >&2
   exit 1
 fi
 BASE="demo/$(basename "$TAPE" .tape)"
+
+# Refuse to start if a VHS render is already running — two concurrent renders
+# write the same output path and corrupt each other (one ends up 0 bytes).
+if pgrep -x vhs >/dev/null 2>&1; then
+  echo "a vhs render is already running — kill it first (pgrep -x vhs)." >&2
+  echo "concurrent renders collide on the output path and produce an empty file." >&2
+  exit 1
+fi
 
 SOURCE="${AGENTPROVIDER_SOURCE:-/Users/simon.lynch/git/research-dynamic-provider/terraform-provider-dynamic}"
 if [ ! -f "$SOURCE/go.mod" ]; then
@@ -66,15 +73,6 @@ for id in $stale; do
   echo "   deleted stale inventory $id"
 done
 
-echo "==> AWX up at $AWX; rendering $TAPE"
+echo "==> AWX up at $AWX; rendering $TAPE → $BASE.mp4"
 vhs "$TAPE"
-
-# VHS's native mp4 export is slow here; transcode only the first 10 minutes of
-# the gif into a clean, self-contained mp4 (even dimensions + yuv420p for broad
-# player support).
-echo "==> transcoding $BASE.mp4 from the gif"
-ffmpeg -y -t 600 -i "$BASE.gif" \
-  -vf "fps=30,scale=trunc(iw/2)*2:trunc(ih/2)*2" \
-  -movflags +faststart -pix_fmt yuv420p -c:v libx264 \
-  "$BASE.mp4"
-echo "==> wrote $BASE.gif and $BASE.mp4"
+echo "==> wrote $BASE.mp4"

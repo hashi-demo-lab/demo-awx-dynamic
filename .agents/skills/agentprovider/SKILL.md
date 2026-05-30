@@ -32,32 +32,21 @@ why live discovery was unavailable.
 introspect (live field discovery, no writes, when available)  →  bootstrap (seed)  →  schema/invariants/describe/validate (authoring introspection)  →  preflight  →  record (capture a cassette)  →  conform (machine verdict)  →  apply repair_hints  →  re-run until overall_passed  →  completeness/classification (coverage + field repair gate)  →  conform --mutation-check --emit-proof  →  Terraform apply (runtime proof)
 ```
 
-**`bootstrap` is the mandatory draft-creation step — do not skip it.** Every new
-or changed contract MUST be seeded with `agentprovider bootstrap` (from an OpenAPI
-spec or a sample JSON response) before you record. `record` *replays an existing
-contract*, so a contract has to exist first — there is no "record first" mode, and
-hand-writing the YAML from scratch to bypass `bootstrap` is **not** the default
-path. Run `introspect` first when the live API can describe its settable surface;
-then use those findings to guide the bootstrap inputs and first repair pass.
-_Narrow exception:_ if you deliberately hand-author instead of
-bootstrapping, you MUST (a) state that and why in your summary, and (b) confirm the
-draft loads under strict decoding before recording — bootstrap output is valid by
-construction, whereas hand-written YAML is exactly where load errors creep in
-(e.g. an unquoted `${id}` inside a flow-mapping `path:` breaks YAML; quote such
-paths).
+**A seeded draft must exist before you `record`** — `record` replays an existing
+contract, so seed first. The default seed is `agentprovider bootstrap` (from an
+OpenAPI spec or a tiny sample response); when introspect gave you the settable
+surface, the blessed fast path is to bootstrap a thin scaffold and lift the schema
+from introspect (see §1's efficiency note). _Narrow exception:_ if you hand-author
+the whole draft, (a) state that and why, and (b) confirm it loads under strict
+decoding before recording — hand-written YAML is where load errors creep in (e.g. an
+unquoted `${id}` in a flow-mapping `path:` breaks YAML; quote such paths).
 
 `conform` returning `overall_passed` is the correctness loop; `completeness` is a
-mandatory follow-on gate that checks the contract models enough of the
-API surface and classifies missing fields for repair. Do not skip completeness
-when claiming a contract is done or proven.
-For Terraform-provider authoring tasks, do not print or report `PROVEN` until all
-contracts conform, completeness has been checked for every contract, and the
-Terraform example has applied successfully.
-
-All commands below use the `agentprovider` CLI; make sure it's available on your
-PATH before you start. The input can be an **OpenAPI spec**, a **sample JSON
-response**, or just a base URL plus your knowledge of the API's shape. If the user
-only wants to *run* an existing provider, that's `docs/RUNNING.md`, not this skill.
+mandatory follow-on gate (model enough of the surface, classify missing fields). For
+Terraform-provider tasks, don't report `PROVEN` until all contracts conform,
+completeness has been checked for each, and the Terraform example has applied.
+Input can be an OpenAPI spec, a sample JSON response, or a base URL + your knowledge
+of the API. To only *run* an existing provider, see `docs/RUNNING.md`, not this skill.
 
 ## The loop in detail
 
@@ -74,21 +63,50 @@ agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --auth-env AWX_
 agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --format json
 ```
 
-For a reviewed local/dev target on a private host, add `--allow-private-host`.
-For credentialed `http://`, add `--allow-insecure` only after confirming the
-target is safe to receive bearer credentials over plaintext.
+Add `--allow-private-host` for a reviewed local/dev host and `--allow-insecure` for
+credentialed `http://`. `--auth-env` takes an env-var **name** and is **bearer-only**
+— for a basic-auth API (AWX), mint a token (`POST /api/v2/tokens/`) and point
+`--auth-env` at it. Full flags: `references/cli-loop.md`.
 
-`--auth-env` takes an environment variable **name**, not a token value. The
-command tries `OPTIONS` first and reuses the same DRF metadata parser as
-completeness; when `OPTIONS` is unavailable it falls back to one `GET` sample with
-`confidence: reduced`. Default output is human-readable text; use `--format json`
-or `--json` when another agent/tool will consume the result.
+**Use a token with *write* scope.** Many DRF APIs (AWX/AAP) only expose the
+`actions.POST` descriptor on `OPTIONS` to a principal with *add* permission; a
+read-only token silently degrades introspect to `source: sample, confidence: reduced`
+(every field `unknown`, no copyable `attribute`). A write-scoped token returns
+`source: options, confidence: high`. If you see `confidence: reduced` against an API
+you know serves `OPTIONS`, inspect JSON `degradation`: `insufficient_scope_or_permission`
+means repair credentials/scope once before authoring, while `metadata_unavailable`
+means ordinary fallback to review-only sample evidence.
 
-Treat high-confidence `OPTIONS` rows as authoring candidates (`required`,
-`optional+default`, `optional+computed`, or `computed`). Treat sample-derived
-rows, nested paths, and malformed descriptor metadata as review-only signals: they
-intentionally do not include a copyable `attribute` snippet until you confirm
-requiredness, settable status, type, and object/list shape.
+**Efficiency — build the schema FROM introspect, don't re-derive it from a verbose
+response.** Each high-confidence `--format json` field carries a ready-to-paste
+`attribute` object already encoding the right shape (`required`,
+`optional`+`default:<lit>`, `optional`+`computed`). Assemble `schema.attributes` by
+**lifting those snippets directly**. On a 40+-field resource the by-hand rewrite of a
+full `--response` draft is the single biggest token/time sink in the loop, and
+introspect has already done that classification — so the fast path is: lift the
+high-confidence `attribute`s → resolve only the `review_descriptor_metadata` rows by
+hand (FK ids → settable `type: number`; JSON blobs like `extra_vars`/`variables` →
+`type: string`, `default: ""`) → seed the lifecycle/connection scaffold + a tiny
+sample for the response shape. This **is** the seeded draft — running `bootstrap`
+with `--response` (a tiny sample) for the scaffold and then replacing its schema with
+the lifted introspect attributes satisfies the bootstrap step; if you assemble the
+draft by hand instead, say so and confirm it loads under `validate` before recording
+(the narrow exception). Don't seed a giant `--response` draft and prune it when the
+settable surface is already in hand.
+
+**Two traps that turn the fast path into a slow one — both cost re-records, the most
+expensive thing in the loop, so get them right before the first `record`:** (1)
+introspect's type for a **choice/enum** field can be wrong — e.g. an integer choice
+rendered as `string`, or marked `optional+computed` when it is really a defaulted
+scalar. Sanity-check any `review_descriptor_metadata` or enum-looking field against
+the OPTIONS `choices`/`type` before lifting (a numeric choice → `type: number`,
+`default: <int>`). (2) **An `optional+computed` field the server defaults is still
+sent in the request body, so it MUST appear in `conformance.example` (and `update_to`)
+with the server's value** — leave it unpinned and the replayed body won't match the
+cassette, forcing a re-record loop. When in doubt, pin defaulted scalars as
+`optional: true, default: <lit>` rather than `optional+computed` (plan-known, and no
+example-pinning needed). These two account for nearly all the re-record churn on a
+verbose resource.
 
 ### 2. Seed a draft with `agentprovider bootstrap` — REQUIRED DRAFT STEP
 
@@ -121,52 +139,25 @@ agentprovider bootstrap --openapi spec.yaml --path /pets/{petId} --method get --
 `--kind` is `resource` (default), `datasource`, `ephemeral`, or `action`;
 `--action <verb>` names the verb for action kinds (only valid with `--kind action`).
 
-From an OpenAPI spec the importer now also: marks `format: password` and
-credential-named fields `sensitive: true` (recursively, including list/map
-element objects); carries a `default` for non-sensitive string/bool attributes
-(other-typed or sensitive defaults are dropped with a one-line stderr notice, so
-a secret is never written into the contract); and, for a by-id read with a single
-path parameter, auto-detects the identity attribute and rewrites the read path
-token to it (so `/pets/{petId}` → `${id}`). Use `--alias <param>=<attribute>` to
-force that link when names don't line up, and `--ignore <name>` (repeatable,
-dot-path like `category.id`) to drop pagination/noise fields from the schema and
-request bodies.
+From an OpenAPI spec the importer also marks credential fields `sensitive: true`,
+carries non-sensitive string/bool `default`s (secrets are never written), and
+auto-detects the identity attribute for a single-path-param by-id read
+(`/pets/{petId}` → `${id}`). `--alias <param>=<attribute>` forces that link;
+`--ignore <name>` drops pagination/noise (OpenAPI importer only — full flags in
+`references/cli-loop.md`). A `--response` seed mirrors the *whole* example
+faithfully and has no pruning, so on a verbose API (mostly `related`/`summary_fields`/
+timestamps) **rewrite it down to the practitioner fields** — but per the efficiency
+note above, when introspect gave you the settable surface, prefer lifting those
+`attribute`s over rewriting a giant draft. The ephemeral and action kinds emit valid
+but **not-yet-conforming** drafts (placeholder `renew`/`close` paths; placeholder
+`conformance.example` outputs) — repair them before `conform` (`references/repair-hints.md`).
 
-`--alias` and `--ignore` shape the **OpenAPI** importer only — a `--response` seed
-has no such pruning, and it mirrors the *whole* example faithfully. For a verbose
-API that example is mostly server-owned noise (`related`, `summary_fields`,
-timestamps), so a `--response` draft is something you **rewrite down to the
-practitioner fields**, not lightly tweak: model the fields a practitioner sets or
-reads (settable inputs as `optional`/`optional+computed`, server values as
-`computed`), and route only server-*owned* churn to `ignore_server_fields`. Don't
-collapse settable inputs into `ignore_server_fields` — see the completeness step on
-green-washing.
-The two new kinds emit valid but **not-yet-conforming** drafts: an ephemeral draft
-carries placeholder `renew`/`close` paths, and an action draft carries placeholder
-`conformance.example` output values — both must be repaired before `conform` passes
-(see `references/repair-hints.md`).
-
-Then read the draft and fill the gaps. Ask the CLI for authoritative rules before
-reading Go source or mirrored prose:
-
-```bash
-agentprovider schema --format json
-agentprovider invariants contracts/widget.yaml
-agentprovider describe 'schema.attributes.<name>.type'
-agentprovider describe conformance.invariants
-agentprovider validate contracts/widget.yaml
-```
-
-`agentprovider schema` emits the JSON Schema for the **whole contract file
-format**. Use it for editor autocomplete, agent-side structural checks, or
-validating bootstrap output before semantic checks. `--format yaml` emits the
-same schema as YAML. Do not confuse the contract format schema with the
-contract's own `schema.attributes` block: `schema.attributes` defines
-Terraform-facing attributes; the contract format schema validates the YAML
-document shape. Use `agentprovider describe <field-path>` for authoring help on
-individual fields. Semantic checks such as pagination consistency, credential
-sensitivity, and conformance coverage still come from `agentprovider validate` /
-`conform`.
+Then read the draft and fill the gaps, asking the CLI for authoritative rules rather
+than reading Go source: `agentprovider schema` (the JSON Schema for the whole
+contract-file format — distinct from the contract's own `schema.attributes` block),
+`invariants <contract>`, `describe <field-path>`, and `validate <contract>`. Semantic
+checks (pagination, credential sensitivity, conformance coverage) come from `validate`
+/ `conform`. Flags and JSON shapes: `references/cli-loop.md`.
 
 Use `references/contract-format.md` as narrative context. Common things
 bootstrap can't infer: `identity.response_field` for a genuinely non-conventional
@@ -198,6 +189,17 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
 - For **resources**, add `--allow-mutations` only when you intend the recorder to
   issue create/update/delete against the target. Without it, only read-side /
   non-mutating calls are captured.
+- Treat `record --suggest` and `completeness` field suggestions as pre-conform
+  proof guidance. `gather_probe_evidence` means the field may be settable but lacks
+  bounded omit/write/readback/stability proof; run the scoped probe path before
+  promoting it into the schema. A suggestion is never an auto-edit.
+- If `record` reports an observed async success status outside `expect_status`,
+  review the `set_expect_status` suggestion, update the relevant lifecycle/action
+  only if the status is a real success for the API, then re-record intentionally
+  with the same `--out` and `--force`.
+- If `record` refuses an existing cassette path after a contract or cassette
+  change, follow the JSON `next_action` / `overwrite_cassette` suggestion and
+  rerun with `--force`; do not create a parallel cassette to dodge the overwrite.
 - **`record` hits the live API, so every id you reference must already exist there.**
   A `kind: DataSource` that looks up an object by id, and a by-id action whose path
   interpolates `${...}_id`, both need a real target object at record time — there is
@@ -224,6 +226,12 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
   rejects `base_url`/`token_url` that resolve to private/loopback/metadata hosts
   unless `allow_private_host` is set. Review a bootstrapped contract's URLs before
   pointing real credentials at them.
+
+Back off only for server-level transients: 5xx responses and transport timeouts,
+and keep any retry bounded and jittered. Contract validation errors, replay
+misses, schema ambiguity, contract status mismatches, and ordinary non-server 4xx
+responses are repair paths. Mutating record operations are not retried
+automatically without an explicit idempotency guarantee.
 - Recorded cassettes are redacted (auth headers, query secrets, OAuth2 tokens,
   `client_secret`) before they hit disk, but **review a new cassette before
   committing** anyway. Redaction is conservative substring matching, so a short or
@@ -280,150 +288,38 @@ agentprovider completeness contracts/widget.yaml .agentprovider/cassettes/widget
 agentprovider completeness contracts/widget.yaml --base-url https://api.example.com --min-completeness 90
 ```
 
-It reports `completeness_percent`, the `missing` fields (the API returns them but
-no attribute models them), and `extra` (modeled but not seen — usually fine). It
-also emits `fields[]` classifications and `suggestions[]` review artifacts. Use
-those before source-diving or making name-based schema edits:
+It reports `completeness_percent`, `missing` (API returns them, no attribute models
+them), `extra` (modeled but unseen — usually fine), plus `fields[]` classifications,
+`suggestions[]`, and — for resources — a **`settable_coverage`** ratio and
+**`ignored_settable`** list. `--min-completeness <pct>` makes it a gate.
 
-- `optional` / `optional_computed_defaulted` with high confidence can become a
-  schema attribute suggestion. A field **already modeled** `optional` (not
-  `computed`) that the cassette shows the server defaults is surfaced as a
-  `promote_to_optional_computed` correction. When the recorded omit-create
-  response is a **stable scalar literal**, the suggestion now carries
-  `optional: true` + `default: <literal>` (text: *"set default:&lt;v&gt; on &lt;path&gt;
-  to keep it plan-known and preserve drift detection"*) — the CLI pins the literal
-  from that create-filtered value. When the default isn't a pinnable scalar
-  (object/list, canonicalized, variable), it falls back to a `promote_schema_attribute`
-  carrying `optional: true, computed: true`. Apply whichever it emits, or the
-  `optional_default_consistency` conform gate fails closed. Prefer `default:` over
-  `computed:` whenever a literal is offered — see the four-way rubric under "Get
-  these right up front".
-- `volatile` / `ignore_server_field` candidates usually belong in
-  `ignore_server_fields`.
-- `needs_probe` means the current evidence is not enough to promote the field.
-  Add `--probe-field <path> --allow-probes` for read-only evidence, and add
-  `--allow-mutations` only when you explicitly accept create/delete probe risk.
-- `--emit-judge-input`, `--judge-input`, and `--judge-command` are advisory only;
-  model output must never determine proof readiness.
+The decisive rule, **the one test**: *does the API accept this field as a
+create/update input?* If yes it is a practitioner knob → `schema.attributes` as
+`optional` (`+computed` only when the server defaults it to a non-pinnable value;
+prefer `default: <literal>`). If it's pure server-owned output (timestamps,
+`related`, `summary_fields`, `url`, `detail`, counters, `*_role`) → `ignore_server_fields`.
+**FK/reference ids and behavior toggles (`enable_*`, `*_enabled`, the whole `ask_*` /
+`*_on_launch` family) ARE settable** — modeling a handful while dumping dozens of
+settable fields to hit 100% is **green-washing**.
 
-The reference field set is generic and dynamic: recorded request/response bodies,
-cassette responses, OpenAPI request/response schemas, optional metadata/docs
-evidence, or a live read (`--base-url`). `--min-completeness` makes it a gate
-(non-zero exit below the threshold). Model the missing fields you care about, or
-add genuinely irrelevant ones to `ignore_server_fields`; then re-record as
-needed, re-run `conform`, and re-check completeness. Weigh `missing` by
-**practitioner relevance, not count** — some entries are artifacts of a response
-shape you don't model (an error/`detail` envelope, a delete body) and aren't
-worth modeling. Note: response-union can't see *write-only* inputs the server
-never echoes — model those from the API's docs/specs.
+**Make the gate mechanical, not judgement-based: feed a request schema.**
+`settable_coverage` derived from the cassette alone is blind to inputs you never
+modeled/sent (false `1.0`). Whenever the API serves a schema (OpenAPI, or a DRF
+`OPTIONS` `actions.POST` envelope), pass it as `--metadata`/`--openapi` to **both**
+`completeness` and `conform --emit-proof` — `ignored_settable` then names every
+dumped input, and `emit-proof` *refuses* a green-washed contract
+(`green-washing refusal: ignored N settable inputs …`).
 
-**`ignore_server_fields` is for server-*owned* output only — not a dumping ground
-to hit a completeness number.** Before you ignore a field, ask the one question
-that decides its class: **does the API accept this field as a create/update
-input?** (Check the request schema — OpenAPI request body, an `OPTIONS`/`POST`
-field listing, or the create-body the API documents.) If yes, it is a
-**practitioner knob** and belongs in `schema.attributes` as `optional: true`, *not*
-in `ignore_server_fields`. When the server *supplies a value you didn't send*, the
-field is server-defaulted and must absorb that value — but **prefer
-`optional + default: <literal>` over `optional + computed`** whenever the omit-default
-is a **stable scalar** (a string/number/bool literal, including `""`, `0`, `false`,
-`"run"`): a static default keeps the unset value plan-known **and** preserves drift
-detection, where `computed` is drift-blind on the unset field. Reserve
-`optional + computed` for defaults that can't be pinned to a literal — a
-canonicalized form of your input, or an object/list/variable default. Do **not**
-mark a field computed merely because the server echoes it back: an optional input
-the server leaves **null/absent** when omitted should stay `optional`-only (plain).
-Reserve `ignore_server_fields` for fields the practitioner
-can never set — timestamps, `related`/`_links`, `summary_fields`, computed status,
-counters, error envelopes (`detail`). **A foreign-key / reference id is a settable
-input, not server-owned** — `*_credential`, `execution_environment`,
-`default_environment`, `*_environment`, a parent/`organization`/`project` id, and
-similar reference fields are accepted on create/update (the API lists them in its
-request schema / `OPTIONS` POST), so they belong in `schema.attributes` as
-`optional` FKs, not swept into `ignore_server_fields` as "server-owned." The tell
-is that the field *names a related object*: if the practitioner could point it at a
-different object, it is a knob, not envelope. **Behavior toggles are settable knobs
-too** — boolean/enum flags such as `enable_*`, `allow_*`, `*_enabled`, and the whole
-`ask_*` / `*_on_launch` family that a verbose API accepts in its create/update body
-configure how the resource behaves; a verbose object can carry a dozen-plus of them,
-and they are the single biggest green-washing trap (easy to wave off as "launch-time
-behavior" and dump). If the request schema accepts the flag, model it `optional`
-(`+computed` when the server defaults it) — do not park it in `ignore_server_fields`.
-The completeness gate may not catch any of this on an API that exposes no request
-schema (response-union evidence can't tell a settable input from a server-supplied
-one), so it is on you to classify by the one test — **"does the create/update body
-accept this field?"** — not by where the value happens to come from or whether it
-"feels" like core config. Ignoring a *settable* field only to clear the
-gate is **green-washing**: completeness reads 100% but you have shipped a resource
-that can't configure most of the API (a verbose object can have dozens of real
-optional inputs — limits, tags, timeouts, feature toggles — and burying them turns
-a rich resource into a near-empty one). Reach 100% the right way: model the
-settable fields a practitioner would reasonably set as `optional`(`+computed`), and
-ignore only the genuinely server-owned remainder. A quick self-check on any
-contract: count the `optional`/`optional+computed` attributes against the API's
-settable-input list — if you're modeling a handful while ignoring dozens of
-settable fields, you green-washed, not completed.
+Kind-specific: a read-only **DataSource/Ephemeral** has no settable inputs, so
+routing the envelope to `ignore_server_fields` is legitimate — instead model the
+practitioner-useful outputs as `computed`. An **action/ephemeral** is low-by-design
+on completeness — judge by `action_returns_expected`, not a percentage, and don't
+point `--min-completeness`/`--emit-proof` at it.
 
-**Let the tool measure green-washing, not just your judgement.** `completeness`
-reports a **`settable_coverage`** ratio and an **`ignored_settable`** list on every
-run — it derives "settable" from the **recorded create/update request bodies in the
-cassette**, so you get the signal for free with no extra flag. Read it on every
-resource: a `settable_coverage` below `1` (or a non-empty `ignored_settable`) means
-you parked a field you are *actually sending* into `ignore_server_fields` — model it
-`optional` instead.
-
-But understand the **blind spot**: cassette-derived settable only sees fields the
-contract *already sends*. An input the API accepts that you never modeled and never
-sent leaves **no request-body evidence**, so it is invisible — `settable_coverage`
-reads a false `1.0` even when you've dumped a dozen real knobs. That false-green is
-exactly the green-washing failure mode, and it is sample-dependent on a verbose
-object (the same prose guidance has produced both 0 and 22 dumped toggles on
-different runs). **The fix that makes quality reproducible is to feed a request
-schema**, which lists *every* accepted input the cassette can't see:
-
-```bash
-# OpenAPI: you already have the spec
-agentprovider completeness contracts/widget.yaml <cassette> --openapi spec.yaml --operation createWidget
-# DRF / Django-REST API (no OpenAPI): use introspect for discovery before
-# authoring. If a reusable proof gate needs --metadata, save the reviewed full
-# OPTIONS envelope (or wrap a reviewed POST map as {"actions":{"POST":...}}).
-agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --auth-env AWX_TOKEN --format json
-agentprovider completeness contracts/widget.yaml <cassette> --metadata widget.options.json --min-settable-coverage 90
-```
-
-With a schema fed, `ignored_settable` now names every accepted input you dumped (not
-just the ones you happen to send), `--min-settable-coverage <pct>` makes a thin
-contract exit non-zero, and — crucially — **`conform --mutation-check --emit-proof`
-takes the same `--metadata`/`--openapi` and _refuses to write the proof_** with
-`green-washing refusal: ignored N settable inputs …`. So **whenever the API serves a
-schema (OpenAPI, or a DRF `OPTIONS` envelope containing `actions.POST` metadata), pass it to both
-`completeness` and `emit-proof`** — a green-washed contract then *cannot* be proven,
-turning the prose guard above into a mechanical gate. (Credential and read-only
-fields are excluded automatically, so a sensitive or server-assigned field in
-`ignore_server_fields` never trips it.) Only when the API exposes **no** schema at
-all do you fall back to the cassette-only signal plus the one-test judgement above.
-
-This guard is about **settable inputs**, which only exist on a contract with a
-create/update body (resources). A **read-only DataSource or Ephemeral has no
-settable inputs** — every field is a computed output — so routing the
-non-projected server envelope into `ignore_server_fields` to reach completeness is
-*legitimate*, not green-washing (nothing a practitioner could set is being hidden).
-For those kinds the quality bar is the inverse: **model the practitioner-useful
-outputs as `computed`** (don't leave the data source projecting three fields), then
-ignore the remaining pure envelope. Don't react to the green-washing rule by
-refusing `ignore_server_fields` and leaving a read-only contract stuck at low
-completeness — that fails the gate without improving quality.
-
-Completeness is a **resource / data-source** gate. An **action-only or ephemeral**
-contract models only the verb's inputs plus a few computed outputs, so its
-completeness against a full read payload is **low by design — not a defect**. Judge
-an action by `action_returns_expected` (does it project the outputs you claimed?),
-not by a percentage, and don't point `--min-completeness` at one. That same
-low-by-design completeness is why `--emit-proof` (which requires 100%) does not
-apply to action/ephemeral kinds — prove them at `conform`, not with a sidecar (step 5).
-
-`record --suggest` also flags `unmodeled_fields` and field-level suggestions so
-you catch gaps at record time. It still does not edit the contract for you.
+**The full classification rubric, the green-washing blind-spot, the field-suggestion
+catalog, and the standard server-envelope starter set live in
+`references/completeness-and-greenwashing.md` — read it when classifying fields or
+completing a verbose resource.**
 
 ### 6. Emit proof only after targeted mutation evidence
 
@@ -474,114 +370,38 @@ sidecars are not enough for `--require-proven` and should be regenerated with
 
 ## Get these right up front
 
-These gotchas burn the most conform loops. Fix them at authoring time rather than
-discovering them one failed run at a time; `references/repair-hints.md` carries
-the *why* and the symptom→fix mapping for each.
+These gotchas burn the most conform loops — fix them at authoring time, not one
+failed run at a time. Each is a one-liner here; **the worked detail, the *why*, and
+the symptom→fix mapping are in `references/gotchas.md` (and `references/repair-hints.md`)
+— read it before your first record on a new API.**
 
-- **A plaintext-`http://` or private/loopback target needs both `allow_insecure`
-  and `allow_private_host` in `connection`** — set them up front for a local/dev or
-  internal API (e.g. `http://localhost:...`, a `10.`/`192.168.` host). Otherwise the
-  engine's transport/SSRF guard rejects the host and you only discover it at
-  `record`/`plan` time. The skill's other examples assume a public HTTPS API, where
-  neither is needed.
-- **Paths interpolate `${...}`, never `{...}`** — `path: /widgets/${id}`, async
-  `status_path: /jobs/${job_id}`. A bare `{id}` is a literal and won't match the
-  recording.
-- **Every operation declares its happy-path `expect_status`** — the engine has no
-  default-accept, so even a 200 read needs `expect_status: [200]`. A missing read
-  status is the most common "first conform fails"; the auto-hint may misattribute
-  it to `create.body`, so when you see `expected status in [], got 200`, add the
-  status to the op named in the failing result.
-- **`update_to` and `update.body` must list the *same* request-body attributes —
-  the symmetry runs both ways.** Include unchanged required fields in
-  `conformance.update_to` (the body is built only from keys present, so a partial
-  `update_to` won't match the recorded update). The inverse bites just as hard and
-  is easier to miss: **any attribute you put in `update.body` must also appear in
-  `update_to` with a value** — `record` sends that attribute on the live PATCH/PUT
-  (a modeled optional is sent even as `null`), but `conform` rebuilds the request
-  from `update_to`'s keys, so an attribute in `update.body` that `update_to` omits
-  makes the replayed body *shorter* than the recorded one → a byte-replay miss (`no
-  recorded interaction for PATCH …`). If a field is never actually changed by the
-  update, drop it from `update.body` rather than carrying it as a null; if it is
-  changed, give it a value in `update_to`. Keep the two key sets identical.
-- **The example must match the request the recorder will replay — and re-record
-  after you change it.** Two recurring traps: (1) an `optional: true, computed: true`
-  field the server defaults (e.g. `max_hosts`) is still sent in the body, so it must
-  appear in `conformance.example`/`update_to` with the server's value or the replay
-  misses the cassette; (2) a value the server canonicalizes (trims a trailing
-  newline, lowercases) must be written in its server-returned form. Re-record only
-  when you change what gets **replayed as a request** — an `example`/`update_to`
-  input that lands in a body or path, or an op's `body`: then **re-run `record`** so
-  the cassette's requests match (conform replays byte-for-byte, so a stale cassette
-  fails). Editing a value that is purely an **assertion target** — an action's
-  expected computed *output*, a `conformance.expect` matcher — changes no request, so
-  it needs **no** re-record; just re-run `conform`. (Knowing the difference saves
-  needless live calls, especially for actions that launch real work.)
-- **Reserved Terraform meta-args (`count`, …) can't be attribute names** — expose
-  the API field under another name with `field:` (attribute `value`, `field: count`).
-- **Object/nested attributes need an explicit `required`/`optional`/`computed`
-  marker** — including the fields *inside* an object.
-- **Pick the attribute shape by what the server does when the field is OMITTED**
-  (the four-way rubric). Reflexively marking every optional `computed` is a quality
-  regression — a `computed` attribute reports no drift when it's unset, so you lose
-  change detection on genuine inputs. Decide instead:
-  - **Server rejects omission** → `required`.
-  - **Server returns null/absent** (genuinely unset) → `optional` (plain). Drift-detecting.
-    Use this *only* when you've confirmed the server returns null/absent on omit.
-  - **Server returns a stable scalar literal** (string/number/bool — including `""`,
-    `0`, `false`, `"run"`) → **`optional: true, default: <literal>`** (no `computed:`
-    key). **Preferred:** plan-known **and** drift-detecting. The CLI auto-suggests
-    this for *meaningful* scalars (`"run"`, `1`, `3`); for `0`/`false`/`""` it stays
-    silent (its `IsMeaningfulDefaultValue` heuristic skips them), so **you** declare
-    the `default:` from the API's docs/observed behavior.
-  - **Server returns a non-pinnable default** (object/list/map, a canonicalized form
-    of your input, an env-dependent/variable value) → `optional: true, computed: true`.
-    Apply-safe but drift-blind on the unset field — the accepted cost when no stable
-    literal exists.
-  - **Pure server-owned output** (never settable) → `computed` only.
-  - Note: a server that echoes **any** value on omit (even `0`/`false`/`""`) is
-    server-defaulting — never leave it plain `optional` (that re-introduces "Provider
-    produced inconsistent result after apply"); it needs `default:` or `computed`.
-  - **YAML shape ≠ generated schema.** A declared `default:` forces the *generated*
-    framework attribute to optional+computed+default (the framework requires it), so
-    keep `computed:` **absent** in the contract YAML — `optional_default_consistency`
-    checks exactly the `optional`-not-`computed` attributes, and the drift-detection
-    win comes from the default being a plan-known literal, not from the missing key.
-  See `references/contract-format.md` (`default:`) for the worked example.
-- **An action's input attribute must not map to the same API field as a computed
-  output** — a by-id action that interpolates `${id}` into its path is the classic
-  trap: if a computed output already maps `field: id` (the id the action returns),
-  naming the path input `id` too makes *two* attributes claim API field `id`, and
-  the contract fails to load (`attributes "a" and "b" both map to API field
-  "id"`). It surfaces only at `record`/replay, so it costs a re-record. Name by-id
-  inputs distinctly — `<resource>_id` (`template_id`, `pipeline_id`) — which is the
-  real reason the worked example's input is `pipeline_id`, never `id`.
-- **Custom-action invariants are name-keyed** — `action_increment_changes_count` /
-  `action_decrement_changes_count` drive actions named exactly `increment` /
-  `decrement`; match the names.
-- **Choose an action's `type` so that `<type>_<verb>` equals the Terraform action
-  id you want** — the action surfaces as `dynamic_<type>_<verb>`, built by
-  concatenation. If you want the action `awx_job_launch`, set `type: awx_job` with
-  verb `launch` (→ `dynamic_awx_job_launch`); do **not** set `type: awx_job_launch`,
-  which yields `dynamic_awx_job_launch_launch` and a plan-time "no action schema for
-  …" error after you've already recorded. The verb lives in the action, not the
-  type — split the desired name at the trailing verb and put the stem in `type`.
-  `validate` and `preflight` now emit a non-fatal advisory when `type` ends in a
-  declared verb (naming the doubled id and the split fix), so you catch this before
-  recording — but the contract still loads, so heed the advisory rather than relying
-  on it to block.
-- **Action contracts need a real computed output check** — for action-only
-  contracts, declare `action_returns_expected` and put at least one computed
-  response field in `conformance.example` (for example `run_id`). A config-only
-  action proof with no computed output expectation is vacuous and should fail
-  closed.
-- **An identity used verbatim in URLs should be `type: string`** unless the id is a
-  canonical integer. Terraform stores numbers as floats, so a non-canonical token
-  (`007`, `1e6`, `1.0`) is canonicalized and the rebuilt URL won't match. `conform`
-  enforces this and emits a "declare type: string" hint, so you catch it up front.
-  Rule of thumb: the resource's own **identity token → `type: string`**; an integer
-  **foreign-key id used in a path** (`project_id`, `inventory`) stays `type: number`
-  — a canonical integer renders cleanly into `${...}`, no float artifact.
+- **`http://`/private host** → set both `allow_insecure` and `allow_private_host` in
+  `connection` (else the SSRF guard rejects it at record/plan).
+- **`auth` nests under `connection`** (not a top-level key) — the #1 first-`validate`
+  failure. Canonical block: `connection: { base_url, allow_insecure, allow_private_host, auth: {...} }`.
+- **`connection.base_url` must resolve at RUNTIME** — `${env.VAR}`/provider config,
+  **never an undefined `${var.*}`**. `conform` doesn't exercise `base_url`, so a bad
+  one passes every invariant and fails only at `terraform apply` (`unsupported
+  protocol scheme ""`). Keep it identical across every contract.
+- **Paths interpolate `${...}`, never `{...}`**; **base_url is ORIGIN only** — the
+  full `/api/v2/...` path lives in each op.
+- **Every op declares `expect_status`** — even a 200 read (no default-accept).
+- **`update.body` and `conformance.update_to` must list the SAME attribute keys**
+  (both ways) — a mismatch makes the replayed body miss the cassette.
+- **Re-record only when you change a replayed REQUEST** (example/update_to input, op
+  body); an assertion-only edit (expect matcher, action output) needs no re-record.
+- **Reserved meta-args (`count`, …) can't be attribute names** (remap with `field:`); **object/nested attributes need an explicit `required`/`optional`/`computed`** marker.
+- **Pick attribute shape by what the server does on OMIT** (four-way rubric: rejects →
+  `required`; null/absent → `optional`; stable scalar → `optional+default:<lit>`;
+  non-pinnable → `optional+computed`). Don't reflexively mark everything `computed`.
+- **Identity token used in URLs → `type: string`**; an integer FK id in a path stays
+  `type: number`.
+- **Action `type` + verb concatenate to `dynamic_<type>_<verb>`** — for action
+  `awx_job_launch` use `type: awx_job` + verb `launch`, NOT `type: awx_job_launch`.
+- **An action input must not map to the same API field as a computed output** — name
+  by-id inputs `<resource>_id` (`template_id`), never `id`.
+- **Action contracts need a real computed-output check** (`action_returns_expected`
+  with a pinned output) — a config-only action proof is vacuous.
 
 ### Proving by contract kind
 
@@ -676,6 +496,10 @@ Read these as needed — don't load them all up front:
   `introspect`'s text default and JSON mode for agents).
 - `references/repair-hints.md` — the standard invariant set, what each invariant
   actually compares, and the repair-hint catalog (symptom → fix → why).
+- `references/gotchas.md` — the full "get these right up front" catalog (the
+  one-liners above, with worked detail and the four-way attribute-shape rubric).
+- `references/completeness-and-greenwashing.md` — the field-classification rubric,
+  the green-washing blind-spot and `--metadata` gate, and the server-envelope set.
 - `references/terraform-usage.md` — the HCL consumption surface: resource / data
   source / ephemeral / action naming, the `action_trigger` pattern and cycle
   gotcha, FK wiring, and a complete worked graph for the live `apply` proof.

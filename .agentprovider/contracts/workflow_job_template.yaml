@@ -1,0 +1,235 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: workflow_job_template
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+identity:
+  attribute: id
+  known_after: create
+  response_field: id
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/workflow_job_templates/
+    body:
+      - name
+      - description
+      - extra_vars
+      - organization
+      - survey_enabled
+      - allow_simultaneous
+      - ask_variables_on_launch
+      - inventory
+      - limit
+      - scm_branch
+      - ask_inventory_on_launch
+      - ask_scm_branch_on_launch
+      - ask_limit_on_launch
+      - webhook_service
+      - webhook_credential
+      - ask_labels_on_launch
+      - ask_skip_tags_on_launch
+      - ask_tags_on_launch
+      - skip_tags
+      - job_tags
+    expect_status:
+      - 201
+
+  read:
+    method: GET
+    path: "/api/v2/workflow_job_templates/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+
+  update:
+    method: PATCH
+    path: "/api/v2/workflow_job_templates/${id}/"
+    body:
+      - name
+      - description
+      - extra_vars
+      - organization
+      - survey_enabled
+      - allow_simultaneous
+      - ask_variables_on_launch
+      - inventory
+      - limit
+      - scm_branch
+      - ask_inventory_on_launch
+      - ask_scm_branch_on_launch
+      - ask_limit_on_launch
+      - webhook_service
+      - webhook_credential
+      - ask_labels_on_launch
+      - ask_skip_tags_on_launch
+      - ask_tags_on_launch
+      - skip_tags
+      - job_tags
+    expect_status:
+      - 200
+
+  delete:
+    method: DELETE
+    path: "/api/v2/workflow_job_templates/${id}/"
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
+schema:
+  attributes:
+    id:
+      computed: true
+      type: string
+    name:
+      required: true
+      type: string
+    description:
+      optional: true
+      default: ""
+      type: string
+    extra_vars:
+      optional: true
+      default: ""
+      type: string
+    organization:
+      optional: true
+      type: number
+    survey_enabled:
+      optional: true
+      default: false
+      type: bool
+    allow_simultaneous:
+      optional: true
+      default: false
+      type: bool
+    ask_variables_on_launch:
+      optional: true
+      default: false
+      type: bool
+    inventory:
+      optional: true
+      type: number
+    limit:
+      optional: true
+      computed: true
+      type: string
+    scm_branch:
+      optional: true
+      computed: true
+      type: string
+    ask_inventory_on_launch:
+      optional: true
+      default: false
+      type: bool
+    ask_scm_branch_on_launch:
+      optional: true
+      default: false
+      type: bool
+    ask_limit_on_launch:
+      optional: true
+      default: false
+      type: bool
+    webhook_service:
+      optional: true
+      computed: true
+      type: string
+    webhook_credential:
+      optional: true
+      type: number
+    ask_labels_on_launch:
+      optional: true
+      default: false
+      type: bool
+    ask_skip_tags_on_launch:
+      optional: true
+      default: false
+      type: bool
+    ask_tags_on_launch:
+      optional: true
+      default: false
+      type: bool
+    skip_tags:
+      optional: true
+      computed: true
+      type: string
+    job_tags:
+      optional: true
+      computed: true
+      type: string
+
+ignore_server_fields:
+  - related
+  - summary_fields
+  - url
+  - type
+  - created
+  - modified
+  - last_job_run
+  - last_job_failed
+  - next_job_run
+  - status
+  - detail
+
+conformance:
+  example:
+    name: ap-wjt-agent-test
+    description: "Workflow job template for agentprovider tests"
+    extra_vars: ""
+    organization: 145
+    survey_enabled: false
+    allow_simultaneous: false
+    ask_variables_on_launch: false
+    ask_inventory_on_launch: false
+    ask_scm_branch_on_launch: false
+    ask_limit_on_launch: false
+    ask_labels_on_launch: false
+    ask_skip_tags_on_launch: false
+    ask_tags_on_launch: false
+    webhook_service: ""
+  update_to:
+    name: ap-wjt-agent-test-updated
+    description: "Updated workflow job template description"
+    extra_vars: ""
+    organization: 145
+    survey_enabled: false
+    allow_simultaneous: true
+    ask_variables_on_launch: true
+    inventory: null
+    limit: null
+    scm_branch: null
+    ask_inventory_on_launch: false
+    ask_scm_branch_on_launch: false
+    ask_limit_on_launch: false
+    webhook_service: ""
+    webhook_credential: null
+    ask_labels_on_launch: false
+    ask_skip_tags_on_launch: false
+    ask_tags_on_launch: false
+    skip_tags: null
+    job_tags: null
+  expect:
+    id:
+      not_null: true
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update
+    - optional_default_consistency
+    - state_matches_expect

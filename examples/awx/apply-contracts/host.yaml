@@ -1,0 +1,125 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: host
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+identity:
+  attribute: id
+  known_after: create
+  response_field: id
+
+schema:
+  attributes:
+    id:
+      type: string
+      computed: true
+    name:
+      type: string
+      required: true
+    description:
+      type: string
+      optional: true
+      default: ""
+    inventory:
+      type: number
+      required: true
+    enabled:
+      type: bool
+      optional: true
+      default: true
+    instance_id:
+      type: string
+      optional: true
+      default: ""
+    variables:
+      type: string
+      optional: true
+      default: ""
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/hosts/
+    body:
+      - name
+      - description
+      - inventory
+      - enabled
+      - instance_id
+      - variables
+    expect_status:
+      - 201
+  read:
+    method: GET
+    path: "/api/v2/hosts/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+  update:
+    method: PATCH
+    path: "/api/v2/hosts/${id}/"
+    body:
+      - name
+      - description
+      - inventory
+      - enabled
+      - instance_id
+      - variables
+    expect_status:
+      - 200
+  delete:
+    method: DELETE
+    path: "/api/v2/hosts/${id}/"
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
+ignore_server_fields:
+  - url
+  - type
+  - related
+  - summary_fields
+  - created
+  - modified
+  - has_active_failures
+  - has_inventory_sources
+  - last_job
+  - last_job_host_summary
+  - ansible_facts_modified
+  - detail
+
+conformance:
+  example:
+    name: ap-host-conformtest
+    description: conformance test host
+    inventory: 174
+    enabled: true
+    instance_id: ""
+    variables: ""
+  update_to:
+    name: ap-host-conformtest
+    description: updated description
+    inventory: 174
+    enabled: false
+    instance_id: ""
+    variables: ""
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - optional_default_consistency
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update

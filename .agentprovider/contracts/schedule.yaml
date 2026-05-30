@@ -1,0 +1,173 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: schedule
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+identity:
+  attribute: id
+  known_after: create
+  response_field: id
+
+schema:
+  attributes:
+    id:
+      type: string
+      computed: true
+    name:
+      type: string
+      required: true
+    description:
+      type: string
+      optional: true
+      default: ""
+    rrule:
+      type: string
+      required: true
+    unified_job_template:
+      type: number
+      required: true
+    enabled:
+      type: bool
+      optional: true
+      default: true
+    scm_branch:
+      type: string
+      optional: true
+      computed: true
+    job_type:
+      type: string
+      optional: true
+      computed: true
+    job_tags:
+      type: string
+      optional: true
+      computed: true
+    skip_tags:
+      type: string
+      optional: true
+      computed: true
+    limit:
+      type: string
+      optional: true
+      computed: true
+    diff_mode:
+      type: bool
+      optional: true
+      computed: true
+    verbosity:
+      type: number
+      optional: true
+      computed: true
+    forks:
+      type: number
+      optional: true
+      computed: true
+    job_slice_count:
+      type: number
+      optional: true
+      computed: true
+    timeout:
+      type: number
+      optional: true
+      computed: true
+    inventory:
+      type: number
+      optional: true
+      computed: true
+    execution_environment:
+      type: number
+      optional: true
+      computed: true
+    extra_data:
+      type: string
+      optional: true
+      computed: true
+    dtstart:
+      type: string
+      computed: true
+    dtend:
+      type: string
+      optional: true
+      computed: true
+    next_run:
+      type: string
+      computed: true
+    timezone:
+      type: string
+      computed: true
+    until:
+      type: string
+      computed: true
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/schedules/
+    expect_status: [201]
+    body:
+      - name
+      - description
+      - rrule
+      - unified_job_template
+      - enabled
+  read:
+    method: GET
+    path: "/api/v2/schedules/${id}/"
+    expect_status: [200]
+    not_found_status: [404]
+  update:
+    method: PATCH
+    path: "/api/v2/schedules/${id}/"
+    expect_status: [200]
+    body:
+      - name
+      - description
+      - rrule
+      - unified_job_template
+      - enabled
+  delete:
+    method: DELETE
+    path: "/api/v2/schedules/${id}/"
+    expect_status: [204]
+    not_found_status: [404]
+
+ignore_server_fields:
+  - type
+  - url
+  - related
+  - summary_fields
+  - created
+  - modified
+  - detail
+
+conformance:
+  example:
+    name: ap-sched-test-001
+    unified_job_template: 168
+    rrule: "dtstart:20300101T000000Z RRULE:FREQ=DAILY;INTERVAL=1"
+    description: ""
+    enabled: true
+  update_to:
+    name: ap-sched-test-001
+    unified_job_template: 168
+    rrule: "dtstart:20300201T000000Z RRULE:FREQ=WEEKLY;INTERVAL=1"
+    description: "updated description"
+    enabled: true
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update
+    - optional_default_consistency

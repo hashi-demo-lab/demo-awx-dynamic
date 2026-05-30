@@ -63,6 +63,13 @@ connection:
   auth: { ... }
 ```
 
+Authoring-loop retry diagnostics are narrower than transport resilience. During
+`record`/`introspect`, backoff guidance is emitted only for server-level
+transients: 5xx responses and transport timeouts. Contract validation errors,
+replay misses, schema ambiguity, contract status mismatches, and ordinary
+non-server 4xx responses are repair paths, even if the runtime transport has
+retry settings.
+
 ### auth
 
 `auth.type` is one of `header`, `query`, `basic`, `oauth2`. A credential slot is

@@ -1,0 +1,70 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/170/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2866
+        body: '{"allow_simultaneous":false,"ask_inventory_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_variables_on_launch":false,"created":"2026-05-30T06:47:51.732488Z","description":"","extra_vars":"","id":170,"inventory":null,"job_tags":null,"last_job_failed":false,"last_job_run":null,"limit":null,"modified":"2026-05-30T06:47:51.732496Z","name":"ap-wjt-178012367145758","next_job_run":null,"organization":150,"related":{"access_list":"/api/v2/workflow_job_templates/170/access_list/","activity_stream":"/api/v2/workflow_job_templates/170/activity_stream/","copy":"/api/v2/workflow_job_templates/170/copy/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_job_templates/170/labels/","launch":"/api/v2/workflow_job_templates/170/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/workflow_job_templates/ap-wjt-178012367145758++ap-org-178012367145758/","notification_templates_approvals":"/api/v2/workflow_job_templates/170/notification_templates_approvals/","notification_templates_error":"/api/v2/workflow_job_templates/170/notification_templates_error/","notification_templates_started":"/api/v2/workflow_job_templates/170/notification_templates_started/","notification_templates_success":"/api/v2/workflow_job_templates/170/notification_templates_success/","object_roles":"/api/v2/workflow_job_templates/170/object_roles/","organization":"/api/v2/organizations/150/","schedules":"/api/v2/workflow_job_templates/170/schedules/","survey_spec":"/api/v2/workflow_job_templates/170/survey_spec/","webhook_key":"/api/v2/workflow_job_templates/170/webhook_key/","webhook_receiver":"","workflow_jobs":"/api/v2/workflow_job_templates/170/workflow_jobs/","workflow_nodes":"/api/v2/workflow_job_templates/170/workflow_nodes/"},"scm_branch":null,"skip_tags":null,"status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the workflow job template","id":3456,"name":"Admin"},"approval_role":{"description":"Can approve or deny a workflow approval node","id":3459,"name":"Approve"},"execute_role":{"description":"May run the workflow job template","id":3457,"name":"Execute"},"read_role":{"description":"May view settings for the workflow job template","id":3458,"name":"Read"}},"organization":{"description":"","id":150,"name":"ap-org-178012367145758"},"recent_jobs":[],"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"type":"workflow_job_template","url":"/api/v2/workflow_job_templates/170/","webhook_credential":null,"webhook_service":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2866"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 3b2db5e1e4f4498eabcddc7dbd568f72
+            X-Api-Time:
+                - 0.276s
+            X-Api-Total-Time:
+                - 0.283s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 290.178375ms
+
+provenance:
+  recorded_at: "2026-05-30T06:48:30Z"
+  host: "localhost:30080"
+  api_version: "nginx"

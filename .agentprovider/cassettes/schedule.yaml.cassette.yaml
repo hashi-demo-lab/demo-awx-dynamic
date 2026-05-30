@@ -1,0 +1,376 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 150
+        host: localhost:30080
+        body: '{"description":"","enabled":true,"name":"ap-sched-test-001","rrule":"dtstart:20300101T000000Z RRULE:FREQ=DAILY;INTERVAL=1","unified_job_template":168}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/schedules/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1625
+        body: '{"created":"2026-05-30T06:47:44.863744Z","description":"","diff_mode":null,"dtend":null,"dtstart":"2030-01-01T00:00:00Z","enabled":true,"execution_environment":null,"extra_data":{},"forks":null,"id":10,"inventory":null,"job_slice_count":null,"job_tags":null,"job_type":null,"limit":null,"modified":"2026-05-30T06:47:44.863749Z","name":"ap-sched-test-001","next_run":"2030-01-01T00:00:00Z","related":{"created_by":"/api/v2/users/1/","credentials":"/api/v2/schedules/10/credentials/","instance_groups":"/api/v2/schedules/10/instance_groups/","inventory":"/api/v2/inventories/181/","labels":"/api/v2/schedules/10/labels/","modified_by":"/api/v2/users/1/","project":"/api/v2/projects/167/","unified_job_template":"/api/v2/job_templates/168/","unified_jobs":"/api/v2/schedules/10/jobs/"},"rrule":"dtstart:20300101T000000Z RRULE:FREQ=DAILY;INTERVAL=1","scm_branch":null,"skip_tags":null,"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":181,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012356644302","organization_id":146,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"unified_job_template":{"description":"","id":168,"name":"ap-jt-178012356644302","unified_job_type":"job"},"user_capabilities":{"delete":true,"edit":true}},"timeout":null,"timezone":"UTC","type":"schedule","unified_job_template":168,"until":"","url":"/api/v2/schedules/10/","verbosity":null}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1625"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/schedules/10/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - f12f44bf0d8e4b2a862b60dd3bf52f06
+            X-Api-Time:
+                - 0.281s
+            X-Api-Total-Time:
+                - 0.292s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 299.81225ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/schedules/10/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1625
+        body: '{"created":"2026-05-30T06:47:44.863744Z","description":"","diff_mode":null,"dtend":null,"dtstart":"2030-01-01T00:00:00Z","enabled":true,"execution_environment":null,"extra_data":{},"forks":null,"id":10,"inventory":null,"job_slice_count":null,"job_tags":null,"job_type":null,"limit":null,"modified":"2026-05-30T06:47:44.863749Z","name":"ap-sched-test-001","next_run":"2030-01-01T00:00:00Z","related":{"created_by":"/api/v2/users/1/","credentials":"/api/v2/schedules/10/credentials/","instance_groups":"/api/v2/schedules/10/instance_groups/","inventory":"/api/v2/inventories/181/","labels":"/api/v2/schedules/10/labels/","modified_by":"/api/v2/users/1/","project":"/api/v2/projects/167/","unified_job_template":"/api/v2/job_templates/168/","unified_jobs":"/api/v2/schedules/10/jobs/"},"rrule":"dtstart:20300101T000000Z RRULE:FREQ=DAILY;INTERVAL=1","scm_branch":null,"skip_tags":null,"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":181,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012356644302","organization_id":146,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"unified_job_template":{"description":"","id":168,"name":"ap-jt-178012356644302","unified_job_type":"job"},"user_capabilities":{"delete":true,"edit":true}},"timeout":null,"timezone":"UTC","type":"schedule","unified_job_template":168,"until":"","url":"/api/v2/schedules/10/","verbosity":null}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1625"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 2337ffae4ec84195a97760ad3e19ca8d
+            X-Api-Time:
+                - 0.286s
+            X-Api-Total-Time:
+                - 0.293s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 298.736125ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 170
+        host: localhost:30080
+        body: '{"description":"updated description","enabled":true,"name":"ap-sched-test-001","rrule":"dtstart:20300201T000000Z RRULE:FREQ=WEEKLY;INTERVAL=1","unified_job_template":168}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/schedules/10/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1645
+        body: '{"created":"2026-05-30T06:47:44.863744Z","description":"updated description","diff_mode":null,"dtend":null,"dtstart":"2030-02-01T00:00:00Z","enabled":true,"execution_environment":null,"extra_data":{},"forks":null,"id":10,"inventory":null,"job_slice_count":null,"job_tags":null,"job_type":null,"limit":null,"modified":"2026-05-30T06:47:46.068606Z","name":"ap-sched-test-001","next_run":"2030-02-01T00:00:00Z","related":{"created_by":"/api/v2/users/1/","credentials":"/api/v2/schedules/10/credentials/","instance_groups":"/api/v2/schedules/10/instance_groups/","inventory":"/api/v2/inventories/181/","labels":"/api/v2/schedules/10/labels/","modified_by":"/api/v2/users/1/","project":"/api/v2/projects/167/","unified_job_template":"/api/v2/job_templates/168/","unified_jobs":"/api/v2/schedules/10/jobs/"},"rrule":"dtstart:20300201T000000Z RRULE:FREQ=WEEKLY;INTERVAL=1","scm_branch":null,"skip_tags":null,"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":181,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012356644302","organization_id":146,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"unified_job_template":{"description":"","id":168,"name":"ap-jt-178012356644302","unified_job_type":"job"},"user_capabilities":{"delete":true,"edit":true}},"timeout":null,"timezone":"UTC","type":"schedule","unified_job_template":168,"until":"","url":"/api/v2/schedules/10/","verbosity":null}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1645"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - feea9f053a274c3d8b5880816301fc4e
+            X-Api-Time:
+                - 0.291s
+            X-Api-Total-Time:
+                - 0.303s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 310.011708ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/schedules/10/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1645
+        body: '{"created":"2026-05-30T06:47:44.863744Z","description":"updated description","diff_mode":null,"dtend":null,"dtstart":"2030-02-01T00:00:00Z","enabled":true,"execution_environment":null,"extra_data":{},"forks":null,"id":10,"inventory":null,"job_slice_count":null,"job_tags":null,"job_type":null,"limit":null,"modified":"2026-05-30T06:47:46.068606Z","name":"ap-sched-test-001","next_run":"2030-02-01T00:00:00Z","related":{"created_by":"/api/v2/users/1/","credentials":"/api/v2/schedules/10/credentials/","instance_groups":"/api/v2/schedules/10/instance_groups/","inventory":"/api/v2/inventories/181/","labels":"/api/v2/schedules/10/labels/","modified_by":"/api/v2/users/1/","project":"/api/v2/projects/167/","unified_job_template":"/api/v2/job_templates/168/","unified_jobs":"/api/v2/schedules/10/jobs/"},"rrule":"dtstart:20300201T000000Z RRULE:FREQ=WEEKLY;INTERVAL=1","scm_branch":null,"skip_tags":null,"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":181,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012356644302","organization_id":146,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"unified_job_template":{"description":"","id":168,"name":"ap-jt-178012356644302","unified_job_type":"job"},"user_capabilities":{"delete":true,"edit":true}},"timeout":null,"timezone":"UTC","type":"schedule","unified_job_template":168,"until":"","url":"/api/v2/schedules/10/","verbosity":null}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1645"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 97e58b3dc81e45729263d004ed6eae1f
+            X-Api-Time:
+                - 0.297s
+            X-Api-Total-Time:
+                - 0.305s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 309.702333ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/schedules/10/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 251375b3378f4d099f1741b16f37f187
+            X-Api-Time:
+                - 0.272s
+            X-Api-Total-Time:
+                - 0.282s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 286.819667ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/schedules/10/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 49
+        body: '{"detail":"No Schedule matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "49"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 28e81727f6994e278cf31f1897fb8516
+            X-Api-Time:
+                - 0.270s
+            X-Api-Total-Time:
+                - 0.276s
+        status: 404 Not Found
+        code: 404
+        duration: 277.876208ms
+
+provenance:
+  recorded_at: "2026-05-30T06:47:48Z"
+  host: "localhost:30080"
+  api_version: "nginx"

@@ -1,0 +1,70 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/183/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2381
+        body: '{"created":"2026-05-30T06:47:04.501585Z","description":"","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":183,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-30T06:47:04.501593Z","name":"ap-inv-178012362345216","organization":149,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/183/access_list/","activity_stream":"/api/v2/inventories/183/activity_stream/","ad_hoc_commands":"/api/v2/inventories/183/ad_hoc_commands/","copy":"/api/v2/inventories/183/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/183/groups/","hosts":"/api/v2/inventories/183/hosts/","instance_groups":"/api/v2/inventories/183/instance_groups/","inventory_sources":"/api/v2/inventories/183/inventory_sources/","job_templates":"/api/v2/inventories/183/job_templates/","labels":"/api/v2/inventories/183/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/ap-inv-178012362345216++ap-org-178012362345216/","object_roles":"/api/v2/inventories/183/object_roles/","organization":"/api/v2/organizations/149/","root_groups":"/api/v2/inventories/183/root_groups/","script":"/api/v2/inventories/183/script/","tree":"/api/v2/inventories/183/tree/","update_inventory_sources":"/api/v2/inventories/183/update_inventory_sources/","variable_data":"/api/v2/inventories/183/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":3440,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":3438,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":3442,"name":"Read"},"update_role":{"description":"May update the inventory","id":3439,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":3441,"name":"Use"}},"organization":{"description":"","id":149,"name":"ap-org-178012362345216"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/183/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2381"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - abfe199683d7480888a1db1a8434ed96
+            X-Api-Time:
+                - 0.291s
+            X-Api-Total-Time:
+                - 0.298s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 304.00925ms
+
+provenance:
+  recorded_at: "2026-05-30T06:47:53Z"
+  host: "localhost:30080"
+  api_version: "nginx"

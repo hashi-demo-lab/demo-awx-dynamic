@@ -22,6 +22,7 @@ clear
 printf '\n'
 
 # --- recap: what the agent just did ---------------------------------------
+printf '  %b✓%b  introspect             %b%bagentprovider introspect%b  →  %blive settable-field discovery (no writes)%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
 printf '  %b✓%b  bootstrap              %b%bagentprovider bootstrap --response%b  →  %bseeded draft contract%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
 printf '  %b✓%b  record                 %b%bagentprovider record%b  →  %bbyte-accurate cassette (go-vcr) + redacted auth%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40
 printf '  %b✓%b  conform inventory      %b%bagentprovider conform%b  →  %b8/8 invariants%b\n' "$G$B" "$X" "$D" "" "$X" "$G" "$X"; sleep 0.40

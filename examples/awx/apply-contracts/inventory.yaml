@@ -1,0 +1,141 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: inventory
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+schema:
+  attributes:
+    id:
+      type: number
+      computed: true
+    name:
+      type: string
+      required: true
+    description:
+      type: string
+      optional: true
+      default: ""
+    organization:
+      type: number
+      required: true
+    kind:
+      type: string
+      optional: true
+      default: ""
+    host_filter:
+      type: string
+      optional: true
+      computed: true
+    variables:
+      type: string
+      optional: true
+      default: ""
+    prevent_instance_group_fallback:
+      type: bool
+      optional: true
+      default: false
+    has_active_failures:
+      type: bool
+      computed: true
+    total_hosts:
+      type: number
+      computed: true
+    hosts_with_active_failures:
+      type: number
+      computed: true
+    total_groups:
+      type: number
+      computed: true
+    has_inventory_sources:
+      type: bool
+      computed: true
+    total_inventory_sources:
+      type: number
+      computed: true
+    inventory_sources_with_failures:
+      type: number
+      computed: true
+    pending_deletion:
+      type: bool
+      computed: true
+
+identity:
+  attribute: id
+  response_field: id
+  known_after: create
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/inventories/
+    body:
+      - name
+      - description
+      - organization
+      - kind
+      - variables
+      - prevent_instance_group_fallback
+    expect_status: [201]
+  read:
+    method: GET
+    path: "/api/v2/inventories/${id}/"
+    expect_status: [200]
+    not_found_status: [404]
+  update:
+    method: PATCH
+    path: "/api/v2/inventories/${id}/"
+    body:
+      - name
+      - description
+      - organization
+      - kind
+      - variables
+      - prevent_instance_group_fallback
+    expect_status: [200]
+  delete:
+    method: DELETE
+    path: "/api/v2/inventories/${id}/"
+    expect_status: [202]
+    not_found_status: [404]
+
+ignore_server_fields:
+  - type
+  - url
+  - created
+  - modified
+  - related
+  - summary_fields
+  - detail
+
+conformance:
+  example:
+    name: ap-inv-conform-test
+    description: ""
+    organization: 140
+    kind: ""
+    variables: ""
+    prevent_instance_group_fallback: false
+  update_to:
+    name: ap-inv-conform-updated
+    description: "updated description"
+    organization: 140
+    kind: ""
+    variables: ""
+    prevent_instance_group_fallback: false
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update

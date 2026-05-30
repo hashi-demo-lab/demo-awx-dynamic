@@ -1,0 +1,44 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: job
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+schema:
+  attributes:
+    template_id:
+      type: number
+      required: true
+    job_id:
+      type: number
+      computed: true
+      field: job
+    name:
+      type: string
+      computed: true
+    status:
+      type: string
+      computed: true
+actions:
+  launch:
+    method: POST
+    path: "/api/v2/job_templates/${template_id}/launch/"
+    expect_status:
+      - 201
+conformance:
+  action: launch
+  example:
+    template_id: 7
+    name: Demo Job Template
+    status: pending
+  expect:
+    job_id:
+      not_null: true
+  invariants:
+    - action_returns_expected
+    - state_matches_expect

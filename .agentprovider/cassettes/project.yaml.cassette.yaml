@@ -1,0 +1,376 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 297
+        host: localhost:30080
+        body: '{"allow_override":false,"description":"","name":"ap-proj-conform-agent","organization":143,"scm_branch":"","scm_clean":false,"scm_delete_on_update":false,"scm_refspec":"","scm_track_submodules":false,"scm_type":"","scm_update_cache_timeout":0,"scm_update_on_launch":false,"scm_url":"","timeout":0}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/projects/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2417
+        body: '{"allow_override":false,"created":"2026-05-30T06:45:23.844248Z","credential":null,"custom_virtualenv":null,"default_environment":null,"description":"","id":164,"last_job_failed":false,"last_job_run":null,"last_update_failed":false,"last_updated":null,"local_path":"","modified":"2026-05-30T06:45:23.844255Z","name":"ap-proj-conform-agent","next_job_run":null,"organization":143,"related":{"access_list":"/api/v2/projects/164/access_list/","activity_stream":"/api/v2/projects/164/activity_stream/","copy":"/api/v2/projects/164/copy/","created_by":"/api/v2/users/1/","inventory_files":"/api/v2/projects/164/inventories/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/projects/ap-proj-conform-agent++ap-org2-178012347643231/","notification_templates_error":"/api/v2/projects/164/notification_templates_error/","notification_templates_started":"/api/v2/projects/164/notification_templates_started/","notification_templates_success":"/api/v2/projects/164/notification_templates_success/","object_roles":"/api/v2/projects/164/object_roles/","organization":"/api/v2/organizations/143/","playbooks":"/api/v2/projects/164/playbooks/","project_updates":"/api/v2/projects/164/project_updates/","schedules":"/api/v2/projects/164/schedules/","scm_inventory_sources":"/api/v2/projects/164/scm_inventory_sources/","teams":"/api/v2/projects/164/teams/","update":"/api/v2/projects/164/update/"},"scm_branch":"","scm_clean":false,"scm_delete_on_update":false,"scm_refspec":"","scm_revision":"","scm_track_submodules":false,"scm_type":"","scm_update_cache_timeout":0,"scm_update_on_launch":false,"scm_url":"","signature_validation_credential":null,"status":"missing","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the project","id":3338,"name":"Admin"},"read_role":{"description":"May view settings for the project","id":3341,"name":"Read"},"update_role":{"description":"May update the project","id":3340,"name":"Update"},"use_role":{"description":"Can use the project in a job template","id":3339,"name":"Use"}},"organization":{"description":"","id":143,"name":"ap-org2-178012347643231"},"user_capabilities":{"copy":false,"delete":true,"edit":true,"schedule":false,"start":false}},"timeout":0,"type":"project","url":"/api/v2/projects/164/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2417"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/projects/164/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 58dab6c09dab4c818d47504b8bd9ed97
+            X-Api-Time:
+                - 0.419s
+            X-Api-Total-Time:
+                - 0.435s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 445.196542ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/projects/164/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2531
+        body: '{"allow_override":false,"created":"2026-05-30T06:45:23.844248Z","credential":null,"custom_virtualenv":null,"default_environment":null,"description":"","id":164,"last_job_failed":false,"last_job_run":null,"last_update_failed":false,"last_updated":null,"local_path":"","modified":"2026-05-30T06:45:23.844255Z","name":"ap-proj-conform-agent","next_job_run":null,"organization":143,"related":{"access_list":"/api/v2/projects/164/access_list/","activity_stream":"/api/v2/projects/164/activity_stream/","copy":"/api/v2/projects/164/copy/","created_by":"/api/v2/users/1/","inventory_files":"/api/v2/projects/164/inventories/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/projects/ap-proj-conform-agent++ap-org2-178012347643231/","notification_templates_error":"/api/v2/projects/164/notification_templates_error/","notification_templates_started":"/api/v2/projects/164/notification_templates_started/","notification_templates_success":"/api/v2/projects/164/notification_templates_success/","object_roles":"/api/v2/projects/164/object_roles/","organization":"/api/v2/organizations/143/","playbooks":"/api/v2/projects/164/playbooks/","project_updates":"/api/v2/projects/164/project_updates/","schedules":"/api/v2/projects/164/schedules/","scm_inventory_sources":"/api/v2/projects/164/scm_inventory_sources/","teams":"/api/v2/projects/164/teams/","update":"/api/v2/projects/164/update/"},"scm_branch":"","scm_clean":false,"scm_delete_on_update":false,"scm_refspec":"","scm_revision":"","scm_track_submodules":false,"scm_type":"","scm_update_cache_timeout":0,"scm_update_on_launch":false,"scm_url":"","signature_validation_credential":null,"status":"missing","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the project","id":3338,"name":"Admin"},"read_role":{"description":"May view settings for the project","id":3341,"name":"Read"},"update_role":{"description":"May update the project","id":3340,"name":"Update"},"use_role":{"description":"Can use the project in a job template","id":3339,"name":"Use"}},"organization":{"description":"","id":143,"name":"ap-org2-178012347643231"},"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":false,"delete":true,"edit":true,"schedule":false,"start":false}},"timeout":0,"type":"project","url":"/api/v2/projects/164/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2531"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 9c94fb6c7dde4c0ab80c96e84965f63d
+            X-Api-Time:
+                - 0.295s
+            X-Api-Total-Time:
+                - 0.302s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 308.033542ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 316
+        host: localhost:30080
+        body: '{"allow_override":false,"description":"updated description","name":"ap-proj-conform-agent","organization":143,"scm_branch":"","scm_clean":false,"scm_delete_on_update":false,"scm_refspec":"","scm_track_submodules":false,"scm_type":"","scm_update_cache_timeout":0,"scm_update_on_launch":false,"scm_url":"","timeout":0}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/projects/164/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2550
+        body: '{"allow_override":false,"created":"2026-05-30T06:45:23.844248Z","credential":null,"custom_virtualenv":null,"default_environment":null,"description":"updated description","id":164,"last_job_failed":false,"last_job_run":null,"last_update_failed":false,"last_updated":null,"local_path":"","modified":"2026-05-30T06:45:25.264554Z","name":"ap-proj-conform-agent","next_job_run":null,"organization":143,"related":{"access_list":"/api/v2/projects/164/access_list/","activity_stream":"/api/v2/projects/164/activity_stream/","copy":"/api/v2/projects/164/copy/","created_by":"/api/v2/users/1/","inventory_files":"/api/v2/projects/164/inventories/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/projects/ap-proj-conform-agent++ap-org2-178012347643231/","notification_templates_error":"/api/v2/projects/164/notification_templates_error/","notification_templates_started":"/api/v2/projects/164/notification_templates_started/","notification_templates_success":"/api/v2/projects/164/notification_templates_success/","object_roles":"/api/v2/projects/164/object_roles/","organization":"/api/v2/organizations/143/","playbooks":"/api/v2/projects/164/playbooks/","project_updates":"/api/v2/projects/164/project_updates/","schedules":"/api/v2/projects/164/schedules/","scm_inventory_sources":"/api/v2/projects/164/scm_inventory_sources/","teams":"/api/v2/projects/164/teams/","update":"/api/v2/projects/164/update/"},"scm_branch":"","scm_clean":false,"scm_delete_on_update":false,"scm_refspec":"","scm_revision":"","scm_track_submodules":false,"scm_type":"","scm_update_cache_timeout":0,"scm_update_on_launch":false,"scm_url":"","signature_validation_credential":null,"status":"missing","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the project","id":3338,"name":"Admin"},"read_role":{"description":"May view settings for the project","id":3341,"name":"Read"},"update_role":{"description":"May update the project","id":3340,"name":"Update"},"use_role":{"description":"Can use the project in a job template","id":3339,"name":"Use"}},"organization":{"description":"","id":143,"name":"ap-org2-178012347643231"},"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":false,"delete":true,"edit":true,"schedule":false,"start":false}},"timeout":0,"type":"project","url":"/api/v2/projects/164/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2550"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - ac5af229166a482db0ddf93e62feecb3
+            X-Api-Time:
+                - 0.314s
+            X-Api-Total-Time:
+                - 0.325s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 329.424209ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/projects/164/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2550
+        body: '{"allow_override":false,"created":"2026-05-30T06:45:23.844248Z","credential":null,"custom_virtualenv":null,"default_environment":null,"description":"updated description","id":164,"last_job_failed":false,"last_job_run":null,"last_update_failed":false,"last_updated":null,"local_path":"","modified":"2026-05-30T06:45:25.264554Z","name":"ap-proj-conform-agent","next_job_run":null,"organization":143,"related":{"access_list":"/api/v2/projects/164/access_list/","activity_stream":"/api/v2/projects/164/activity_stream/","copy":"/api/v2/projects/164/copy/","created_by":"/api/v2/users/1/","inventory_files":"/api/v2/projects/164/inventories/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/projects/ap-proj-conform-agent++ap-org2-178012347643231/","notification_templates_error":"/api/v2/projects/164/notification_templates_error/","notification_templates_started":"/api/v2/projects/164/notification_templates_started/","notification_templates_success":"/api/v2/projects/164/notification_templates_success/","object_roles":"/api/v2/projects/164/object_roles/","organization":"/api/v2/organizations/143/","playbooks":"/api/v2/projects/164/playbooks/","project_updates":"/api/v2/projects/164/project_updates/","schedules":"/api/v2/projects/164/schedules/","scm_inventory_sources":"/api/v2/projects/164/scm_inventory_sources/","teams":"/api/v2/projects/164/teams/","update":"/api/v2/projects/164/update/"},"scm_branch":"","scm_clean":false,"scm_delete_on_update":false,"scm_refspec":"","scm_revision":"","scm_track_submodules":false,"scm_type":"","scm_update_cache_timeout":0,"scm_update_on_launch":false,"scm_url":"","signature_validation_credential":null,"status":"missing","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the project","id":3338,"name":"Admin"},"read_role":{"description":"May view settings for the project","id":3341,"name":"Read"},"update_role":{"description":"May update the project","id":3340,"name":"Update"},"use_role":{"description":"Can use the project in a job template","id":3339,"name":"Use"}},"organization":{"description":"","id":143,"name":"ap-org2-178012347643231"},"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":false,"delete":true,"edit":true,"schedule":false,"start":false}},"timeout":0,"type":"project","url":"/api/v2/projects/164/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2550"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 1ff9aa043e8543acb8b9db4aaa3a4764
+            X-Api-Time:
+                - 0.275s
+            X-Api-Total-Time:
+                - 0.282s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 283.97475ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/projects/164/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 5f6462581bd7448d8f2f355d9dd22967
+            X-Api-Time:
+                - 0.326s
+            X-Api-Total-Time:
+                - 0.344s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 346.094542ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/projects/164/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 48
+        body: '{"detail":"No Project matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "48"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 777736baff2742669f6b901b46d78d05
+            X-Api-Time:
+                - 0.273s
+            X-Api-Total-Time:
+                - 0.281s
+        status: 404 Not Found
+        code: 404
+        duration: 285.440375ms
+
+provenance:
+  recorded_at: "2026-05-30T06:45:27Z"
+  host: "localhost:30080"
+  api_version: "nginx"

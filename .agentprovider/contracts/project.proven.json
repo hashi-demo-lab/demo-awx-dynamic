@@ -1,0 +1,23 @@
+{
+  "contract": "project",
+  "contract_hash": "sha256:5e77fa89c0b7a8532c005be56c3b911288feadc74274b3202fa4add46917c41d",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "import_reconstructs",
+    "id_stable_across_update",
+    "optional_default_consistency"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "settable_coverage": 1,
+  "cassette": "../cassettes/project.yaml.cassette.yaml",
+  "cassette_hash": "sha256:a5f39dd0223a701250fe8aed65fe7059792afa548ffa5d501454584d8058df23",
+  "generated_at": "2026-05-30T06:46:05Z"
+}
