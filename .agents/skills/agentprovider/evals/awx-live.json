@@ -1,7 +1,15 @@
 {
   "skill_name": "agentprovider",
   "eval_kind": "live",
-  "notes": "Live, full-stack AWX eval for the agentprovider skill. Unlike evals.json (offline, fixtures + `conform` oracle, CI-reproducible), this one runs end to end against a real AWX-on-Docker target with mutations and a real `terraform apply`, so it is NOT offline/CI-reproducible. It mirrors the demo / 5-round benchmark and covers all three contract kinds: author the full AWX provider surface from scratch (4 CRUD resources + 1 data source + 2 actions: an awx_job_launch and an aap_workflow_job_launch), prove each with `conform`, then apply real Terraform and execute an AWX job and a workflow job. Run it from a clean slate (no pre-existing awx_* contracts/cassettes/examples). The agent should author entirely from the skill references (0 engine-Go reads is the efficiency target).",
+  "notes": "Live, full-stack AWX eval for the agentprovider skill. Unlike evals.json (offline, fixtures + `conform` oracle, CI-reproducible), this one runs end to end against a real AWX-on-Docker target with mutations and a real `terraform apply`, so it is NOT offline/CI-reproducible. It mirrors the demo / 5-round benchmark and covers all three contract kinds: author the full AWX provider surface from scratch (4 CRUD resources + 1 data source + 2 actions: an awx_job_launch and an aap_workflow_job_launch), prove each with `conform`, then apply real Terraform and execute an AWX job and a workflow job. Run it from a clean slate (no pre-existing awx_* contracts/cassettes/examples). The agent should author entirely from the skill references (0 engine-Go reads is the efficiency target). The introspect-first loop is in scope: when AWX can describe its create/update surface, run `agentprovider introspect` (read-only OPTIONS discovery) before bootstrapping each resource — note that AWX only returns the actions.POST descriptor to a write-scoped token, so a read-only token degrades introspect to source:sample/confidence:reduced.",
+  "run_config": {
+    "eval_execution_model": "sonnet",
+    "eval_execution_concurrency": "concurrent",
+    "skill_uplift_model": "opus",
+    "note": "Harness directive (NOT part of the task prompt the agent-under-test follows): run the eval — i.e. execute the skill under test — on CONCURRENT sonnet agents, one per contract, launched in the same turn so they author/record/conform in parallel (cost-efficient and wall-clock-fast); do skill uplift (analyzing run results/friction and rewriting SKILL.md + references) on opus. The model split keeps execution cheap while reserving the stronger model for the judgement-heavy improvement pass.",
+    "concurrency": "Fan the 7 contracts out across concurrent sonnet sub-runs in one turn rather than authoring them serially. Pre-create the shared FK fixtures (one org + one inventory) and discover the read/launch fixtures (an existing job_template id, the workflow_job_template id) BEFORE fan-out, then pass those ids to the agents so each contract's record step has real parents — this removes the cross-contract ordering dependency and lets all 7 run at once. Give each created AWX object a unique name to avoid collisions between concurrent mutating records.",
+    "output_style": "Efficiency-oriented: per-contract authoring is delegated to the concurrent sonnet sub-runs, which report concise per-command summaries + the gates that matter (conform overall_passed, the completeness/classification gate). Raw-output-on-screen is NOT required (this reverses the iteration-10 'leave raw output on screen' stance in favour of consider-efficiency)."
+  },
   "requires": [
     "AWX reachable at $AWX (default http://localhost:30080), admin creds in $AWX_USERNAME/$AWX_PASSWORD",
     "agentprovider CLI + terraform-provider-dynamic binary built and on PATH (demo/bin) / wired via TF_CLI_CONFIG_FILE dev_overrides",
@@ -9,17 +17,17 @@
     "a workflow job template exists in AWX for aap_workflow_job_launch to target (stock AWX/AAP ships none) — create one or point the action at an existing workflow_job_template id"
   ],
   "setup": [
-    "cd <repo root>",
-    "export PATH=$PWD/demo/bin:$PATH",
-    "export AWX_PASSWORD=$(cat demo/awx/.admin_password)",
-    "export AWX=${AWX:-http://localhost:30080}",
-    "export AGENTPROVIDER_CONTRACTS=$PWD/.agentprovider/contracts",
-    "sed 's#DEV_OVERRIDE_BIN_DIR#'$PWD'/demo/awx/tf/bin#' demo/awx/tf/dev.tfrc > /tmp/awx-dev.tfrc",
-    "export TF_CLI_CONFIG_FILE=/tmp/awx-dev.tfrc",
-    "source .env",
-    "rm -f .agentprovider/contracts/awx_*.yaml .agentprovider/cassettes/awx_*.cassette.yaml",
-    "rm -rf examples/awx demo/awx/tf/.terraform demo/awx/tf/terraform.tfstate demo/awx/tf/terraform.tfstate.backup",
-    "# pre-clean stray AWX objects named agentprovider* from a prior run (org/inventory/host/job_template)"
+    "cd <repo root>  # MUST run from repo root: .env derives AWX_PASSWORD via a relative cat",
+    "set -a; . ./.env; set +a  # exports AWX, AWX_USERNAME, AWX_PASSWORD (persists across later cd)",
+    "agentprovider on PATH (~/.local/bin/agentprovider); terraform-provider-dynamic at repo root, wired via dev_overrides — no PATH entry needed",
+    "printf 'provider_installation {\\n  dev_overrides { \"hashi-demo-lab/dynamic\" = \"'$PWD'\" }\\n  direct {}\\n}\\n' > examples/awx/dev.tfrc",
+    "export TF_CLI_CONFIG_FILE=$PWD/examples/awx/dev.tfrc  # dev_overrides skips init; go straight to plan/apply",
+    "export AGENTPROVIDER_CONTRACTS=$PWD/.agentprovider/contracts  # provider CWD becomes examples/awx, so set abs contracts dir",
+    "rm -f .agentprovider/contracts/awx_*.yaml .agentprovider/contracts/aap_*.yaml .agentprovider/cassettes/awx_*.cassette.yaml .agentprovider/cassettes/aap_*.cassette.yaml",
+    "rm -rf examples/awx/main.tf examples/awx/.terraform examples/awx/terraform.tfstate examples/awx/terraform.tfstate.backup",
+    "# introspect needs a bearer token: mint one — curl -s -u \"$AWX_USERNAME:$AWX_PASSWORD\" -X POST $AWX/api/v2/tokens/ -d '{\"scope\":\"write\"}' — and export it as AWX_TOKEN for --auth-env",
+    "# binaries: if agentprovider lacks `introspect`, rebuild from the engine source (research-dynamic-provider) — `go build -o <dest> ./cli/agentprovider` and `go build -o <repo>/terraform-provider-dynamic .`",
+    "# pre-clean stray AWX objects named apeval-*/agentprovider* from a prior run (org/inventory/host/job_template); keep the id-56 workflow fixture and Default org"
   ],
   "oracle": "All 7 contracts `conform --json` overall_passed:true (incl. the data source via read_returns_expected and both actions via action_returns_expected) AND `terraform -chdir=examples/awx apply` succeeds AND the awx_job_launch action launches a real AWX job AND the aap_workflow_job_launch action launches a real AWX workflow job (verify both via the AWX API) AND the data source reads an existing AWX object AND a second `plan` is a no-op (idempotent) AND `completeness <contract> --base-url $AWX --min-completeness 90` passes for each CRUD resource and the data source (host models `groups`; the data source models `url`/`named_url`). AWX serves no OpenAPI, so completeness uses the live response-union source.",
   "evals": [
@@ -28,9 +36,11 @@
       "name": "awx-provider-from-scratch",
       "coverage": "live",
       "requires": ["awx", "terraform"],
-      "prompt": "Use the agentprovider skill to create a new AWX provider using terraform-provider-dynamic from scratch, covering all three contract kinds. Assume there are no pre-existing AWX contracts, cassettes, Terraform examples, or Terraform state to reuse; author fresh contracts under .agentprovider/contracts and fresh cassettes under .agentprovider/cassettes. Author: (1) RESOURCES for organization, inventory, job template, and hosts (full CRUD); (2) at least one DATA SOURCE that looks up an existing AWX object by id (e.g. an organization or job template) and exposes its computed fields; and (3) TWO Terraform ACTIONS: one named awx_job_launch that launches a job template (POST /api/v2/job_templates/${id}/launch/), and one named aap_workflow_job_launch that launches a workflow job template (POST /api/v2/workflow_job_templates/${id}/launch/) — so Terraform can execute both a job and a workflow job. Use the local AWX credentials from the sourced .env file (basic auth via ${env.AWX_USERNAME}/${env.AWX_PASSWORD}, base_url ${env.AWX}); do not print or read .env contents. Follow the standard agentprovider workflow with --allow-mutations, run agentprovider conform until every contract is proven, then create fresh Terraform under examples/awx (consuming the resources, the data source, and both actions) and apply it to validate. Keep credentials out of all files and print PROVEN when the contracts conform and terraform apply succeeds.",
+      "prompt": "Use the repo-local agentprovider skill to build a fresh Red Hat Ansible AWX provider with terraform-provider-dynamic against live AWX, then prove it with terraform apply. Show the completeness/classification gate for each contract. Provide the agentprovider commands run and summaries when useful; consider efficiency. Assume there are no pre-existing AWX contracts, cassettes, Terraform examples, or Terraform state to reuse; author fresh contracts under .agentprovider/contracts and fresh cassettes under .agentprovider/cassettes. Author: (1) RESOURCES for organization, inventory, job_template, and host (full CRUD); (2) at least one DATA SOURCE that looks up an existing AWX object by id and exposes its computed fields; and (3) TWO Terraform ACTIONS: one named awx_job_launch that launches a job template (POST /api/v2/job_templates/${id}/launch/), and one named aap_workflow_job_launch that launches a workflow job template (POST /api/v2/workflow_job_templates/${id}/launch/). Use the local AWX credentials from the sourced .env file (basic auth via ${env.AWX_USERNAME}/${env.AWX_PASSWORD}, base_url ${env.AWX}); do not print or read .env contents. Follow the standard agentprovider loop — introspect (when the live API can describe its surface) then bootstrap, preflight, record with --allow-mutations, conform until overall_passed, the completeness/classification gate, and mutation-check/emit-proof — then create fresh Terraform under examples/awx (consuming the resources, the data source, and both actions) and apply it to validate. Keep credentials out of all files and print PROVEN only when every contract conforms, the completeness/classification gate has been shown for each, and terraform apply succeeds.",
       "assertions": [
         {"text": "all 7 AWX contracts conform with overall_passed:true (4 full-CRUD resources 8/8 incl. the import_reconstructs + id_stable_across_update floor; 1 data source via read_returns_expected; 2 action contracts — awx_job_launch and aap_workflow_job_launch — 1/1 each via action_returns_expected)", "kind": "all_contracts_proven"},
+        {"text": "agentprovider introspect was run for read-only field discovery before authoring each resource (or the summary states why no live discovery path existed); against AWX this returns source:options/confidence:high only with a write-scoped token", "kind": "introspect_run"},
+        {"text": "the completeness/classification gate is shown for each resource and the data source — completeness_percent plus the settable-input classification (settable_coverage / ignored_settable) — and no settable input was parked in ignore_server_fields to inflate the number (no green-washing; the verbose job_template models its full ask_*_on_launch + behavior-toggle surface)", "kind": "completeness_gate_shown"},
         {"text": "a data source (kind DataSource) reads an existing AWX object by id and projects at least one real computed output, proven via read_returns_expected (no create/update/delete lifecycle)", "kind": "datasource_modeled"},
         {"text": "terraform apply succeeded against live AWX (org -> inventory -> host + job_template created; the data source resolved an existing object)", "kind": "terraform_apply_succeeded"},
         {"text": "the awx_job_launch action executed a real AWX job (verifiable via the AWX jobs API)", "kind": "action_executed_a_job"},
@@ -44,7 +54,7 @@
         "go_internal_files_read": 0,
         "conform_repair_iterations": 0,
         "record_plan_time_surprises": 0,
-        "note": "Targets from the 5-round benchmark: an agent should author the whole provider from the skill references alone (0 engine-Go reads), with no conform repair loops and no settings discovered at record/plan time. Baseline (pre-uplift skill) averaged ~3.3 Go-reads and 1 repair."
+        "note": "Targets from the 5-round benchmark: an agent should author the whole provider from the skill references alone (0 engine-Go reads), with no conform repair loops and no settings discovered at record/plan time. Baseline (pre-uplift skill) averaged ~3.3 Go-reads and 1 repair. Efficiency is now measured at the harness level too: per-contract authoring may be parallelised across sonnet sub-runs and reported as concise summaries (raw-output-on-screen is not required); skill uplift from the run is done on opus. introspect (when available) should replace blind bootstrapping of resource field shapes."
       },
       "cleanup": "terraform -chdir=examples/awx destroy (or delete AWX objects named agentprovider*: organizations, inventories, hosts, job_templates), then rm -rf examples/awx + tf state and the authored .agentprovider/{contracts,cassettes}/awx_* files."
     }
