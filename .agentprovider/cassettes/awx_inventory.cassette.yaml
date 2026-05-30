@@ -6,9 +6,9 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 187
+        content_length: 133
         host: localhost:30080
-        body: '{"description":"apeval inventory for agentprovider conformance testing","kind":"","name":"apeval-fresh-inv-a7k2","organization":115,"prevent_instance_group_fallback":false,"variables":""}'
+        body: '{"description":"","kind":"","name":"apeval-fresh-inv-b7f2","organization":115,"prevent_instance_group_fallback":false,"variables":""}'
         headers:
             Accept:
                 - application/json
@@ -24,8 +24,8 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2466
-        body: '{"created":"2026-05-29T23:06:44.799893Z","description":"apeval inventory for agentprovider conformance testing","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":156,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T23:06:44.799900Z","name":"apeval-fresh-inv-a7k2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/156/access_list/","activity_stream":"/api/v2/inventories/156/activity_stream/","ad_hoc_commands":"/api/v2/inventories/156/ad_hoc_commands/","copy":"/api/v2/inventories/156/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/156/groups/","hosts":"/api/v2/inventories/156/hosts/","instance_groups":"/api/v2/inventories/156/instance_groups/","inventory_sources":"/api/v2/inventories/156/inventory_sources/","job_templates":"/api/v2/inventories/156/job_templates/","labels":"/api/v2/inventories/156/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-a7k2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/156/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/156/root_groups/","script":"/api/v2/inventories/156/script/","tree":"/api/v2/inventories/156/tree/","update_inventory_sources":"/api/v2/inventories/156/update_inventory_sources/","variable_data":"/api/v2/inventories/156/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2625,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2623,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2627,"name":"Read"},"update_role":{"description":"May update the inventory","id":2624,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2626,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/156/","variables":""}'
+        content_length: 2412
+        body: '{"created":"2026-05-30T01:51:19.244697Z","description":"","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":158,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-30T01:51:19.244709Z","name":"apeval-fresh-inv-b7f2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/158/access_list/","activity_stream":"/api/v2/inventories/158/activity_stream/","ad_hoc_commands":"/api/v2/inventories/158/ad_hoc_commands/","copy":"/api/v2/inventories/158/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/158/groups/","hosts":"/api/v2/inventories/158/hosts/","instance_groups":"/api/v2/inventories/158/instance_groups/","inventory_sources":"/api/v2/inventories/158/inventory_sources/","job_templates":"/api/v2/inventories/158/job_templates/","labels":"/api/v2/inventories/158/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-b7f2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/158/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/158/root_groups/","script":"/api/v2/inventories/158/script/","tree":"/api/v2/inventories/158/tree/","update_inventory_sources":"/api/v2/inventories/158/update_inventory_sources/","variable_data":"/api/v2/inventories/158/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2667,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2665,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2669,"name":"Read"},"update_role":{"description":"May update the inventory","id":2666,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2668,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/158/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -36,11 +36,11 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2466"
+                - "2412"
             Content-Type:
                 - application/json
             Location:
-                - /api/v2/inventories/156/
+                - /api/v2/inventories/158/
             Pragma:
                 - no-cache
             Server:
@@ -56,18 +56,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 185bff31a973463c97f8be7064078eca
+                - b87bd6766b2b4919b3d11d147a84b22d
             X-Api-Time:
-                - 0.315s
+                - 0.336s
             X-Api-Total-Time:
-                - 0.328s
+                - 0.346s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 201 Created
         code: 201
-        duration: 333.138042ms
+        duration: 351.546125ms
     - id: 1
       request:
         proto: HTTP/1.1
@@ -84,14 +84,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/156/
+        url: http://localhost:30080/api/v2/inventories/158/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2466
-        body: '{"created":"2026-05-29T23:06:44.799893Z","description":"apeval inventory for agentprovider conformance testing","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":156,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T23:06:44.799900Z","name":"apeval-fresh-inv-a7k2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/156/access_list/","activity_stream":"/api/v2/inventories/156/activity_stream/","ad_hoc_commands":"/api/v2/inventories/156/ad_hoc_commands/","copy":"/api/v2/inventories/156/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/156/groups/","hosts":"/api/v2/inventories/156/hosts/","instance_groups":"/api/v2/inventories/156/instance_groups/","inventory_sources":"/api/v2/inventories/156/inventory_sources/","job_templates":"/api/v2/inventories/156/job_templates/","labels":"/api/v2/inventories/156/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-a7k2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/156/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/156/root_groups/","script":"/api/v2/inventories/156/script/","tree":"/api/v2/inventories/156/tree/","update_inventory_sources":"/api/v2/inventories/156/update_inventory_sources/","variable_data":"/api/v2/inventories/156/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2625,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2623,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2627,"name":"Read"},"update_role":{"description":"May update the inventory","id":2624,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2626,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/156/","variables":""}'
+        content_length: 2412
+        body: '{"created":"2026-05-30T01:51:19.244697Z","description":"","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":158,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-30T01:51:19.244709Z","name":"apeval-fresh-inv-b7f2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/158/access_list/","activity_stream":"/api/v2/inventories/158/activity_stream/","ad_hoc_commands":"/api/v2/inventories/158/ad_hoc_commands/","copy":"/api/v2/inventories/158/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/158/groups/","hosts":"/api/v2/inventories/158/hosts/","instance_groups":"/api/v2/inventories/158/instance_groups/","inventory_sources":"/api/v2/inventories/158/inventory_sources/","job_templates":"/api/v2/inventories/158/job_templates/","labels":"/api/v2/inventories/158/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-b7f2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/158/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/158/root_groups/","script":"/api/v2/inventories/158/script/","tree":"/api/v2/inventories/158/tree/","update_inventory_sources":"/api/v2/inventories/158/update_inventory_sources/","variable_data":"/api/v2/inventories/158/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2667,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2665,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2669,"name":"Read"},"update_role":{"description":"May update the inventory","id":2666,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2668,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/158/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -102,7 +102,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2466"
+                - "2412"
             Content-Type:
                 - application/json
             Pragma:
@@ -120,26 +120,26 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 8047a8fb8e63426a855489fca878c121
+                - 7dd8edeca8624f7490b0a236980c9d75
             X-Api-Time:
-                - 0.280s
+                - 0.282s
             X-Api-Total-Time:
-                - 0.287s
+                - 0.289s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 288.687959ms
+        duration: 291.193375ms
     - id: 2
       request:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 188
+        content_length: 171
         host: localhost:30080
-        body: '{"description":"apeval inventory updated description","host_filter":null,"kind":"","name":"apeval-fresh-inv-a7k2","organization":115,"prevent_instance_group_fallback":false,"variables":""}'
+        body: '{"description":"updated description","host_filter":null,"kind":"","name":"apeval-fresh-inv-b7f2","organization":115,"prevent_instance_group_fallback":false,"variables":""}'
         headers:
             Accept:
                 - application/json
@@ -149,14 +149,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/156/
+        url: http://localhost:30080/api/v2/inventories/158/
         method: PATCH
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2448
-        body: '{"created":"2026-05-29T23:06:44.799893Z","description":"apeval inventory updated description","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":156,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T23:06:46.056513Z","name":"apeval-fresh-inv-a7k2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/156/access_list/","activity_stream":"/api/v2/inventories/156/activity_stream/","ad_hoc_commands":"/api/v2/inventories/156/ad_hoc_commands/","copy":"/api/v2/inventories/156/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/156/groups/","hosts":"/api/v2/inventories/156/hosts/","instance_groups":"/api/v2/inventories/156/instance_groups/","inventory_sources":"/api/v2/inventories/156/inventory_sources/","job_templates":"/api/v2/inventories/156/job_templates/","labels":"/api/v2/inventories/156/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-a7k2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/156/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/156/root_groups/","script":"/api/v2/inventories/156/script/","tree":"/api/v2/inventories/156/tree/","update_inventory_sources":"/api/v2/inventories/156/update_inventory_sources/","variable_data":"/api/v2/inventories/156/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2625,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2623,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2627,"name":"Read"},"update_role":{"description":"May update the inventory","id":2624,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2626,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/156/","variables":""}'
+        content_length: 2431
+        body: '{"created":"2026-05-30T01:51:19.244697Z","description":"updated description","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":158,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-30T01:51:20.526354Z","name":"apeval-fresh-inv-b7f2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/158/access_list/","activity_stream":"/api/v2/inventories/158/activity_stream/","ad_hoc_commands":"/api/v2/inventories/158/ad_hoc_commands/","copy":"/api/v2/inventories/158/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/158/groups/","hosts":"/api/v2/inventories/158/hosts/","instance_groups":"/api/v2/inventories/158/instance_groups/","inventory_sources":"/api/v2/inventories/158/inventory_sources/","job_templates":"/api/v2/inventories/158/job_templates/","labels":"/api/v2/inventories/158/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-b7f2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/158/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/158/root_groups/","script":"/api/v2/inventories/158/script/","tree":"/api/v2/inventories/158/tree/","update_inventory_sources":"/api/v2/inventories/158/update_inventory_sources/","variable_data":"/api/v2/inventories/158/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2667,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2665,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2669,"name":"Read"},"update_role":{"description":"May update the inventory","id":2666,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2668,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/158/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -167,7 +167,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2448"
+                - "2431"
             Content-Type:
                 - application/json
             Pragma:
@@ -185,18 +185,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - a9dee25c3a8e4918a2597cd35ae532e3
+                - d85ae58a24d74a28afb280a7345179bc
             X-Api-Time:
-                - 0.302s
+                - 0.294s
             X-Api-Total-Time:
-                - 0.311s
+                - 0.304s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 313.762209ms
+        duration: 306.318291ms
     - id: 3
       request:
         proto: HTTP/1.1
@@ -213,14 +213,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/156/
+        url: http://localhost:30080/api/v2/inventories/158/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2448
-        body: '{"created":"2026-05-29T23:06:44.799893Z","description":"apeval inventory updated description","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":156,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T23:06:46.056513Z","name":"apeval-fresh-inv-a7k2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/156/access_list/","activity_stream":"/api/v2/inventories/156/activity_stream/","ad_hoc_commands":"/api/v2/inventories/156/ad_hoc_commands/","copy":"/api/v2/inventories/156/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/156/groups/","hosts":"/api/v2/inventories/156/hosts/","instance_groups":"/api/v2/inventories/156/instance_groups/","inventory_sources":"/api/v2/inventories/156/inventory_sources/","job_templates":"/api/v2/inventories/156/job_templates/","labels":"/api/v2/inventories/156/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-a7k2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/156/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/156/root_groups/","script":"/api/v2/inventories/156/script/","tree":"/api/v2/inventories/156/tree/","update_inventory_sources":"/api/v2/inventories/156/update_inventory_sources/","variable_data":"/api/v2/inventories/156/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2625,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2623,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2627,"name":"Read"},"update_role":{"description":"May update the inventory","id":2624,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2626,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/156/","variables":""}'
+        content_length: 2431
+        body: '{"created":"2026-05-30T01:51:19.244697Z","description":"updated description","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":158,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-30T01:51:20.526354Z","name":"apeval-fresh-inv-b7f2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/158/access_list/","activity_stream":"/api/v2/inventories/158/activity_stream/","ad_hoc_commands":"/api/v2/inventories/158/ad_hoc_commands/","copy":"/api/v2/inventories/158/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/158/groups/","hosts":"/api/v2/inventories/158/hosts/","instance_groups":"/api/v2/inventories/158/instance_groups/","inventory_sources":"/api/v2/inventories/158/inventory_sources/","job_templates":"/api/v2/inventories/158/job_templates/","labels":"/api/v2/inventories/158/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-b7f2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/158/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/158/root_groups/","script":"/api/v2/inventories/158/script/","tree":"/api/v2/inventories/158/tree/","update_inventory_sources":"/api/v2/inventories/158/update_inventory_sources/","variable_data":"/api/v2/inventories/158/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2667,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2665,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2669,"name":"Read"},"update_role":{"description":"May update the inventory","id":2666,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2668,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/158/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -231,7 +231,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2448"
+                - "2431"
             Content-Type:
                 - application/json
             Pragma:
@@ -249,18 +249,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 5102ef74e77e4e8db7a2702361878b64
+                - 9f0a6e79f018446f9f2581ff824b7265
             X-Api-Time:
-                - 0.288s
+                - 0.302s
             X-Api-Total-Time:
-                - 0.294s
+                - 0.309s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 296.362708ms
+        duration: 311.876083ms
     - id: 4
       request:
         proto: HTTP/1.1
@@ -277,14 +277,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/156/
+        url: http://localhost:30080/api/v2/inventories/158/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 2448
-        body: '{"created":"2026-05-29T23:06:44.799893Z","description":"apeval inventory updated description","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":156,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-29T23:06:46.056513Z","name":"apeval-fresh-inv-a7k2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/156/access_list/","activity_stream":"/api/v2/inventories/156/activity_stream/","ad_hoc_commands":"/api/v2/inventories/156/ad_hoc_commands/","copy":"/api/v2/inventories/156/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/156/groups/","hosts":"/api/v2/inventories/156/hosts/","instance_groups":"/api/v2/inventories/156/instance_groups/","inventory_sources":"/api/v2/inventories/156/inventory_sources/","job_templates":"/api/v2/inventories/156/job_templates/","labels":"/api/v2/inventories/156/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-a7k2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/156/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/156/root_groups/","script":"/api/v2/inventories/156/script/","tree":"/api/v2/inventories/156/tree/","update_inventory_sources":"/api/v2/inventories/156/update_inventory_sources/","variable_data":"/api/v2/inventories/156/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2625,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2623,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2627,"name":"Read"},"update_role":{"description":"May update the inventory","id":2624,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2626,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/156/","variables":""}'
+        content_length: 2431
+        body: '{"created":"2026-05-30T01:51:19.244697Z","description":"updated description","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":158,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-30T01:51:20.526354Z","name":"apeval-fresh-inv-b7f2","organization":115,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/158/access_list/","activity_stream":"/api/v2/inventories/158/activity_stream/","ad_hoc_commands":"/api/v2/inventories/158/ad_hoc_commands/","copy":"/api/v2/inventories/158/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/158/groups/","hosts":"/api/v2/inventories/158/hosts/","instance_groups":"/api/v2/inventories/158/instance_groups/","inventory_sources":"/api/v2/inventories/158/inventory_sources/","job_templates":"/api/v2/inventories/158/job_templates/","labels":"/api/v2/inventories/158/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apeval-fresh-inv-b7f2++apeval-fresh-fk-org/","object_roles":"/api/v2/inventories/158/object_roles/","organization":"/api/v2/organizations/115/","root_groups":"/api/v2/inventories/158/root_groups/","script":"/api/v2/inventories/158/script/","tree":"/api/v2/inventories/158/tree/","update_inventory_sources":"/api/v2/inventories/158/update_inventory_sources/","variable_data":"/api/v2/inventories/158/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":2667,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":2665,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":2669,"name":"Read"},"update_role":{"description":"May update the inventory","id":2666,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":2668,"name":"Use"}},"organization":{"description":"FK fixture for fresh build record steps","id":115,"name":"apeval-fresh-fk-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/158/","variables":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -295,7 +295,7 @@ interactions:
             Connection:
                 - keep-alive
             Content-Length:
-                - "2448"
+                - "2431"
             Content-Type:
                 - application/json
             Pragma:
@@ -313,18 +313,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - d3f5b75bc880466d837def8fde4322df
+                - 000089b2cf6844a6830d6a15da8f9879
             X-Api-Time:
-                - 0.277s
+                - 0.281s
             X-Api-Total-Time:
-                - 0.284s
+                - 0.289s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 286.200833ms
+        duration: 291.92675ms
     - id: 5
       request:
         proto: HTTP/1.1
@@ -341,7 +341,7 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/156/
+        url: http://localhost:30080/api/v2/inventories/158/
         method: DELETE
       response:
         proto: HTTP/1.1
@@ -369,14 +369,14 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 00332d81a99b4dd48cdbadc401ed89df
+                - 14befab14fac4a2b9fe1ae822ab5c49e
             X-Api-Time:
-                - 0.304s
+                - 0.311s
             X-Api-Total-Time:
-                - 0.320s
+                - 0.322s
         status: 202 Accepted
         code: 202
-        duration: 322.271333ms
+        duration: 324.650042ms
     - id: 6
       request:
         proto: HTTP/1.1
@@ -393,7 +393,7 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/inventories/156/
+        url: http://localhost:30080/api/v2/inventories/158/
         method: GET
       response:
         proto: HTTP/1.1
@@ -423,16 +423,16 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 4040f9af7e7c4d10bac7ebb58a6413e6
+                - 2f5e8981f45d475388b536b947dec87d
             X-Api-Time:
-                - 0.275s
+                - 0.267s
             X-Api-Total-Time:
-                - 0.283s
+                - 0.275s
         status: 404 Not Found
         code: 404
-        duration: 284.802625ms
+        duration: 277.099458ms
 
 provenance:
-  recorded_at: "2026-05-29T23:06:48Z"
+  recorded_at: "2026-05-30T01:51:23Z"
   host: "localhost:30080"
   api_version: "nginx"

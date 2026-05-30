@@ -24,7 +24,7 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: 1943
-        body: '{"allow_simultaneous":false,"canceled_on":null,"created":"2026-05-29T23:07:19.313003Z","description":"fixture for workflow launch action","elapsed":0.0,"extra_vars":"{}","failed":false,"finished":null,"id":244,"ignored_fields":{},"inventory":null,"is_sliced_job":false,"job_args":"","job_cwd":"","job_env":{},"job_explanation":"","job_tags":null,"job_template":null,"launch_type":"manual","launched_by":{"id":1,"name":"admin","type":"user","url":"/api/v2/users/1/"},"limit":null,"modified":"2026-05-29T23:07:19.322119Z","name":"tf-demo-wfjt-fixture","related":{"activity_stream":"/api/v2/workflow_jobs/244/activity_stream/","cancel":"/api/v2/workflow_jobs/244/cancel/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_jobs/244/labels/","modified_by":"/api/v2/users/1/","notifications":"/api/v2/workflow_jobs/244/notifications/","relaunch":"/api/v2/workflow_jobs/244/relaunch/","unified_job_template":"/api/v2/workflow_job_templates/56/","workflow_job_template":"/api/v2/workflow_job_templates/56/","workflow_nodes":"/api/v2/workflow_jobs/244/workflow_nodes/"},"result_traceback":"","scm_branch":null,"skip_tags":null,"started":null,"status":"pending","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"organization":{"description":"","id":1,"name":"Default"},"unified_job_template":{"description":"fixture for workflow launch action","id":56,"name":"tf-demo-wfjt-fixture","unified_job_type":"workflow_job"},"user_capabilities":{"delete":true,"start":true},"workflow_job_template":{"description":"fixture for workflow launch action","id":56,"name":"tf-demo-wfjt-fixture"}},"type":"workflow_job","unified_job_template":56,"url":"/api/v2/workflow_jobs/244/","webhook_credential":null,"webhook_guid":"","webhook_service":"","work_unit_id":null,"workflow_job":244,"workflow_job_template":56}'
+        body: '{"allow_simultaneous":false,"canceled_on":null,"created":"2026-05-30T01:51:42.463926Z","description":"fixture for workflow launch action","elapsed":0.0,"extra_vars":"{}","failed":false,"finished":null,"id":253,"ignored_fields":{},"inventory":null,"is_sliced_job":false,"job_args":"","job_cwd":"","job_env":{},"job_explanation":"","job_tags":null,"job_template":null,"launch_type":"manual","launched_by":{"id":1,"name":"admin","type":"user","url":"/api/v2/users/1/"},"limit":null,"modified":"2026-05-30T01:51:42.475647Z","name":"tf-demo-wfjt-fixture","related":{"activity_stream":"/api/v2/workflow_jobs/253/activity_stream/","cancel":"/api/v2/workflow_jobs/253/cancel/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_jobs/253/labels/","modified_by":"/api/v2/users/1/","notifications":"/api/v2/workflow_jobs/253/notifications/","relaunch":"/api/v2/workflow_jobs/253/relaunch/","unified_job_template":"/api/v2/workflow_job_templates/56/","workflow_job_template":"/api/v2/workflow_job_templates/56/","workflow_nodes":"/api/v2/workflow_jobs/253/workflow_nodes/"},"result_traceback":"","scm_branch":null,"skip_tags":null,"started":null,"status":"pending","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"organization":{"description":"","id":1,"name":"Default"},"unified_job_template":{"description":"fixture for workflow launch action","id":56,"name":"tf-demo-wfjt-fixture","unified_job_type":"workflow_job"},"user_capabilities":{"delete":true,"start":true},"workflow_job_template":{"description":"fixture for workflow launch action","id":56,"name":"tf-demo-wfjt-fixture"}},"type":"workflow_job","unified_job_template":56,"url":"/api/v2/workflow_jobs/253/","webhook_credential":null,"webhook_guid":"","webhook_service":"","work_unit_id":null,"workflow_job":253,"workflow_job_template":56}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -39,7 +39,7 @@ interactions:
             Content-Type:
                 - application/json
             Location:
-                - /api/v2/workflow_jobs/244/
+                - /api/v2/workflow_jobs/253/
             Pragma:
                 - no-cache
             Server:
@@ -55,7 +55,7 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 15d26f1e68184ba68d918cea92ec30b9
+                - 148bd22a08b24603b76b498f4757c6b1
             X-Api-Time:
                 - 0.321s
             X-Api-Total-Time:
@@ -66,9 +66,9 @@ interactions:
                 - DENY
         status: 201 Created
         code: 201
-        duration: 341.157209ms
+        duration: 339.659709ms
 
 provenance:
-  recorded_at: "2026-05-29T23:07:19Z"
+  recorded_at: "2026-05-30T01:51:42Z"
   host: "localhost:30080"
   api_version: "nginx"

@@ -3,143 +3,188 @@ type: awx_job_template_ds
 kind: DataSource
 
 connection:
-  base_url: ${env.AWX}
-  allow_insecure: true
-  allow_private_host: true
-  headers:
-    Content-Type: application/json
-  auth:
-    type: basic
-    username: ${env.AWX_USERNAME}
-    password: ${env.AWX_PASSWORD}
+    base_url: ${env.AWX}
+    allow_insecure: true
+    allow_private_host: true
+    headers:
+        Content-Type: application/json
+    auth:
+        type: basic
+        username: ${env.AWX_USERNAME}
+        password: ${env.AWX_PASSWORD}
 
 identity:
-  attribute: id
-  known_after: read
-  response_field: id
-
-schema:
-  attributes:
-    id:
-      required: true
-      type: string
-    name:
-      computed: true
-      type: string
-    description:
-      computed: true
-      type: string
-    job_type:
-      computed: true
-      type: string
-    inventory:
-      computed: true
-      type: number
-    project:
-      computed: true
-      type: number
-    playbook:
-      computed: true
-      type: string
-    scm_branch:
-      computed: true
-      type: string
-    forks:
-      computed: true
-      type: number
-    limit:
-      computed: true
-      type: string
-    verbosity:
-      computed: true
-      type: number
-    extra_vars:
-      computed: true
-      type: string
-    job_tags:
-      computed: true
-      type: string
-    skip_tags:
-      computed: true
-      type: string
-    timeout:
-      computed: true
-      type: number
-    organization:
-      computed: true
-      type: number
-    status:
-      computed: true
-      type: string
-    survey_enabled:
-      computed: true
-      type: string
-    become_enabled:
-      computed: true
-      type: string
-    diff_mode:
-      computed: true
-      type: string
-    allow_simultaneous:
-      computed: true
-      type: string
-    job_slice_count:
-      computed: true
-      type: number
-
-ignore_server_fields:
-  - related
-  - summary_fields
-  - type
-  - url
-  - created
-  - modified
-  - last_job_run
-  - last_job_failed
-  - next_job_run
-  - execution_environment
-  - host_config_key
-  - ask_scm_branch_on_launch
-  - ask_diff_mode_on_launch
-  - ask_variables_on_launch
-  - ask_limit_on_launch
-  - ask_tags_on_launch
-  - ask_skip_tags_on_launch
-  - ask_job_type_on_launch
-  - ask_verbosity_on_launch
-  - ask_inventory_on_launch
-  - ask_credential_on_launch
-  - ask_execution_environment_on_launch
-  - ask_labels_on_launch
-  - ask_forks_on_launch
-  - ask_job_slice_count_on_launch
-  - ask_timeout_on_launch
-  - ask_instance_groups_on_launch
-  - force_handlers
-  - start_at_task
-  - use_fact_cache
-  - webhook_service
-  - webhook_credential
-  - prevent_instance_group_fallback
-  - custom_virtualenv
+    attribute: id
+    response_field: id
 
 lifecycle:
-  read:
-    method: GET
-    path: "/api/v2/job_templates/${id}/"
-    expect_status:
-      - 200
+    read:
+        method: GET
+        path: "/api/v2/job_templates/${id}/"
+        expect_status:
+            - 200
+        not_found_status:
+            - 404
 
 conformance:
-  example:
-    id: "70"
-    name: "ap-demo-jt-05290835"
-    status: "successful"
-  invariants:
-    - read_returns_expected
-    - state_matches_expect
-  expect:
-    name: "ap-demo-jt-05290835"
-    status: "successful"
-    id:
-      not_null: true
+    example:
+        id: "70"
+        name: "ap-demo-jt-05290835"
+        status: "successful"
+    expect:
+        id:
+            not_null: true
+    invariants:
+        - read_returns_expected
+        - state_matches_expect
+
+ignore_server_fields:
+    - related
+    - summary_fields
+    - url
+    - type
+    - created
+    - modified
+    - last_job_run
+    - last_job_failed
+    - next_job_run
+    - custom_virtualenv
+    - host_config_key
+
+schema:
+    attributes:
+        id:
+            type: string
+            required: true
+        name:
+            type: string
+            computed: true
+        description:
+            type: string
+            computed: true
+        job_type:
+            type: string
+            computed: true
+        inventory:
+            type: number
+            computed: true
+        project:
+            type: number
+            computed: true
+        playbook:
+            type: string
+            computed: true
+        scm_branch:
+            type: string
+            computed: true
+        forks:
+            type: number
+            computed: true
+        limit:
+            type: string
+            computed: true
+        verbosity:
+            type: number
+            computed: true
+        extra_vars:
+            type: string
+            computed: true
+        job_tags:
+            type: string
+            computed: true
+        skip_tags:
+            type: string
+            computed: true
+        start_at_task:
+            type: string
+            computed: true
+        timeout:
+            type: number
+            computed: true
+        organization:
+            type: number
+            computed: true
+        status:
+            type: string
+            computed: true
+        execution_environment:
+            type: number
+            computed: true
+        force_handlers:
+            type: bool
+            computed: true
+        use_fact_cache:
+            type: bool
+            computed: true
+        become_enabled:
+            type: bool
+            computed: true
+        diff_mode:
+            type: bool
+            computed: true
+        allow_simultaneous:
+            type: bool
+            computed: true
+        survey_enabled:
+            type: bool
+            computed: true
+        prevent_instance_group_fallback:
+            type: bool
+            computed: true
+        job_slice_count:
+            type: number
+            computed: true
+        webhook_service:
+            type: string
+            computed: true
+        webhook_credential:
+            type: number
+            computed: true
+        ask_scm_branch_on_launch:
+            type: bool
+            computed: true
+        ask_diff_mode_on_launch:
+            type: bool
+            computed: true
+        ask_variables_on_launch:
+            type: bool
+            computed: true
+        ask_limit_on_launch:
+            type: bool
+            computed: true
+        ask_tags_on_launch:
+            type: bool
+            computed: true
+        ask_skip_tags_on_launch:
+            type: bool
+            computed: true
+        ask_job_type_on_launch:
+            type: bool
+            computed: true
+        ask_verbosity_on_launch:
+            type: bool
+            computed: true
+        ask_inventory_on_launch:
+            type: bool
+            computed: true
+        ask_credential_on_launch:
+            type: bool
+            computed: true
+        ask_execution_environment_on_launch:
+            type: bool
+            computed: true
+        ask_labels_on_launch:
+            type: bool
+            computed: true
+        ask_forks_on_launch:
+            type: bool
+            computed: true
+        ask_job_slice_count_on_launch:
+            type: bool
+            computed: true
+        ask_timeout_on_launch:
+            type: bool
+            computed: true
+        ask_instance_groups_on_launch:
+            type: bool
+            computed: true

@@ -6,9 +6,9 @@ interactions:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
-        content_length: 1062
+        content_length: 1007
         host: localhost:30080
-        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"description":"","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","limit":"","name":"apeval-fresh-jt-k7m2","playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"scm_branch":"","skip_tags":"","start_at_task":"","survey_enabled":false,"timeout":0,"use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
+        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"description":"","diff_mode":false,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","limit":"","name":"apeval-fresh-jt-a7f3","playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"scm_branch":"","skip_tags":"","start_at_task":"","survey_enabled":false,"timeout":0,"use_fact_cache":false,"verbosity":0,"webhook_service":""}'
         headers:
             Accept:
                 - application/json
@@ -25,7 +25,7 @@ interactions:
         proto_major: 1
         proto_minor: 1
         content_length: 3671
-        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-29T23:07:19.082944Z","custom_virtualenv":null,"description":"","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":113,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-29T23:07:19.082964Z","name":"apeval-fresh-jt-k7m2","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/113/access_list/","activity_stream":"/api/v2/job_templates/113/activity_stream/","copy":"/api/v2/job_templates/113/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/113/credentials/","instance_groups":"/api/v2/job_templates/113/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/113/jobs/","labels":"/api/v2/job_templates/113/labels/","launch":"/api/v2/job_templates/113/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-k7m2++Default/","notification_templates_error":"/api/v2/job_templates/113/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/113/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/113/notification_templates_success/","object_roles":"/api/v2/job_templates/113/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/113/schedules/","slice_workflow_jobs":"/api/v2/job_templates/113/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/113/survey_spec/","webhook_key":"/api/v2/job_templates/113/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2628,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2629,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2630,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/113/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
+        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-30T01:52:30.204204Z","custom_virtualenv":null,"description":"","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":116,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-30T01:52:30.204212Z","name":"apeval-fresh-jt-a7f3","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/116/access_list/","activity_stream":"/api/v2/job_templates/116/activity_stream/","copy":"/api/v2/job_templates/116/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/116/credentials/","instance_groups":"/api/v2/job_templates/116/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/116/jobs/","labels":"/api/v2/job_templates/116/labels/","launch":"/api/v2/job_templates/116/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-a7f3++Default/","notification_templates_error":"/api/v2/job_templates/116/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/116/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/116/notification_templates_success/","object_roles":"/api/v2/job_templates/116/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/116/schedules/","slice_workflow_jobs":"/api/v2/job_templates/116/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/116/survey_spec/","webhook_key":"/api/v2/job_templates/116/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2673,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2674,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2675,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/116/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -40,7 +40,7 @@ interactions:
             Content-Type:
                 - application/json
             Location:
-                - /api/v2/job_templates/113/
+                - /api/v2/job_templates/116/
             Pragma:
                 - no-cache
             Server:
@@ -56,18 +56,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - a00e2ff5b1024e2b8866cd632d29ecca
+                - 77ef5a033e0348d89e029b4f2211cd6f
             X-Api-Time:
-                - 0.364s
+                - 0.331s
             X-Api-Total-Time:
-                - 0.377s
+                - 0.348s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 201 Created
         code: 201
-        duration: 385.76425ms
+        duration: 360.474167ms
     - id: 1
       request:
         proto: HTTP/1.1
@@ -84,14 +84,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/job_templates/113/
+        url: http://localhost:30080/api/v2/job_templates/116/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 3785
-        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-29T23:07:19.082944Z","custom_virtualenv":null,"description":"","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":113,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-29T23:07:19.082964Z","name":"apeval-fresh-jt-k7m2","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/113/access_list/","activity_stream":"/api/v2/job_templates/113/activity_stream/","copy":"/api/v2/job_templates/113/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/113/credentials/","instance_groups":"/api/v2/job_templates/113/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/113/jobs/","labels":"/api/v2/job_templates/113/labels/","launch":"/api/v2/job_templates/113/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-k7m2++Default/","notification_templates_error":"/api/v2/job_templates/113/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/113/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/113/notification_templates_success/","object_roles":"/api/v2/job_templates/113/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/113/schedules/","slice_workflow_jobs":"/api/v2/job_templates/113/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/113/survey_spec/","webhook_key":"/api/v2/job_templates/113/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2628,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2629,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2630,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/113/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
+        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-30T01:52:30.204204Z","custom_virtualenv":null,"description":"","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":116,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-30T01:52:30.204212Z","name":"apeval-fresh-jt-a7f3","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/116/access_list/","activity_stream":"/api/v2/job_templates/116/activity_stream/","copy":"/api/v2/job_templates/116/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/116/credentials/","instance_groups":"/api/v2/job_templates/116/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/116/jobs/","labels":"/api/v2/job_templates/116/labels/","launch":"/api/v2/job_templates/116/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-a7f3++Default/","notification_templates_error":"/api/v2/job_templates/116/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/116/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/116/notification_templates_success/","object_roles":"/api/v2/job_templates/116/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/116/schedules/","slice_workflow_jobs":"/api/v2/job_templates/116/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/116/survey_spec/","webhook_key":"/api/v2/job_templates/116/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2673,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2674,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2675,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/116/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -120,18 +120,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 64869bb3c0aa45e69ba22f61dede2b22
+                - e9e878227d104b048779d7f000fae78e
             X-Api-Time:
-                - 0.290s
+                - 0.295s
             X-Api-Total-Time:
-                - 0.297s
+                - 0.306s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 299.732625ms
+        duration: 310.231417ms
     - id: 2
       request:
         proto: HTTP/1.1
@@ -139,7 +139,7 @@ interactions:
         proto_minor: 1
         content_length: 1081
         host: localhost:30080
-        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","limit":"","name":"apeval-fresh-jt-k7m2","playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"scm_branch":"","skip_tags":"","start_at_task":"","survey_enabled":false,"timeout":0,"use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
+        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","limit":"","name":"apeval-fresh-jt-a7f3","playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"scm_branch":"","skip_tags":"","start_at_task":"","survey_enabled":false,"timeout":0,"use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
         headers:
             Accept:
                 - application/json
@@ -149,14 +149,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/job_templates/113/
+        url: http://localhost:30080/api/v2/job_templates/116/
         method: PATCH
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 3804
-        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-29T23:07:19.082944Z","custom_virtualenv":null,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":113,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-29T23:07:20.414136Z","name":"apeval-fresh-jt-k7m2","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/113/access_list/","activity_stream":"/api/v2/job_templates/113/activity_stream/","copy":"/api/v2/job_templates/113/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/113/credentials/","instance_groups":"/api/v2/job_templates/113/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/113/jobs/","labels":"/api/v2/job_templates/113/labels/","launch":"/api/v2/job_templates/113/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-k7m2++Default/","notification_templates_error":"/api/v2/job_templates/113/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/113/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/113/notification_templates_success/","object_roles":"/api/v2/job_templates/113/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/113/schedules/","slice_workflow_jobs":"/api/v2/job_templates/113/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/113/survey_spec/","webhook_key":"/api/v2/job_templates/113/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2628,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2629,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2630,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/113/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
+        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-30T01:52:30.204204Z","custom_virtualenv":null,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":116,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-30T01:52:31.560324Z","name":"apeval-fresh-jt-a7f3","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/116/access_list/","activity_stream":"/api/v2/job_templates/116/activity_stream/","copy":"/api/v2/job_templates/116/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/116/credentials/","instance_groups":"/api/v2/job_templates/116/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/116/jobs/","labels":"/api/v2/job_templates/116/labels/","launch":"/api/v2/job_templates/116/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-a7f3++Default/","notification_templates_error":"/api/v2/job_templates/116/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/116/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/116/notification_templates_success/","object_roles":"/api/v2/job_templates/116/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/116/schedules/","slice_workflow_jobs":"/api/v2/job_templates/116/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/116/survey_spec/","webhook_key":"/api/v2/job_templates/116/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2673,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2674,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2675,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/116/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -185,18 +185,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 4e3c6c3159bd46c88e036453e37069ca
+                - 2950ee501c9c45089ecfd08f44a8bc8e
             X-Api-Time:
-                - 0.293s
+                - 0.334s
             X-Api-Total-Time:
-                - 0.302s
+                - 0.346s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 309.244542ms
+        duration: 350.696125ms
     - id: 3
       request:
         proto: HTTP/1.1
@@ -213,14 +213,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/job_templates/113/
+        url: http://localhost:30080/api/v2/job_templates/116/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 3804
-        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-29T23:07:19.082944Z","custom_virtualenv":null,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":113,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-29T23:07:20.414136Z","name":"apeval-fresh-jt-k7m2","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/113/access_list/","activity_stream":"/api/v2/job_templates/113/activity_stream/","copy":"/api/v2/job_templates/113/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/113/credentials/","instance_groups":"/api/v2/job_templates/113/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/113/jobs/","labels":"/api/v2/job_templates/113/labels/","launch":"/api/v2/job_templates/113/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-k7m2++Default/","notification_templates_error":"/api/v2/job_templates/113/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/113/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/113/notification_templates_success/","object_roles":"/api/v2/job_templates/113/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/113/schedules/","slice_workflow_jobs":"/api/v2/job_templates/113/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/113/survey_spec/","webhook_key":"/api/v2/job_templates/113/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2628,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2629,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2630,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/113/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
+        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-30T01:52:30.204204Z","custom_virtualenv":null,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":116,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-30T01:52:31.560324Z","name":"apeval-fresh-jt-a7f3","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/116/access_list/","activity_stream":"/api/v2/job_templates/116/activity_stream/","copy":"/api/v2/job_templates/116/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/116/credentials/","instance_groups":"/api/v2/job_templates/116/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/116/jobs/","labels":"/api/v2/job_templates/116/labels/","launch":"/api/v2/job_templates/116/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-a7f3++Default/","notification_templates_error":"/api/v2/job_templates/116/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/116/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/116/notification_templates_success/","object_roles":"/api/v2/job_templates/116/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/116/schedules/","slice_workflow_jobs":"/api/v2/job_templates/116/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/116/survey_spec/","webhook_key":"/api/v2/job_templates/116/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2673,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2674,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2675,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/116/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -249,18 +249,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - e59b861bf1bb40eabc43931d579509c7
+                - c7637fcfdf784392a60b1ecf53fc0963
             X-Api-Time:
-                - 0.295s
+                - 0.297s
             X-Api-Total-Time:
-                - 0.308s
+                - 0.304s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 313.76675ms
+        duration: 309.20025ms
     - id: 4
       request:
         proto: HTTP/1.1
@@ -277,14 +277,14 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/job_templates/113/
+        url: http://localhost:30080/api/v2/job_templates/116/
         method: GET
       response:
         proto: HTTP/1.1
         proto_major: 1
         proto_minor: 1
         content_length: 3804
-        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-29T23:07:19.082944Z","custom_virtualenv":null,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":113,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-29T23:07:20.414136Z","name":"apeval-fresh-jt-k7m2","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/113/access_list/","activity_stream":"/api/v2/job_templates/113/activity_stream/","copy":"/api/v2/job_templates/113/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/113/credentials/","instance_groups":"/api/v2/job_templates/113/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/113/jobs/","labels":"/api/v2/job_templates/113/labels/","launch":"/api/v2/job_templates/113/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-k7m2++Default/","notification_templates_error":"/api/v2/job_templates/113/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/113/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/113/notification_templates_success/","object_roles":"/api/v2/job_templates/113/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/113/schedules/","slice_workflow_jobs":"/api/v2/job_templates/113/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/113/survey_spec/","webhook_key":"/api/v2/job_templates/113/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2628,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2629,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2630,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/113/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
+        body: '{"allow_simultaneous":false,"ask_credential_on_launch":false,"ask_diff_mode_on_launch":false,"ask_execution_environment_on_launch":false,"ask_forks_on_launch":false,"ask_instance_groups_on_launch":false,"ask_inventory_on_launch":false,"ask_job_slice_count_on_launch":false,"ask_job_type_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_timeout_on_launch":false,"ask_variables_on_launch":false,"ask_verbosity_on_launch":false,"become_enabled":false,"created":"2026-05-30T01:52:30.204204Z","custom_virtualenv":null,"description":"updated description","diff_mode":false,"execution_environment":null,"extra_vars":"","force_handlers":false,"forks":0,"host_config_key":"","id":116,"inventory":154,"job_slice_count":1,"job_tags":"","job_type":"run","last_job_failed":false,"last_job_run":null,"limit":"","modified":"2026-05-30T01:52:31.560324Z","name":"apeval-fresh-jt-a7f3","next_job_run":null,"organization":1,"playbook":"hello_world.yml","prevent_instance_group_fallback":false,"project":6,"related":{"access_list":"/api/v2/job_templates/116/access_list/","activity_stream":"/api/v2/job_templates/116/activity_stream/","copy":"/api/v2/job_templates/116/copy/","created_by":"/api/v2/users/1/","credentials":"/api/v2/job_templates/116/credentials/","instance_groups":"/api/v2/job_templates/116/instance_groups/","inventory":"/api/v2/inventories/154/","jobs":"/api/v2/job_templates/116/jobs/","labels":"/api/v2/job_templates/116/labels/","launch":"/api/v2/job_templates/116/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/job_templates/apeval-fresh-jt-a7f3++Default/","notification_templates_error":"/api/v2/job_templates/116/notification_templates_error/","notification_templates_started":"/api/v2/job_templates/116/notification_templates_started/","notification_templates_success":"/api/v2/job_templates/116/notification_templates_success/","object_roles":"/api/v2/job_templates/116/object_roles/","organization":"/api/v2/organizations/1/","project":"/api/v2/projects/6/","schedules":"/api/v2/job_templates/116/schedules/","slice_workflow_jobs":"/api/v2/job_templates/116/slice_workflow_jobs/","survey_spec":"/api/v2/job_templates/116/survey_spec/","webhook_key":"/api/v2/job_templates/116/webhook_key/","webhook_receiver":""},"scm_branch":"","skip_tags":"","start_at_task":"","status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"credentials":[],"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":154,"inventory_sources_with_failures":0,"kind":"","name":"apeval-fresh-fk-inv","organization_id":115,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the job template","id":2673,"name":"Admin"},"execute_role":{"description":"May run the job template","id":2674,"name":"Execute"},"read_role":{"description":"May view settings for the job template","id":2675,"name":"Read"}},"organization":{"description":"","id":1,"name":"Default"},"project":{"allow_override":false,"description":"","id":6,"name":"Demo Project","scm_type":"git","status":"successful"},"recent_jobs":[],"resolved_environment":{"description":"","id":2,"image":"quay.io/ansible/awx-ee:latest","name":"AWX EE (latest)"},"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"timeout":0,"type":"job_template","url":"/api/v2/job_templates/116/","use_fact_cache":false,"verbosity":0,"webhook_credential":null,"webhook_service":""}'
         headers:
             Access-Control-Expose-Headers:
                 - X-API-Request-Id
@@ -313,18 +313,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 214dfb7b4a7341de9494b9aab2588ddd
+                - 0ca8dc3ad9e342db88201ef77c9ae38c
             X-Api-Time:
-                - 0.291s
+                - 0.312s
             X-Api-Total-Time:
-                - 0.298s
+                - 0.335s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 200 OK
         code: 200
-        duration: 304.083166ms
+        duration: 347.432209ms
     - id: 5
       request:
         proto: HTTP/1.1
@@ -341,7 +341,7 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/job_templates/113/
+        url: http://localhost:30080/api/v2/job_templates/116/
         method: DELETE
       response:
         proto: HTTP/1.1
@@ -375,18 +375,18 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - d519e2ca7bfe486f95a0467261fc254b
+                - ab4b4247491c4b47b9354d8b4e264e75
             X-Api-Time:
-                - 0.332s
+                - 0.291s
             X-Api-Total-Time:
-                - 0.349s
+                - 0.311s
             X-Content-Type-Options:
                 - nosniff
             X-Frame-Options:
                 - DENY
         status: 204 No Content
         code: 204
-        duration: 351.630042ms
+        duration: 313.171625ms
     - id: 6
       request:
         proto: HTTP/1.1
@@ -403,7 +403,7 @@ interactions:
                 - application/json
             User-Agent:
                 - agentprovider-engine/0.2 (+terraform-dynamic-provider)
-        url: http://localhost:30080/api/v2/job_templates/113/
+        url: http://localhost:30080/api/v2/job_templates/116/
         method: GET
       response:
         proto: HTTP/1.1
@@ -433,16 +433,16 @@ interactions:
             X-Api-Product-Version:
                 - 24.6.1
             X-Api-Request-Id:
-                - 40565b416e7c4bf8b7866d05df5b2202
+                - e78cf5f930b24dcbb0a4090498bdfcef
             X-Api-Time:
-                - 0.265s
+                - 0.280s
             X-Api-Total-Time:
-                - 0.272s
+                - 0.291s
         status: 404 Not Found
         code: 404
-        duration: 274.441042ms
+        duration: 296.268041ms
 
 provenance:
-  recorded_at: "2026-05-29T23:07:23Z"
+  recorded_at: "2026-05-30T01:52:34Z"
   host: "localhost:30080"
   api_version: "nginx"

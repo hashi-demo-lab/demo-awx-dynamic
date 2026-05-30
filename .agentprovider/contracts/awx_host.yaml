@@ -1,4 +1,5 @@
 apiVersion: agentprovider/v1
+
 type: awx_host
 kind: Resource
 
@@ -46,25 +47,12 @@ schema:
             default: ""
             type: string
 
-ignore_server_fields:
-    - related
-    - summary_fields
-    - type
-    - url
-    - created
-    - modified
-    - has_active_failures
-    - has_inventory_sources
-    - last_job
-    - last_job_host_summary
-    - ansible_facts_modified
-    - detail
-
 lifecycle:
     create:
         method: POST
         path: /api/v2/hosts/
-        expect_status: [201]
+        expect_status:
+            - 201
         body:
             - name
             - description
@@ -75,12 +63,15 @@ lifecycle:
     read:
         method: GET
         path: "/api/v2/hosts/${id}/"
-        expect_status: [200]
-        not_found_status: [404]
+        expect_status:
+            - 200
+        not_found_status:
+            - 404
     update:
         method: PATCH
         path: "/api/v2/hosts/${id}/"
-        expect_status: [200]
+        expect_status:
+            - 200
         refresh_after: true
         body:
             - name
@@ -92,20 +83,36 @@ lifecycle:
     delete:
         method: DELETE
         path: "/api/v2/hosts/${id}/"
-        expect_status: [204]
-        not_found_status: [404]
+        expect_status:
+            - 204
+        not_found_status:
+            - 404
+
+ignore_server_fields:
+    - type
+    - url
+    - related
+    - summary_fields
+    - created
+    - modified
+    - has_active_failures
+    - has_inventory_sources
+    - last_job
+    - last_job_host_summary
+    - ansible_facts_modified
+    - detail
 
 conformance:
     example:
-        name: apeval-fresh-host-a7x2
+        name: apeval-fresh-host-x7k2
         description: ""
         inventory: 154
         enabled: true
         instance_id: ""
         variables: ""
     update_to:
-        name: apeval-fresh-host-a7x2
-        description: updated description
+        name: apeval-fresh-host-x7k2
+        description: "updated description"
         inventory: 154
         enabled: false
         instance_id: ""
