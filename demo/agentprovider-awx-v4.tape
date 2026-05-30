@@ -67,7 +67,7 @@ Sleep 5s
 
 # --- human handoff: minimal prompt. Internal tech demo — we intentionally want
 #     Claude to run the agentprovider CLI and leave its raw output on screen. ---
-Type "Use the repo-local agentprovider skill to build a fresh Red Hat Ansible AWX provider with terraform-provider-dynamic against live AWX, then prove it with terraform apply. Show the completeness/classification gate for each contract. Run each agentprovider command in the visible terminal and leave its raw output on screen — don't hide it behind scripts or summaries."
+Type "Use the agentprovider skill to build a fresh Red Hat Ansible AWX provider with terraform-provider-dynamic against live AWX, then prove it with terraform apply and confirm the action launched a real AWX job. Show the completeness/classification gate summaries as they complete. Use max concurrent sonnet subagents"
 Sleep 1500ms
 Enter
 
@@ -79,7 +79,7 @@ Enter
 #     18m captures a complete session and leaves it idle on the final frame. If
 #     the agent needs longer on a given take, raise this and re-record. ---
 Sleep 2s
-Sleep 15m
+Sleep 10m
 
 # --- exit the Claude TUI back to the shell, then play the closing card. The
 #     agent leaves us at Claude's idle input prompt; Ctrl+C twice quits it (the
