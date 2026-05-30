@@ -1,0 +1,22 @@
+{
+  "contract": "organization",
+  "contract_hash": "sha256:52fa48bd433b7db88ade842ebd3a853aa136d8a79237ce17b8d8bbb3341631f6",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "settable_coverage": 1,
+  "cassette": "../cassettes/organization.yaml.cassette.yaml",
+  "cassette_hash": "sha256:1ffb409f98f34537af06bf05a4c81dabdbfd6ad402f22df1803877b7a74120c5",
+  "generated_at": "2026-05-30T06:46:57Z"
+}

@@ -1,0 +1,15 @@
+{
+  "contract": "inventory",
+  "contract_hash": "sha256:729433817a4b8be329ae352f8a68a1b11ef3035bac89fea87a5ab3b3f33c4835",
+  "overall_passed": true,
+  "invariants": [
+    "read_returns_expected"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "settable_coverage": 1,
+  "cassette": "../cassettes/inventory_ds.yaml.cassette.yaml",
+  "cassette_hash": "sha256:e6a33e86ffabdc4f91ebd1847155356b7e40fd14eb31c550ae9fe00de95f70a9",
+  "generated_at": "2026-05-30T06:48:05Z"
+}

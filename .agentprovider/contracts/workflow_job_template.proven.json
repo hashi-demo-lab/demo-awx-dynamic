@@ -1,0 +1,24 @@
+{
+  "contract": "workflow_job_template",
+  "contract_hash": "sha256:206f5d70b57fb33d1a62d64352bc1ae7a3b93a3e3a953930e1c8bafe9fda2b1f",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "import_reconstructs",
+    "id_stable_across_update",
+    "optional_default_consistency",
+    "state_matches_expect"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "settable_coverage": 1,
+  "cassette": "../cassettes/workflow_job_template.cassette.yaml",
+  "cassette_hash": "sha256:344e9148d2376b61e038d0f468587f16edc661599bdf4f7701fb844b34e53aeb",
+  "generated_at": "2026-05-30T06:48:31Z"
+}

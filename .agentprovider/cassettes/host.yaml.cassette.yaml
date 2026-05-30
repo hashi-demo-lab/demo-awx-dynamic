@@ -1,0 +1,376 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 131
+        host: localhost:30080
+        body: '{"description":"conformance test host","enabled":true,"instance_id":"","inventory":174,"name":"ap-host-conformtest","variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1746
+        body: '{"ansible_facts_modified":null,"created":"2026-05-30T06:44:27.436683Z","description":"conformance test host","enabled":true,"has_active_failures":false,"has_inventory_sources":false,"id":134,"instance_id":"","inventory":174,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-30T06:44:27.436691Z","name":"ap-host-conformtest","related":{"activity_stream":"/api/v2/hosts/134/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/134/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/134/ad_hoc_commands/","all_groups":"/api/v2/hosts/134/all_groups/","ansible_facts":"/api/v2/hosts/134/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/134/groups/","inventory":"/api/v2/inventories/174/","inventory_sources":"/api/v2/hosts/134/inventory_sources/","job_events":"/api/v2/hosts/134/job_events/","job_host_summaries":"/api/v2/hosts/134/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/ap-host-conformtest++ap-inv-178012340742212++ap-org-178012340742212/","smart_inventories":"/api/v2/hosts/134/smart_inventories/","variable_data":"/api/v2/hosts/134/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":174,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012340742212","organization_id":136,"total_groups":0,"total_hosts":1,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/134/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1746"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/hosts/134/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - d2d267aa8f474993acd4fa7daf1b2347
+            X-Api-Time:
+                - 0.300s
+            X-Api-Total-Time:
+                - 0.313s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 318.342417ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/134/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1746
+        body: '{"ansible_facts_modified":null,"created":"2026-05-30T06:44:27.436683Z","description":"conformance test host","enabled":true,"has_active_failures":false,"has_inventory_sources":false,"id":134,"instance_id":"","inventory":174,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-30T06:44:27.436691Z","name":"ap-host-conformtest","related":{"activity_stream":"/api/v2/hosts/134/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/134/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/134/ad_hoc_commands/","all_groups":"/api/v2/hosts/134/all_groups/","ansible_facts":"/api/v2/hosts/134/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/134/groups/","inventory":"/api/v2/inventories/174/","inventory_sources":"/api/v2/hosts/134/inventory_sources/","job_events":"/api/v2/hosts/134/job_events/","job_host_summaries":"/api/v2/hosts/134/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/ap-host-conformtest++ap-inv-178012340742212++ap-org-178012340742212/","smart_inventories":"/api/v2/hosts/134/smart_inventories/","variable_data":"/api/v2/hosts/134/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":174,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012340742212","organization_id":136,"total_groups":0,"total_hosts":2,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/134/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1746"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - f77d3456eaa1424aa50fbcdf5e50caac
+            X-Api-Time:
+                - 0.309s
+            X-Api-Total-Time:
+                - 0.324s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 328.412833ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 130
+        host: localhost:30080
+        body: '{"description":"updated description","enabled":false,"instance_id":"","inventory":174,"name":"ap-host-conformtest","variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/134/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1745
+        body: '{"ansible_facts_modified":null,"created":"2026-05-30T06:44:27.436683Z","description":"updated description","enabled":false,"has_active_failures":false,"has_inventory_sources":false,"id":134,"instance_id":"","inventory":174,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-30T06:44:28.729599Z","name":"ap-host-conformtest","related":{"activity_stream":"/api/v2/hosts/134/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/134/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/134/ad_hoc_commands/","all_groups":"/api/v2/hosts/134/all_groups/","ansible_facts":"/api/v2/hosts/134/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/134/groups/","inventory":"/api/v2/inventories/174/","inventory_sources":"/api/v2/hosts/134/inventory_sources/","job_events":"/api/v2/hosts/134/job_events/","job_host_summaries":"/api/v2/hosts/134/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/ap-host-conformtest++ap-inv-178012340742212++ap-org-178012340742212/","smart_inventories":"/api/v2/hosts/134/smart_inventories/","variable_data":"/api/v2/hosts/134/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":174,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012340742212","organization_id":136,"total_groups":0,"total_hosts":2,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/134/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1745"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 3eb4b1a9d38f4e4c9cec6a48c728d292
+            X-Api-Time:
+                - 0.300s
+            X-Api-Total-Time:
+                - 0.310s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 311.787917ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/134/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1745
+        body: '{"ansible_facts_modified":null,"created":"2026-05-30T06:44:27.436683Z","description":"updated description","enabled":false,"has_active_failures":false,"has_inventory_sources":false,"id":134,"instance_id":"","inventory":174,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-30T06:44:28.729599Z","name":"ap-host-conformtest","related":{"activity_stream":"/api/v2/hosts/134/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/134/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/134/ad_hoc_commands/","all_groups":"/api/v2/hosts/134/all_groups/","ansible_facts":"/api/v2/hosts/134/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/134/groups/","inventory":"/api/v2/inventories/174/","inventory_sources":"/api/v2/hosts/134/inventory_sources/","job_events":"/api/v2/hosts/134/job_events/","job_host_summaries":"/api/v2/hosts/134/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/ap-host-conformtest++ap-inv-178012340742212++ap-org-178012340742212/","smart_inventories":"/api/v2/hosts/134/smart_inventories/","variable_data":"/api/v2/hosts/134/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":174,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012340742212","organization_id":136,"total_groups":0,"total_hosts":2,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/134/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1745"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 1b3a72bebd8044b6a3834f328f4ec442
+            X-Api-Time:
+                - 0.296s
+            X-Api-Total-Time:
+                - 0.304s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 308.336333ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/134/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 8ff216f57e8b4004b6bf9174ae6ac505
+            X-Api-Time:
+                - 0.308s
+            X-Api-Total-Time:
+                - 0.321s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 326.022167ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/134/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 45
+        body: '{"detail":"No Host matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "45"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 70830b2e4e664ac5aab6659be94efff1
+            X-Api-Time:
+                - 0.287s
+            X-Api-Total-Time:
+                - 0.296s
+        status: 404 Not Found
+        code: 404
+        duration: 299.826667ms
+
+provenance:
+  recorded_at: "2026-05-30T06:44:30Z"
+  host: "localhost:30080"
+  api_version: "nginx"

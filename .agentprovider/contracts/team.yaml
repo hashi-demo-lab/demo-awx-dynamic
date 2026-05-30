@@ -1,0 +1,95 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: team
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+schema:
+  attributes:
+    id:
+      type: string
+      computed: true
+    name:
+      type: string
+      required: true
+    description:
+      type: string
+      optional: true
+      default: ""
+    organization:
+      type: number
+      required: true
+
+identity:
+  attribute: id
+  response_field: id
+  known_after: create
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/teams/
+    body:
+      - name
+      - description
+      - organization
+    expect_status:
+      - 201
+  read:
+    method: GET
+    path: "/api/v2/teams/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+  update:
+    method: PATCH
+    path: "/api/v2/teams/${id}/"
+    body:
+      - name
+      - description
+      - organization
+    expect_status:
+      - 200
+  delete:
+    method: DELETE
+    path: "/api/v2/teams/${id}/"
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
+ignore_server_fields:
+  - type
+  - url
+  - related
+  - summary_fields
+  - created
+  - modified
+  - detail
+
+conformance:
+  example:
+    name: ap-team-conform
+    description: ""
+    organization: 134
+  update_to:
+    name: ap-team-conform-upd
+    description: "updated description"
+    organization: 134
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update

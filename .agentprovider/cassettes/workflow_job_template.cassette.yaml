@@ -1,0 +1,376 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 409
+        host: localhost:30080
+        body: '{"allow_simultaneous":false,"ask_inventory_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_variables_on_launch":false,"description":"Workflow job template for agentprovider tests","extra_vars":"","name":"ap-wjt-agent-test","organization":145,"survey_enabled":false,"webhook_service":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2901
+        body: '{"allow_simultaneous":false,"ask_inventory_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_variables_on_launch":false,"created":"2026-05-30T06:46:33.182109Z","description":"Workflow job template for agentprovider tests","extra_vars":"","id":169,"inventory":null,"job_tags":null,"last_job_failed":false,"last_job_run":null,"limit":null,"modified":"2026-05-30T06:46:33.182117Z","name":"ap-wjt-agent-test","next_job_run":null,"organization":145,"related":{"access_list":"/api/v2/workflow_job_templates/169/access_list/","activity_stream":"/api/v2/workflow_job_templates/169/activity_stream/","copy":"/api/v2/workflow_job_templates/169/copy/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_job_templates/169/labels/","launch":"/api/v2/workflow_job_templates/169/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/workflow_job_templates/ap-wjt-agent-test++ap-org-178012354644048/","notification_templates_approvals":"/api/v2/workflow_job_templates/169/notification_templates_approvals/","notification_templates_error":"/api/v2/workflow_job_templates/169/notification_templates_error/","notification_templates_started":"/api/v2/workflow_job_templates/169/notification_templates_started/","notification_templates_success":"/api/v2/workflow_job_templates/169/notification_templates_success/","object_roles":"/api/v2/workflow_job_templates/169/object_roles/","organization":"/api/v2/organizations/145/","schedules":"/api/v2/workflow_job_templates/169/schedules/","survey_spec":"/api/v2/workflow_job_templates/169/survey_spec/","webhook_key":"/api/v2/workflow_job_templates/169/webhook_key/","webhook_receiver":"","workflow_jobs":"/api/v2/workflow_job_templates/169/workflow_jobs/","workflow_nodes":"/api/v2/workflow_job_templates/169/workflow_nodes/"},"scm_branch":null,"skip_tags":null,"status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the workflow job template","id":3408,"name":"Admin"},"approval_role":{"description":"Can approve or deny a workflow approval node","id":3411,"name":"Approve"},"execute_role":{"description":"May run the workflow job template","id":3409,"name":"Execute"},"read_role":{"description":"May view settings for the workflow job template","id":3410,"name":"Read"}},"organization":{"description":"","id":145,"name":"ap-org-178012354644048"},"recent_jobs":[],"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"type":"workflow_job_template","url":"/api/v2/workflow_job_templates/169/","webhook_credential":null,"webhook_service":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2901"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/workflow_job_templates/169/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - e7d2db860d4841aaa40e302d0146eead
+            X-Api-Time:
+                - 0.320s
+            X-Api-Total-Time:
+                - 0.329s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 334.890541ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/169/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2901
+        body: '{"allow_simultaneous":false,"ask_inventory_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_variables_on_launch":false,"created":"2026-05-30T06:46:33.182109Z","description":"Workflow job template for agentprovider tests","extra_vars":"","id":169,"inventory":null,"job_tags":null,"last_job_failed":false,"last_job_run":null,"limit":null,"modified":"2026-05-30T06:46:33.182117Z","name":"ap-wjt-agent-test","next_job_run":null,"organization":145,"related":{"access_list":"/api/v2/workflow_job_templates/169/access_list/","activity_stream":"/api/v2/workflow_job_templates/169/activity_stream/","copy":"/api/v2/workflow_job_templates/169/copy/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_job_templates/169/labels/","launch":"/api/v2/workflow_job_templates/169/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/workflow_job_templates/ap-wjt-agent-test++ap-org-178012354644048/","notification_templates_approvals":"/api/v2/workflow_job_templates/169/notification_templates_approvals/","notification_templates_error":"/api/v2/workflow_job_templates/169/notification_templates_error/","notification_templates_started":"/api/v2/workflow_job_templates/169/notification_templates_started/","notification_templates_success":"/api/v2/workflow_job_templates/169/notification_templates_success/","object_roles":"/api/v2/workflow_job_templates/169/object_roles/","organization":"/api/v2/organizations/145/","schedules":"/api/v2/workflow_job_templates/169/schedules/","survey_spec":"/api/v2/workflow_job_templates/169/survey_spec/","webhook_key":"/api/v2/workflow_job_templates/169/webhook_key/","webhook_receiver":"","workflow_jobs":"/api/v2/workflow_job_templates/169/workflow_jobs/","workflow_nodes":"/api/v2/workflow_job_templates/169/workflow_nodes/"},"scm_branch":null,"skip_tags":null,"status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the workflow job template","id":3408,"name":"Admin"},"approval_role":{"description":"Can approve or deny a workflow approval node","id":3411,"name":"Approve"},"execute_role":{"description":"May run the workflow job template","id":3409,"name":"Execute"},"read_role":{"description":"May view settings for the workflow job template","id":3410,"name":"Read"}},"organization":{"description":"","id":145,"name":"ap-org-178012354644048"},"recent_jobs":[],"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"type":"workflow_job_template","url":"/api/v2/workflow_job_templates/169/","webhook_credential":null,"webhook_service":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2901"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - f668488a82a64784aaee2bae7ba21bbe
+            X-Api-Time:
+                - 0.277s
+            X-Api-Total-Time:
+                - 0.284s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 286.139209ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 518
+        host: localhost:30080
+        body: '{"allow_simultaneous":true,"ask_inventory_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_variables_on_launch":true,"description":"Updated workflow job template description","extra_vars":"","inventory":null,"job_tags":null,"limit":null,"name":"ap-wjt-agent-test-updated","organization":145,"scm_branch":null,"skip_tags":null,"survey_enabled":false,"webhook_credential":null,"webhook_service":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/169/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2911
+        body: '{"allow_simultaneous":true,"ask_inventory_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_variables_on_launch":true,"created":"2026-05-30T06:46:33.182109Z","description":"Updated workflow job template description","extra_vars":"","id":169,"inventory":null,"job_tags":null,"last_job_failed":false,"last_job_run":null,"limit":null,"modified":"2026-05-30T06:46:34.439814Z","name":"ap-wjt-agent-test-updated","next_job_run":null,"organization":145,"related":{"access_list":"/api/v2/workflow_job_templates/169/access_list/","activity_stream":"/api/v2/workflow_job_templates/169/activity_stream/","copy":"/api/v2/workflow_job_templates/169/copy/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_job_templates/169/labels/","launch":"/api/v2/workflow_job_templates/169/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/workflow_job_templates/ap-wjt-agent-test-updated++ap-org-178012354644048/","notification_templates_approvals":"/api/v2/workflow_job_templates/169/notification_templates_approvals/","notification_templates_error":"/api/v2/workflow_job_templates/169/notification_templates_error/","notification_templates_started":"/api/v2/workflow_job_templates/169/notification_templates_started/","notification_templates_success":"/api/v2/workflow_job_templates/169/notification_templates_success/","object_roles":"/api/v2/workflow_job_templates/169/object_roles/","organization":"/api/v2/organizations/145/","schedules":"/api/v2/workflow_job_templates/169/schedules/","survey_spec":"/api/v2/workflow_job_templates/169/survey_spec/","webhook_key":"/api/v2/workflow_job_templates/169/webhook_key/","webhook_receiver":"","workflow_jobs":"/api/v2/workflow_job_templates/169/workflow_jobs/","workflow_nodes":"/api/v2/workflow_job_templates/169/workflow_nodes/"},"scm_branch":null,"skip_tags":null,"status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the workflow job template","id":3408,"name":"Admin"},"approval_role":{"description":"Can approve or deny a workflow approval node","id":3411,"name":"Approve"},"execute_role":{"description":"May run the workflow job template","id":3409,"name":"Execute"},"read_role":{"description":"May view settings for the workflow job template","id":3410,"name":"Read"}},"organization":{"description":"","id":145,"name":"ap-org-178012354644048"},"recent_jobs":[],"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"type":"workflow_job_template","url":"/api/v2/workflow_job_templates/169/","webhook_credential":null,"webhook_service":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2911"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 7e8aadac19de4a0abae824ef75e5b6a7
+            X-Api-Time:
+                - 0.309s
+            X-Api-Total-Time:
+                - 0.319s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 321.2675ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/169/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2911
+        body: '{"allow_simultaneous":true,"ask_inventory_on_launch":false,"ask_labels_on_launch":false,"ask_limit_on_launch":false,"ask_scm_branch_on_launch":false,"ask_skip_tags_on_launch":false,"ask_tags_on_launch":false,"ask_variables_on_launch":true,"created":"2026-05-30T06:46:33.182109Z","description":"Updated workflow job template description","extra_vars":"","id":169,"inventory":null,"job_tags":null,"last_job_failed":false,"last_job_run":null,"limit":null,"modified":"2026-05-30T06:46:34.439814Z","name":"ap-wjt-agent-test-updated","next_job_run":null,"organization":145,"related":{"access_list":"/api/v2/workflow_job_templates/169/access_list/","activity_stream":"/api/v2/workflow_job_templates/169/activity_stream/","copy":"/api/v2/workflow_job_templates/169/copy/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_job_templates/169/labels/","launch":"/api/v2/workflow_job_templates/169/launch/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/workflow_job_templates/ap-wjt-agent-test-updated++ap-org-178012354644048/","notification_templates_approvals":"/api/v2/workflow_job_templates/169/notification_templates_approvals/","notification_templates_error":"/api/v2/workflow_job_templates/169/notification_templates_error/","notification_templates_started":"/api/v2/workflow_job_templates/169/notification_templates_started/","notification_templates_success":"/api/v2/workflow_job_templates/169/notification_templates_success/","object_roles":"/api/v2/workflow_job_templates/169/object_roles/","organization":"/api/v2/organizations/145/","schedules":"/api/v2/workflow_job_templates/169/schedules/","survey_spec":"/api/v2/workflow_job_templates/169/survey_spec/","webhook_key":"/api/v2/workflow_job_templates/169/webhook_key/","webhook_receiver":"","workflow_jobs":"/api/v2/workflow_job_templates/169/workflow_jobs/","workflow_nodes":"/api/v2/workflow_job_templates/169/workflow_nodes/"},"scm_branch":null,"skip_tags":null,"status":"never updated","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the workflow job template","id":3408,"name":"Admin"},"approval_role":{"description":"Can approve or deny a workflow approval node","id":3411,"name":"Approve"},"execute_role":{"description":"May run the workflow job template","id":3409,"name":"Execute"},"read_role":{"description":"May view settings for the workflow job template","id":3410,"name":"Read"}},"organization":{"description":"","id":145,"name":"ap-org-178012354644048"},"recent_jobs":[],"user_capabilities":{"copy":true,"delete":true,"edit":true,"schedule":true,"start":true}},"survey_enabled":false,"type":"workflow_job_template","url":"/api/v2/workflow_job_templates/169/","webhook_credential":null,"webhook_service":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2911"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 04edd235810f408993265341a46d76d6
+            X-Api-Time:
+                - 0.276s
+            X-Api-Total-Time:
+                - 0.283s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 285.419417ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/169/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 3b5d1339b04b4bfdbcbee1847a705250
+            X-Api-Time:
+                - 0.332s
+            X-Api-Total-Time:
+                - 0.350s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 351.816166ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/169/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 60
+        body: '{"detail":"No WorkflowJobTemplate matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "60"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - b55acf565b32463f84c6c4a273e37300
+            X-Api-Time:
+                - 0.284s
+            X-Api-Total-Time:
+                - 0.291s
+        status: 404 Not Found
+        code: 404
+        duration: 293.199125ms
+
+provenance:
+  recorded_at: "2026-05-30T06:46:36Z"
+  host: "localhost:30080"
+  api_version: "nginx"

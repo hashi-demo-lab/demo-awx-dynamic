@@ -1,0 +1,376 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 96
+        host: localhost:30080
+        body: '{"description":"test group description","inventory":175,"name":"ap-grp-test-001","variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/groups/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1445
+        body: '{"created":"2026-05-30T06:44:10.874754Z","description":"test group description","id":5,"inventory":175,"modified":"2026-05-30T06:44:10.874762Z","name":"ap-grp-test-001","related":{"activity_stream":"/api/v2/groups/5/activity_stream/","ad_hoc_commands":"/api/v2/groups/5/ad_hoc_commands/","all_hosts":"/api/v2/groups/5/all_hosts/","children":"/api/v2/groups/5/children/","created_by":"/api/v2/users/1/","hosts":"/api/v2/groups/5/hosts/","inventory":"/api/v2/inventories/175/","inventory_sources":"/api/v2/groups/5/inventory_sources/","job_events":"/api/v2/groups/5/job_events/","job_host_summaries":"/api/v2/groups/5/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/groups/ap-grp-test-001++ap-inv-178012341342378++ap-org-178012341342378/","potential_children":"/api/v2/groups/5/potential_children/","variable_data":"/api/v2/groups/5/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":175,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012341342378","organization_id":139,"total_groups":1,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"user_capabilities":{"copy":true,"delete":true,"edit":true}},"type":"group","url":"/api/v2/groups/5/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1445"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/groups/5/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - b9c53dffdf1a4d98bbbb915e5268648d
+            X-Api-Time:
+                - 0.280s
+            X-Api-Total-Time:
+                - 0.299s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 309.31625ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/groups/5/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1445
+        body: '{"created":"2026-05-30T06:44:10.874754Z","description":"test group description","id":5,"inventory":175,"modified":"2026-05-30T06:44:10.874762Z","name":"ap-grp-test-001","related":{"activity_stream":"/api/v2/groups/5/activity_stream/","ad_hoc_commands":"/api/v2/groups/5/ad_hoc_commands/","all_hosts":"/api/v2/groups/5/all_hosts/","children":"/api/v2/groups/5/children/","created_by":"/api/v2/users/1/","hosts":"/api/v2/groups/5/hosts/","inventory":"/api/v2/inventories/175/","inventory_sources":"/api/v2/groups/5/inventory_sources/","job_events":"/api/v2/groups/5/job_events/","job_host_summaries":"/api/v2/groups/5/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/groups/ap-grp-test-001++ap-inv-178012341342378++ap-org-178012341342378/","potential_children":"/api/v2/groups/5/potential_children/","variable_data":"/api/v2/groups/5/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":175,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012341342378","organization_id":139,"total_groups":2,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"user_capabilities":{"copy":true,"delete":true,"edit":true}},"type":"group","url":"/api/v2/groups/5/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1445"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 80c9924d89484aba867e61ba4ef7502b
+            X-Api-Time:
+                - 0.276s
+            X-Api-Total-Time:
+                - 0.285s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 289.913917ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 85
+        host: localhost:30080
+        body: '{"description":"updated description","name":"ap-grp-test-001-updated","variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/groups/5/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1458
+        body: '{"created":"2026-05-30T06:44:10.874754Z","description":"updated description","id":5,"inventory":175,"modified":"2026-05-30T06:44:12.068896Z","name":"ap-grp-test-001-updated","related":{"activity_stream":"/api/v2/groups/5/activity_stream/","ad_hoc_commands":"/api/v2/groups/5/ad_hoc_commands/","all_hosts":"/api/v2/groups/5/all_hosts/","children":"/api/v2/groups/5/children/","created_by":"/api/v2/users/1/","hosts":"/api/v2/groups/5/hosts/","inventory":"/api/v2/inventories/175/","inventory_sources":"/api/v2/groups/5/inventory_sources/","job_events":"/api/v2/groups/5/job_events/","job_host_summaries":"/api/v2/groups/5/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/groups/ap-grp-test-001-updated++ap-inv-178012341342378++ap-org-178012341342378/","potential_children":"/api/v2/groups/5/potential_children/","variable_data":"/api/v2/groups/5/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":175,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012341342378","organization_id":139,"total_groups":2,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"user_capabilities":{"copy":true,"delete":true,"edit":true}},"type":"group","url":"/api/v2/groups/5/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1458"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 05e304a98c2541ca94576a2f56d47e14
+            X-Api-Time:
+                - 0.311s
+            X-Api-Total-Time:
+                - 0.322s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 325.066875ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/groups/5/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1458
+        body: '{"created":"2026-05-30T06:44:10.874754Z","description":"updated description","id":5,"inventory":175,"modified":"2026-05-30T06:44:12.068896Z","name":"ap-grp-test-001-updated","related":{"activity_stream":"/api/v2/groups/5/activity_stream/","ad_hoc_commands":"/api/v2/groups/5/ad_hoc_commands/","all_hosts":"/api/v2/groups/5/all_hosts/","children":"/api/v2/groups/5/children/","created_by":"/api/v2/users/1/","hosts":"/api/v2/groups/5/hosts/","inventory":"/api/v2/inventories/175/","inventory_sources":"/api/v2/groups/5/inventory_sources/","job_events":"/api/v2/groups/5/job_events/","job_host_summaries":"/api/v2/groups/5/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/groups/ap-grp-test-001-updated++ap-inv-178012341342378++ap-org-178012341342378/","potential_children":"/api/v2/groups/5/potential_children/","variable_data":"/api/v2/groups/5/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":175,"inventory_sources_with_failures":0,"kind":"","name":"ap-inv-178012341342378","organization_id":139,"total_groups":2,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"user_capabilities":{"copy":true,"delete":true,"edit":true}},"type":"group","url":"/api/v2/groups/5/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1458"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - e7b55e98f9f04c09a3cc52cd32f5a7f2
+            X-Api-Time:
+                - 0.275s
+            X-Api-Total-Time:
+                - 0.284s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 287.153333ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/groups/5/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - cd9327197ff543cc89e7464f790bef52
+            X-Api-Time:
+                - 0.325s
+            X-Api-Total-Time:
+                - 0.339s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 344.936709ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/groups/5/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 46
+        body: '{"detail":"No Group matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "46"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - d7815753b6374a07a3e7f69b5488cbd7
+            X-Api-Time:
+                - 0.270s
+            X-Api-Total-Time:
+                - 0.277s
+        status: 404 Not Found
+        code: 404
+        duration: 279.789292ms
+
+provenance:
+  recorded_at: "2026-05-30T06:44:14Z"
+  host: "localhost:30080"
+  api_version: "nginx"

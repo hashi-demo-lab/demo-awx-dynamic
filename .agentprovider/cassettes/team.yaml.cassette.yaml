@@ -1,0 +1,376 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 62
+        host: localhost:30080
+        body: '{"description":"","name":"ap-team-conform","organization":134}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/teams/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1336
+        body: '{"created":"2026-05-30T06:44:20.418572Z","description":"","id":5,"modified":"2026-05-30T06:44:20.418581Z","name":"ap-team-conform","organization":134,"related":{"access_list":"/api/v2/teams/5/access_list/","activity_stream":"/api/v2/teams/5/activity_stream/","created_by":"/api/v2/users/1/","credentials":"/api/v2/teams/5/credentials/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/teams/ap-team-conform++ap-org-178012340342094/","object_roles":"/api/v2/teams/5/object_roles/","organization":"/api/v2/organizations/134/","projects":"/api/v2/teams/5/projects/","roles":"/api/v2/teams/5/roles/","users":"/api/v2/teams/5/users/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the team","id":3283,"name":"Admin"},"member_role":{"description":"User is a member of the team","id":3284,"name":"Member"},"read_role":{"description":"May view settings for the team","id":3285,"name":"Read"}},"organization":{"description":"","id":134,"name":"ap-org-178012340342094"},"resource":{"ansible_id":"c13bad54-a6c8-416d-92b1-0a822f9cd4b1","resource_type":"shared.team"},"user_capabilities":{"delete":true,"edit":true}},"type":"team","url":"/api/v2/teams/5/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1336"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/teams/5/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 48cc2716820f41ae816af34d8d1a1a96
+            X-Api-Time:
+                - 0.328s
+            X-Api-Total-Time:
+                - 0.339s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 350.454125ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/teams/5/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1336
+        body: '{"created":"2026-05-30T06:44:20.418572Z","description":"","id":5,"modified":"2026-05-30T06:44:20.418581Z","name":"ap-team-conform","organization":134,"related":{"access_list":"/api/v2/teams/5/access_list/","activity_stream":"/api/v2/teams/5/activity_stream/","created_by":"/api/v2/users/1/","credentials":"/api/v2/teams/5/credentials/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/teams/ap-team-conform++ap-org-178012340342094/","object_roles":"/api/v2/teams/5/object_roles/","organization":"/api/v2/organizations/134/","projects":"/api/v2/teams/5/projects/","roles":"/api/v2/teams/5/roles/","users":"/api/v2/teams/5/users/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the team","id":3283,"name":"Admin"},"member_role":{"description":"User is a member of the team","id":3284,"name":"Member"},"read_role":{"description":"May view settings for the team","id":3285,"name":"Read"}},"organization":{"description":"","id":134,"name":"ap-org-178012340342094"},"resource":{"ansible_id":"c13bad54-a6c8-416d-92b1-0a822f9cd4b1","resource_type":"shared.team"},"user_capabilities":{"delete":true,"edit":true}},"type":"team","url":"/api/v2/teams/5/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1336"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 8fbbc34b2bcd4ae5adcd5412aea800dd
+            X-Api-Time:
+                - 0.260s
+            X-Api-Total-Time:
+                - 0.268s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 270.201791ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 85
+        host: localhost:30080
+        body: '{"description":"updated description","name":"ap-team-conform-upd","organization":134}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/teams/5/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1363
+        body: '{"created":"2026-05-30T06:44:20.418572Z","description":"updated description","id":5,"modified":"2026-05-30T06:44:21.653977Z","name":"ap-team-conform-upd","organization":134,"related":{"access_list":"/api/v2/teams/5/access_list/","activity_stream":"/api/v2/teams/5/activity_stream/","created_by":"/api/v2/users/1/","credentials":"/api/v2/teams/5/credentials/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/teams/ap-team-conform-upd++ap-org-178012340342094/","object_roles":"/api/v2/teams/5/object_roles/","organization":"/api/v2/organizations/134/","projects":"/api/v2/teams/5/projects/","roles":"/api/v2/teams/5/roles/","users":"/api/v2/teams/5/users/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the team","id":3283,"name":"Admin"},"member_role":{"description":"User is a member of the team","id":3284,"name":"Member"},"read_role":{"description":"May view settings for the team","id":3285,"name":"Read"}},"organization":{"description":"","id":134,"name":"ap-org-178012340342094"},"resource":{"ansible_id":"c13bad54-a6c8-416d-92b1-0a822f9cd4b1","resource_type":"shared.team"},"user_capabilities":{"delete":true,"edit":true}},"type":"team","url":"/api/v2/teams/5/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1363"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - c3ac70a047fb4b8387b10c5278beed25
+            X-Api-Time:
+                - 0.298s
+            X-Api-Total-Time:
+                - 0.309s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 313.253959ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/teams/5/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1363
+        body: '{"created":"2026-05-30T06:44:20.418572Z","description":"updated description","id":5,"modified":"2026-05-30T06:44:21.653977Z","name":"ap-team-conform-upd","organization":134,"related":{"access_list":"/api/v2/teams/5/access_list/","activity_stream":"/api/v2/teams/5/activity_stream/","created_by":"/api/v2/users/1/","credentials":"/api/v2/teams/5/credentials/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/teams/ap-team-conform-upd++ap-org-178012340342094/","object_roles":"/api/v2/teams/5/object_roles/","organization":"/api/v2/organizations/134/","projects":"/api/v2/teams/5/projects/","roles":"/api/v2/teams/5/roles/","users":"/api/v2/teams/5/users/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"admin_role":{"description":"Can manage all aspects of the team","id":3283,"name":"Admin"},"member_role":{"description":"User is a member of the team","id":3284,"name":"Member"},"read_role":{"description":"May view settings for the team","id":3285,"name":"Read"}},"organization":{"description":"","id":134,"name":"ap-org-178012340342094"},"resource":{"ansible_id":"c13bad54-a6c8-416d-92b1-0a822f9cd4b1","resource_type":"shared.team"},"user_capabilities":{"delete":true,"edit":true}},"type":"team","url":"/api/v2/teams/5/"}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1363"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 9a99f5343a8c4681b5f8bd6c5a93ee2e
+            X-Api-Time:
+                - 0.296s
+            X-Api-Total-Time:
+                - 0.305s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 309.115667ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/teams/5/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - d58e06c2f7384bd98f2ee1699948d0f1
+            X-Api-Time:
+                - 0.290s
+            X-Api-Total-Time:
+                - 0.304s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 306.434042ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/teams/5/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 45
+        body: '{"detail":"No Team matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "45"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 5aba0ad7f1cc45d18f15c7bc9e03ebdb
+            X-Api-Time:
+                - 0.277s
+            X-Api-Total-Time:
+                - 0.284s
+        status: 404 Not Found
+        code: 404
+        duration: 286.185041ms
+
+provenance:
+  recorded_at: "2026-05-30T06:44:23Z"
+  host: "localhost:30080"
+  api_version: "nginx"

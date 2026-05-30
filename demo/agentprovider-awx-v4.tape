@@ -67,19 +67,16 @@ Sleep 5s
 
 # --- human handoff: minimal prompt. Internal tech demo — we intentionally want
 #     Claude to run the agentprovider CLI and leave its raw output on screen. ---
-Type "Use the agentprovider skill to build a fresh Red Hat Ansible AWX provider with terraform-provider-dynamic against live AWX, then prove it with terraform apply and confirm the action launched a real AWX job. Show the completeness/classification gate summaries as they complete. Use max concurrent sonnet subagents"
+Type "Use the agentprovider skill to build a fresh Red Hat Ansible AWX provider with terraform-provider-dynamic against live AWX, then prove it with terraform apply and confirm the action launched a real AWX job. Spawn one concurrent Sonnet 4.6 medium-effort subagent per contract/task — organization, inventory, job template, and host resources, the data source, and both the job-launch and workflow-job-launch actions — so every contract is built in parallel, at the end summarize completed tasks and substages per resource in table format, then run demo/done.sh"
 Sleep 1500ms
 Enter
 
-# --- Let Claude Code work. Fixed Sleep, NOT a dynamic Wait: the agent runs
-#     inside the Claude Code TUI, which renders tool output in collapsed widgets
-#     rather than plain scrolling text, so VHS `Wait+Screen` cannot reliably match
-#     terraform's "Apply complete!" — and a Wait timeout discards the ENTIRE
-#     recording. A sized Sleep always yields a gif. Observed full run ~16m41s, so
-#     18m captures a complete session and leaves it idle on the final frame. If
-#     the agent needs longer on a given take, raise this and re-record. ---
-Sleep 2s
-Sleep 10m
+# --- Wait for the agent to finish. demo/done.sh prints DEMO_COMPLETE to stdout
+#     so VHS Wait+Screen can match it and advance immediately rather than sleeping
+#     a fixed duration. 20m is a safety ceiling — a stuck run aborts rather than
+#     hanging forever. If a take consistently hits the ceiling, raise it. ---
+Set WaitTimeout 45m
+Wait+Screen /DEMO_COMPLETE/
 
 # --- exit the Claude TUI back to the shell, then play the closing card. The
 #     agent leaves us at Claude's idle input prompt; Ctrl+C twice quits it (the

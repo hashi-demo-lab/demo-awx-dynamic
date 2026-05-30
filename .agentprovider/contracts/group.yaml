@@ -1,0 +1,106 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: group
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+identity:
+  attribute: id
+  known_after: create
+  response_field: id
+
+schema:
+  attributes:
+    id:
+      type: string
+      computed: true
+    name:
+      type: string
+      required: true
+    description:
+      type: string
+      optional: true
+      default: ""
+    inventory:
+      type: number
+      required: true
+    variables:
+      type: string
+      optional: true
+      default: ""
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/groups/
+    body:
+      - name
+      - description
+      - inventory
+      - variables
+    expect_status:
+      - 201
+  read:
+    method: GET
+    path: "/api/v2/groups/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+  update:
+    method: PATCH
+    path: "/api/v2/groups/${id}/"
+    body:
+      - name
+      - description
+      - variables
+    expect_status:
+      - 200
+  delete:
+    method: DELETE
+    path: "/api/v2/groups/${id}/"
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
+ignore_server_fields:
+  - type
+  - url
+  - related
+  - summary_fields
+  - created
+  - modified
+  - detail
+
+conformance:
+  example:
+    name: ap-grp-test-001
+    description: test group description
+    inventory: 175
+    variables: ""
+  update_to:
+    name: ap-grp-test-001-updated
+    description: updated description
+    variables: ""
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - optional_default_consistency
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update
+    - state_matches_expect
+  expect:
+    id:
+      not_null: true

@@ -1,0 +1,118 @@
+apiVersion: agentprovider/v1
+kind: DataSource
+type: workflow_job_template
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+identity:
+  attribute: id
+  response_field: id
+
+lifecycle:
+  read:
+    method: GET
+    path: "/api/v2/workflow_job_templates/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+
+schema:
+  attributes:
+    id:
+      type: number
+      required: true
+    name:
+      type: string
+      computed: true
+    description:
+      type: string
+      computed: true
+    extra_vars:
+      type: string
+      computed: true
+    organization:
+      type: number
+      computed: true
+    survey_enabled:
+      type: bool
+      computed: true
+    allow_simultaneous:
+      type: bool
+      computed: true
+    ask_variables_on_launch:
+      type: bool
+      computed: true
+    ask_inventory_on_launch:
+      type: bool
+      computed: true
+    ask_scm_branch_on_launch:
+      type: bool
+      computed: true
+    ask_limit_on_launch:
+      type: bool
+      computed: true
+    ask_labels_on_launch:
+      type: bool
+      computed: true
+    ask_skip_tags_on_launch:
+      type: bool
+      computed: true
+    ask_tags_on_launch:
+      type: bool
+      computed: true
+    inventory:
+      type: string
+      computed: true
+    limit:
+      type: string
+      computed: true
+    scm_branch:
+      type: string
+      computed: true
+    webhook_service:
+      type: string
+      computed: true
+    webhook_credential:
+      type: string
+      computed: true
+    skip_tags:
+      type: string
+      computed: true
+    job_tags:
+      type: string
+      computed: true
+    status:
+      type: string
+      computed: true
+    last_job_run:
+      type: string
+      computed: true
+    last_job_failed:
+      type: bool
+      computed: true
+    next_job_run:
+      type: string
+      computed: true
+
+ignore_server_fields:
+  - related
+  - summary_fields
+  - url
+  - type
+  - created
+  - modified
+
+conformance:
+  invariants:
+    - read_returns_expected
+  example:
+    id: 170
+    name: ap-wjt-178012367145758

@@ -1,0 +1,23 @@
+{
+  "contract": "schedule",
+  "contract_hash": "sha256:5dfdf41ce7da49325cfdf01c785b3e95bb85127809e215c7f42d817f1faea577",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "import_reconstructs",
+    "id_stable_across_update",
+    "optional_default_consistency"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "settable_coverage": 1,
+  "cassette": "../cassettes/schedule.yaml.cassette.yaml",
+  "cassette_hash": "sha256:9d07ef2162633f43345ec67a6392be2982f92161dbad84437327b20aeb60518e",
+  "generated_at": "2026-05-30T06:49:47Z"
+}

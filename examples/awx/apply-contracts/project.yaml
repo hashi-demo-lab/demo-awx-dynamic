@@ -1,0 +1,207 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: project
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+
+identity:
+  attribute: id
+  known_after: create
+
+schema:
+  attributes:
+    id:
+      type: string
+      computed: true
+    name:
+      type: string
+      required: true
+    description:
+      type: string
+      optional: true
+      default: ""
+    organization:
+      type: number
+      required: true
+    scm_type:
+      type: string
+      optional: true
+      default: ""
+    scm_url:
+      type: string
+      optional: true
+      default: ""
+    scm_branch:
+      type: string
+      optional: true
+      default: ""
+    scm_refspec:
+      type: string
+      optional: true
+      default: ""
+    scm_clean:
+      type: bool
+      optional: true
+      default: false
+    scm_track_submodules:
+      type: bool
+      optional: true
+      default: false
+    scm_delete_on_update:
+      type: bool
+      optional: true
+      default: false
+    scm_update_on_launch:
+      type: bool
+      optional: true
+      default: false
+    scm_update_cache_timeout:
+      type: number
+      optional: true
+      default: 0
+    allow_override:
+      type: bool
+      optional: true
+      default: false
+    timeout:
+      type: number
+      optional: true
+      default: 0
+    credential:
+      type: number
+      optional: true
+      computed: true
+    default_environment:
+      type: number
+      optional: true
+      computed: true
+    signature_validation_credential:
+      type: number
+      optional: true
+      computed: true
+    local_path:
+      type: string
+      optional: true
+      computed: true
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/projects/
+    body:
+      - name
+      - description
+      - organization
+      - scm_type
+      - scm_url
+      - scm_branch
+      - scm_refspec
+      - scm_clean
+      - scm_track_submodules
+      - scm_delete_on_update
+      - scm_update_on_launch
+      - scm_update_cache_timeout
+      - allow_override
+      - timeout
+    expect_status:
+      - 201
+  read:
+    method: GET
+    path: "/api/v2/projects/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+  update:
+    method: PATCH
+    path: "/api/v2/projects/${id}/"
+    body:
+      - name
+      - description
+      - organization
+      - scm_type
+      - scm_url
+      - scm_branch
+      - scm_refspec
+      - scm_clean
+      - scm_track_submodules
+      - scm_delete_on_update
+      - scm_update_on_launch
+      - scm_update_cache_timeout
+      - allow_override
+      - timeout
+    expect_status:
+      - 200
+  delete:
+    method: DELETE
+    path: "/api/v2/projects/${id}/"
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
+ignore_server_fields:
+  - type
+  - url
+  - related
+  - summary_fields
+  - created
+  - modified
+  - scm_revision
+  - last_job_run
+  - last_job_failed
+  - next_job_run
+  - status
+  - last_update_failed
+  - last_updated
+  - custom_virtualenv
+  - detail
+
+conformance:
+  example:
+    name: ap-proj-conform-agent
+    description: ""
+    organization: 143
+    scm_type: ""
+    scm_url: ""
+    scm_branch: ""
+    scm_refspec: ""
+    scm_clean: false
+    scm_track_submodules: false
+    scm_delete_on_update: false
+    scm_update_on_launch: false
+    scm_update_cache_timeout: 0
+    allow_override: false
+    timeout: 0
+  update_to:
+    name: ap-proj-conform-agent
+    description: "updated description"
+    organization: 143
+    scm_type: ""
+    scm_url: ""
+    scm_branch: ""
+    scm_refspec: ""
+    scm_clean: false
+    scm_track_submodules: false
+    scm_delete_on_update: false
+    scm_update_on_launch: false
+    scm_update_cache_timeout: 0
+    allow_override: false
+    timeout: 0
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - import_reconstructs
+    - id_stable_across_update
+    - optional_default_consistency
