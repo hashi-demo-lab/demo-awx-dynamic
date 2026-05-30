@@ -20,10 +20,22 @@ contract-file schema as `--format json` or `--format yaml`, with no text mode.
 and supports `--json` / `--format json` for agents and scripts.
 
 On a **runtime** fatal error (exit 1) in JSON mode, a command prints a structured
-envelope to stdout:
+envelope to stdout. Some commands add `next_action`, `suggestions[]`, and `retry`
+diagnostics; these are reviewable authoring hints, not proof readiness:
 
 ```json
-{ "command": "record", "ok": false, "error": "load contract: ..." }
+{
+  "command": "record",
+  "ok": false,
+  "error": "load contract: ...",
+  "next_action": "repair the contract, cassette, credentials, schema, or invocation; do not wait-and-retry this authoring defect",
+  "retry": {
+    "category": "validation_error",
+    "eligible": false,
+    "terminal": true,
+    "next_action": "repair the contract, cassette, credentials, schema, or invocation; do not wait-and-retry this authoring defect"
+  }
+}
 ```
 
 `conform` instead folds contract load/validation failures into its `results[]`
@@ -147,6 +159,10 @@ agentprovider introspect <endpoint> --base-url <url>
 - The command tries read-only `OPTIONS` first and parses DRF `actions.POST` /
   update metadata into field suggestions. If `OPTIONS` is unavailable, it performs
   one sample `GET` and marks the result `confidence: reduced`.
+- Reduced-confidence JSON may include `degradation`. `reason:
+  insufficient_scope_or_permission` means metadata was likely auth/scope-gated;
+  review credentials once instead of looping the same introspect command. Ordinary
+  metadata absence is reported as `metadata_unavailable` with low confidence.
 - `--auth-env` is **bearer-only**; for a basic-auth API mint a token first. Use a
   **write-scoped** token: DRF APIs (AWX/AAP) only return the `actions.POST`
   descriptor on `OPTIONS` to a principal with add permission, so a read-only token
@@ -179,12 +195,25 @@ agentprovider record <contract.yaml> --base-url <url>
   including legacy identity/ignore/unmodeled projections and field-level
   classification suggestions.
 - `--out`: defaults to `.agentprovider/cassettes/<type>.cassette.yaml`. `--force`
-  overwrites.
+  overwrites. Re-record intentionally with the same `--out` plus `--force` after
+  request-shape changes; without `--force`, the JSON error carries a
+  machine-readable `next_action` and `overwrite_cassette` suggestion.
 - Secrets (auth headers, query secrets, OAuth2 tokens, `client_secret`) are
   redacted before the cassette is written. Review it before committing.
 - The recorder refuses to persist a cassette whose recorded status is outside the
   contract's expectations (e.g. an error-shape contract must record its declared
   error status), so a bad live pass doesn't bless a wrong cassette.
+- If the live run observes an asynchronous success status such as `202` or `303`
+  outside the declared `expect_status`, the record still fails and writes no green
+  cassette. The JSON error includes a reviewable `set_expect_status` suggestion
+  naming the lifecycle/action operation and observed status; update the contract
+  only if that status is truly a success for the API, then re-record with
+  `--force`.
+- Retry/backoff diagnostics are bounded to server-level transients: 5xx responses
+  and transport timeouts. Validation errors, replay misses, schema ambiguity,
+  contract status mismatches, and ordinary non-server 4xx responses are repair
+  paths, not wait-and-retry paths. Mutating record operations are not retried
+  automatically without an explicit idempotency guarantee.
 - **Action-only contracts** (a `Resource` with `actions` and no `create`) record
   fine: `record` invokes the declared action verb against `--base-url` and captures
   the action request/response into the cassette. Pass `--allow-mutations` if the
@@ -338,6 +367,15 @@ suggestion, re-record if request shape changed, rerun `conform`, rerun
 `--judge-input`, and `--judge-command` place model assistance under `judge`; it
 is labeled advisory and cannot change classifications, thresholds, mutation
 checks, proof sidecars, or served-provider readiness.
+
+Use JSON and `jq` for checks rather than inline scripts:
+
+```bash
+agentprovider record contracts/widget.yaml --base-url "$BASE_URL" --out .agentprovider/cassettes/widget.cassette.yaml --suggest \
+  | jq '.suggestions.field_suggestions'
+agentprovider completeness contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml \
+  | jq '.summary, .suggestions'
+```
 
 ## refresh — drift gate against the committed cassette
 

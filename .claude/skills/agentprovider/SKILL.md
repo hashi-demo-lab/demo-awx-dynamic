@@ -73,7 +73,9 @@ credentialed `http://`. `--auth-env` takes an env-var **name** and is **bearer-o
 read-only token silently degrades introspect to `source: sample, confidence: reduced`
 (every field `unknown`, no copyable `attribute`). A write-scoped token returns
 `source: options, confidence: high`. If you see `confidence: reduced` against an API
-you know serves `OPTIONS`, re-mint with write scope before authoring.
+you know serves `OPTIONS`, inspect JSON `degradation`: `insufficient_scope_or_permission`
+means repair credentials/scope once before authoring, while `metadata_unavailable`
+means ordinary fallback to review-only sample evidence.
 
 **Efficiency — build the schema FROM introspect, don't re-derive it from a verbose
 response.** Each high-confidence `--format json` field carries a ready-to-paste
@@ -187,6 +189,17 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
 - For **resources**, add `--allow-mutations` only when you intend the recorder to
   issue create/update/delete against the target. Without it, only read-side /
   non-mutating calls are captured.
+- Treat `record --suggest` and `completeness` field suggestions as pre-conform
+  proof guidance. `gather_probe_evidence` means the field may be settable but lacks
+  bounded omit/write/readback/stability proof; run the scoped probe path before
+  promoting it into the schema. A suggestion is never an auto-edit.
+- If `record` reports an observed async success status outside `expect_status`,
+  review the `set_expect_status` suggestion, update the relevant lifecycle/action
+  only if the status is a real success for the API, then re-record intentionally
+  with the same `--out` and `--force`.
+- If `record` refuses an existing cassette path after a contract or cassette
+  change, follow the JSON `next_action` / `overwrite_cassette` suggestion and
+  rerun with `--force`; do not create a parallel cassette to dodge the overwrite.
 - **`record` hits the live API, so every id you reference must already exist there.**
   A `kind: DataSource` that looks up an object by id, and a by-id action whose path
   interpolates `${...}_id`, both need a real target object at record time — there is
@@ -213,6 +226,12 @@ agentprovider record contracts/widget.yaml --base-url https://api.example.com --
   rejects `base_url`/`token_url` that resolve to private/loopback/metadata hosts
   unless `allow_private_host` is set. Review a bootstrapped contract's URLs before
   pointing real credentials at them.
+
+Back off only for server-level transients: 5xx responses and transport timeouts,
+and keep any retry bounded and jittered. Contract validation errors, replay
+misses, schema ambiguity, contract status mismatches, and ordinary non-server 4xx
+responses are repair paths. Mutating record operations are not retried
+automatically without an explicit idempotency guarantee.
 - Recorded cassettes are redacted (auth headers, query secrets, OAuth2 tokens,
   `client_secret`) before they hit disk, but **review a new cassette before
   committing** anyway. Redaction is conservative substring matching, so a short or
