@@ -1,0 +1,428 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 154
+        host: localhost:30080
+        body: '{"description":"agentprovider eval inventory","kind":"","name":"apr3-inv-22350","organization":154,"prevent_instance_group_fallback":false,"variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2408
+        body: '{"created":"2026-05-31T02:12:43.145652Z","description":"agentprovider eval inventory","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":194,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-31T02:12:43.145665Z","name":"apr3-inv-22350","organization":154,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/194/access_list/","activity_stream":"/api/v2/inventories/194/activity_stream/","ad_hoc_commands":"/api/v2/inventories/194/ad_hoc_commands/","copy":"/api/v2/inventories/194/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/194/groups/","hosts":"/api/v2/inventories/194/hosts/","instance_groups":"/api/v2/inventories/194/instance_groups/","inventory_sources":"/api/v2/inventories/194/inventory_sources/","job_templates":"/api/v2/inventories/194/job_templates/","labels":"/api/v2/inventories/194/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apr3-inv-22350++agentprovider-r1-org/","object_roles":"/api/v2/inventories/194/object_roles/","organization":"/api/v2/organizations/154/","root_groups":"/api/v2/inventories/194/root_groups/","script":"/api/v2/inventories/194/script/","tree":"/api/v2/inventories/194/tree/","update_inventory_sources":"/api/v2/inventories/194/update_inventory_sources/","variable_data":"/api/v2/inventories/194/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":3675,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":3673,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":3677,"name":"Read"},"update_role":{"description":"May update the inventory","id":3674,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":3676,"name":"Use"}},"organization":{"description":"r1 shared FK parent","id":154,"name":"agentprovider-r1-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/194/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2408"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/inventories/194/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 130675626d2243328aa2e6a96dc41f36
+            X-Api-Time:
+                - 0.308s
+            X-Api-Total-Time:
+                - 0.318s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 322.784791ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/194/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2408
+        body: '{"created":"2026-05-31T02:12:43.145652Z","description":"agentprovider eval inventory","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":194,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-31T02:12:43.145665Z","name":"apr3-inv-22350","organization":154,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/194/access_list/","activity_stream":"/api/v2/inventories/194/activity_stream/","ad_hoc_commands":"/api/v2/inventories/194/ad_hoc_commands/","copy":"/api/v2/inventories/194/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/194/groups/","hosts":"/api/v2/inventories/194/hosts/","instance_groups":"/api/v2/inventories/194/instance_groups/","inventory_sources":"/api/v2/inventories/194/inventory_sources/","job_templates":"/api/v2/inventories/194/job_templates/","labels":"/api/v2/inventories/194/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apr3-inv-22350++agentprovider-r1-org/","object_roles":"/api/v2/inventories/194/object_roles/","organization":"/api/v2/organizations/154/","root_groups":"/api/v2/inventories/194/root_groups/","script":"/api/v2/inventories/194/script/","tree":"/api/v2/inventories/194/tree/","update_inventory_sources":"/api/v2/inventories/194/update_inventory_sources/","variable_data":"/api/v2/inventories/194/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":3675,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":3673,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":3677,"name":"Read"},"update_role":{"description":"May update the inventory","id":3674,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":3676,"name":"Use"}},"organization":{"description":"r1 shared FK parent","id":154,"name":"agentprovider-r1-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/194/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2408"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 5eea54c0c865426b8030e121d5134489
+            X-Api-Time:
+                - 0.267s
+            X-Api-Total-Time:
+                - 0.277s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 281.46475ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 181
+        host: localhost:30080
+        body: '{"description":"agentprovider eval inventory updated","host_filter":null,"kind":"","name":"apr3-inv-22350","organization":154,"prevent_instance_group_fallback":false,"variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/194/
+        method: PUT
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2416
+        body: '{"created":"2026-05-31T02:12:43.145652Z","description":"agentprovider eval inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":194,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-31T02:12:44.372814Z","name":"apr3-inv-22350","organization":154,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/194/access_list/","activity_stream":"/api/v2/inventories/194/activity_stream/","ad_hoc_commands":"/api/v2/inventories/194/ad_hoc_commands/","copy":"/api/v2/inventories/194/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/194/groups/","hosts":"/api/v2/inventories/194/hosts/","instance_groups":"/api/v2/inventories/194/instance_groups/","inventory_sources":"/api/v2/inventories/194/inventory_sources/","job_templates":"/api/v2/inventories/194/job_templates/","labels":"/api/v2/inventories/194/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apr3-inv-22350++agentprovider-r1-org/","object_roles":"/api/v2/inventories/194/object_roles/","organization":"/api/v2/organizations/154/","root_groups":"/api/v2/inventories/194/root_groups/","script":"/api/v2/inventories/194/script/","tree":"/api/v2/inventories/194/tree/","update_inventory_sources":"/api/v2/inventories/194/update_inventory_sources/","variable_data":"/api/v2/inventories/194/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":3675,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":3673,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":3677,"name":"Read"},"update_role":{"description":"May update the inventory","id":3674,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":3676,"name":"Use"}},"organization":{"description":"r1 shared FK parent","id":154,"name":"agentprovider-r1-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/194/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2416"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 67ffc99006e34d3cb9334c62192970c5
+            X-Api-Time:
+                - 0.305s
+            X-Api-Total-Time:
+                - 0.317s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 319.968708ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/194/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2416
+        body: '{"created":"2026-05-31T02:12:43.145652Z","description":"agentprovider eval inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":194,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-31T02:12:44.372814Z","name":"apr3-inv-22350","organization":154,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/194/access_list/","activity_stream":"/api/v2/inventories/194/activity_stream/","ad_hoc_commands":"/api/v2/inventories/194/ad_hoc_commands/","copy":"/api/v2/inventories/194/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/194/groups/","hosts":"/api/v2/inventories/194/hosts/","instance_groups":"/api/v2/inventories/194/instance_groups/","inventory_sources":"/api/v2/inventories/194/inventory_sources/","job_templates":"/api/v2/inventories/194/job_templates/","labels":"/api/v2/inventories/194/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apr3-inv-22350++agentprovider-r1-org/","object_roles":"/api/v2/inventories/194/object_roles/","organization":"/api/v2/organizations/154/","root_groups":"/api/v2/inventories/194/root_groups/","script":"/api/v2/inventories/194/script/","tree":"/api/v2/inventories/194/tree/","update_inventory_sources":"/api/v2/inventories/194/update_inventory_sources/","variable_data":"/api/v2/inventories/194/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":3675,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":3673,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":3677,"name":"Read"},"update_role":{"description":"May update the inventory","id":3674,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":3676,"name":"Use"}},"organization":{"description":"r1 shared FK parent","id":154,"name":"agentprovider-r1-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/194/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2416"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - be882fc762d8459ba9b1029ccc9959ff
+            X-Api-Time:
+                - 0.271s
+            X-Api-Total-Time:
+                - 0.283s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 285.555083ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/194/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2416
+        body: '{"created":"2026-05-31T02:12:43.145652Z","description":"agentprovider eval inventory updated","has_active_failures":false,"has_inventory_sources":false,"host_filter":null,"hosts_with_active_failures":0,"id":194,"inventory_sources_with_failures":0,"kind":"","modified":"2026-05-31T02:12:44.372814Z","name":"apr3-inv-22350","organization":154,"pending_deletion":false,"prevent_instance_group_fallback":false,"related":{"access_list":"/api/v2/inventories/194/access_list/","activity_stream":"/api/v2/inventories/194/activity_stream/","ad_hoc_commands":"/api/v2/inventories/194/ad_hoc_commands/","copy":"/api/v2/inventories/194/copy/","created_by":"/api/v2/users/1/","groups":"/api/v2/inventories/194/groups/","hosts":"/api/v2/inventories/194/hosts/","instance_groups":"/api/v2/inventories/194/instance_groups/","inventory_sources":"/api/v2/inventories/194/inventory_sources/","job_templates":"/api/v2/inventories/194/job_templates/","labels":"/api/v2/inventories/194/labels/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/inventories/apr3-inv-22350++agentprovider-r1-org/","object_roles":"/api/v2/inventories/194/object_roles/","organization":"/api/v2/organizations/154/","root_groups":"/api/v2/inventories/194/root_groups/","script":"/api/v2/inventories/194/script/","tree":"/api/v2/inventories/194/tree/","update_inventory_sources":"/api/v2/inventories/194/update_inventory_sources/","variable_data":"/api/v2/inventories/194/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"object_roles":{"adhoc_role":{"description":"May run ad hoc commands on the inventory","id":3675,"name":"Ad Hoc"},"admin_role":{"description":"Can manage all aspects of the inventory","id":3673,"name":"Admin"},"read_role":{"description":"May view settings for the inventory","id":3677,"name":"Read"},"update_role":{"description":"May update the inventory","id":3674,"name":"Update"},"use_role":{"description":"Can use the inventory in a job template","id":3676,"name":"Use"}},"organization":{"description":"r1 shared FK parent","id":154,"name":"agentprovider-r1-org"},"user_capabilities":{"adhoc":true,"copy":true,"delete":true,"edit":true}},"total_groups":0,"total_hosts":0,"total_inventory_sources":0,"type":"inventory","url":"/api/v2/inventories/194/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2416"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 68bacd8c7db942dfae82ba12d91831f0
+            X-Api-Time:
+                - 0.268s
+            X-Api-Total-Time:
+                - 0.275s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 276.770917ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/194/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 7491ca6766264bee9de23d729db5fd5e
+            X-Api-Time:
+                - 0.262s
+            X-Api-Total-Time:
+                - 0.272s
+        status: 202 Accepted
+        code: 202
+        duration: 274.22425ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/inventories/194/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 50
+        body: '{"detail":"No Inventory matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "50"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 8b5d24ec6477464bbf14e18b7a09963b
+            X-Api-Time:
+                - 0.253s
+            X-Api-Total-Time:
+                - 0.260s
+        status: 404 Not Found
+        code: 404
+        duration: 261.668667ms
+
+provenance:
+  recorded_at: "2026-05-31T02:12:46Z"
+  host: "localhost:30080"
+  api_version: "nginx"

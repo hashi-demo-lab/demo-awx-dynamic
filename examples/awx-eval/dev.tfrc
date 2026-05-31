@@ -1,0 +1,4 @@
+provider_installation {
+  dev_overrides { "hashi-demo-lab/dynamic" = "/Users/simon.lynch/git/demo-awx-dynamic" }
+  direct {}
+}

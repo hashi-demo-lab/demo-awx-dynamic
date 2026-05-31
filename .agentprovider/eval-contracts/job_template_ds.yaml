@@ -1,0 +1,121 @@
+apiVersion: agentprovider/v1
+kind: DataSource
+type: aap_job_template
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+  headers:
+    Content-Type: application/json
+
+identity:
+  attribute: id
+  response_field: id
+
+lifecycle:
+  read:
+    method: GET
+    path: /api/v2/job_templates/${id}/
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+
+schema:
+  attributes:
+    id:
+      type: number
+      required: true
+    name:
+      type: string
+      computed: true
+    description:
+      type: string
+      computed: true
+    url:
+      type: string
+      computed: true
+    project:
+      type: number
+      computed: true
+    inventory:
+      type: number
+      computed: true
+    playbook:
+      type: string
+      computed: true
+    job_type:
+      type: string
+      computed: true
+
+ignore_server_fields:
+  - related
+  - summary_fields
+  - created
+  - modified
+  - type
+  - last_job_run
+  - last_job_failed
+  - next_job_run
+  - status
+  - organization
+  - scm_branch
+  - forks
+  - limit
+  - verbosity
+  - extra_vars
+  - job_tags
+  - force_handlers
+  - skip_tags
+  - start_at_task
+  - timeout
+  - use_fact_cache
+  - execution_environment
+  - host_config_key
+  - ask_scm_branch_on_launch
+  - ask_diff_mode_on_launch
+  - ask_variables_on_launch
+  - ask_limit_on_launch
+  - ask_tags_on_launch
+  - ask_skip_tags_on_launch
+  - ask_job_type_on_launch
+  - ask_verbosity_on_launch
+  - ask_inventory_on_launch
+  - ask_credential_on_launch
+  - ask_execution_environment_on_launch
+  - ask_labels_on_launch
+  - ask_forks_on_launch
+  - ask_job_slice_count_on_launch
+  - ask_timeout_on_launch
+  - ask_instance_groups_on_launch
+  - survey_enabled
+  - become_enabled
+  - diff_mode
+  - allow_simultaneous
+  - custom_virtualenv
+  - job_slice_count
+  - webhook_service
+  - webhook_credential
+  - prevent_instance_group_fallback
+
+conformance:
+  example:
+    id: 177
+    name: ap-demo-job-template
+    playbook: hello_world.yml
+    url: /api/v2/job_templates/177/
+  invariants:
+    - read_returns_expected
+    - state_matches_expect
+  expect:
+    url:
+      not_null: true
+    project:
+      not_null: true
+    inventory:
+      not_null: true

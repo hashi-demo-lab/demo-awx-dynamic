@@ -1,0 +1,129 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: aap_host
+
+connection:
+  base_url: "${env.AWX}"
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: "${env.AWX_USERNAME}"
+    password: "${env.AWX_PASSWORD}"
+
+schema:
+  attributes:
+    id:
+      type: string
+      computed: true
+    name:
+      type: string
+      required: true
+    description:
+      type: string
+      optional: true
+      default: ""
+    inventory:
+      type: number
+      required: true
+    enabled:
+      type: bool
+      optional: true
+      default: true
+    instance_id:
+      type: string
+      optional: true
+      default: ""
+    variables:
+      type: string
+      optional: true
+      default: ""
+
+identity:
+  attribute: id
+  known_after: create
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/hosts/
+    body:
+      - name
+      - description
+      - inventory
+      - enabled
+      - instance_id
+      - variables
+    expect_status:
+      - 201
+  read:
+    method: GET
+    path: "/api/v2/hosts/${id}/"
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+  update:
+    method: PUT
+    path: "/api/v2/hosts/${id}/"
+    body:
+      - name
+      - description
+      - inventory
+      - enabled
+      - instance_id
+      - variables
+    expect_status:
+      - 200
+    refresh_after: true
+  delete:
+    method: DELETE
+    path: "/api/v2/hosts/${id}/"
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
+ignore_server_fields:
+  - type
+  - url
+  - related
+  - summary_fields
+  - created
+  - modified
+  - has_active_failures
+  - has_inventory_sources
+  - last_job
+  - last_job_host_summary
+  - ansible_facts_modified
+  - detail
+
+conformance:
+  example:
+    name: "apr3-host-21155"
+    description: ""
+    inventory: 186
+    enabled: true
+    instance_id: ""
+    variables: ""
+  update_to:
+    name: "apr3-host-21155"
+    description: "updated description"
+    inventory: 186
+    enabled: true
+    instance_id: ""
+    variables: ""
+  expect:
+    id:
+      not_null: true
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - optional_default_consistency
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - state_matches_expect
+    - import_reconstructs
+    - id_stable_across_update

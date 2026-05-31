@@ -1,0 +1,72 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/workflow_job_templates/176/launch/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1872
+        body: '{"allow_simultaneous":false,"canceled_on":null,"created":"2026-05-31T02:13:05.920219Z","description":"","elapsed":0.0,"extra_vars":"{}","failed":false,"finished":null,"id":331,"ignored_fields":{},"inventory":null,"is_sliced_job":false,"job_args":"","job_cwd":"","job_env":{},"job_explanation":"","job_tags":null,"job_template":null,"launch_type":"manual","launched_by":{"id":1,"name":"admin","type":"user","url":"/api/v2/users/1/"},"limit":null,"modified":"2026-05-31T02:13:05.929079Z","name":"ap-demo-workflow","related":{"activity_stream":"/api/v2/workflow_jobs/331/activity_stream/","cancel":"/api/v2/workflow_jobs/331/cancel/","created_by":"/api/v2/users/1/","labels":"/api/v2/workflow_jobs/331/labels/","modified_by":"/api/v2/users/1/","notifications":"/api/v2/workflow_jobs/331/notifications/","relaunch":"/api/v2/workflow_jobs/331/relaunch/","unified_job_template":"/api/v2/workflow_job_templates/176/","workflow_job_template":"/api/v2/workflow_job_templates/176/","workflow_nodes":"/api/v2/workflow_jobs/331/workflow_nodes/"},"result_traceback":"","scm_branch":null,"skip_tags":null,"started":null,"status":"pending","summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"labels":{"count":0,"results":[]},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"organization":{"description":"agentprovider demo organization","id":153,"name":"ap-demo-org"},"unified_job_template":{"description":"","id":176,"name":"ap-demo-workflow","unified_job_type":"workflow_job"},"user_capabilities":{"delete":true,"start":true},"workflow_job_template":{"description":"","id":176,"name":"ap-demo-workflow"}},"type":"workflow_job","unified_job_template":176,"url":"/api/v2/workflow_jobs/331/","webhook_credential":null,"webhook_guid":"","webhook_service":"","work_unit_id":null,"workflow_job":331,"workflow_job_template":176}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1872"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/workflow_jobs/331/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin, Cookie
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - c880c9808e344239b58466e4105cebab
+            X-Api-Time:
+                - 0.301s
+            X-Api-Total-Time:
+                - 0.316s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 322.098541ms
+
+provenance:
+  recorded_at: "2026-05-31T02:13:06Z"
+  host: "localhost:30080"
+  api_version: "nginx"

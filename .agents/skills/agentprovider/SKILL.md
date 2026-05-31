@@ -168,15 +168,25 @@ contract-file format — distinct from the contract's own `schema.attributes` bl
 checks (pagination, credential sensitivity, conformance coverage) come from `validate`
 / `conform`. Flags and JSON shapes: `references/cli-loop.md`.
 
-Use `references/contract-format.md` as narrative context. Common things
-bootstrap can't infer: `identity.response_field` for a genuinely non-conventional
-id (the common single-path-param by-id case is auto-detected; see above),
-`refresh_after` (empty write responses), `ignore_server_fields` (server
-timestamps), `auth`, `async`, `pagination`, `carry_on_read`/`normalize`,
-ephemeral `renew`/`close` paths, and an action's real expected output value.
-Bootstrap uses a per-type env placeholder for `connection.base_url` (for example
-`${env.WIDGET_BASE_URL}`); for basic auth, add `connection.auth.type: basic` with
-`username` and `password` keys.
+Things bootstrap can't infer (fill from `references/contract-format.md`):
+`refresh_after` (empty write responses), `ignore_server_fields` (server timestamps),
+`async`, `pagination`, `carry_on_read`/`normalize`, ephemeral `renew`/`close` paths,
+and an action's real expected output value.
+
+**After bootstrap, before your first `record`: replace every scaffold placeholder in
+one pass** — `base_url`, `auth` block + env-var names, op paths, `identity` field,
+`expect_status` (the bullets under "Get these right up front" below). Bootstrap guesses
+each, and a leftover fails one-at-a-time at record; `validate` catches most offline, so
+fixing them together costs zero record attempts.
+
+**Server-derived FK stance — set this BEFORE the first record, it is the #1 re-record
+cause.** When one FK is derivable from another (organization-from-project,
+tenant-from-parent, account-from-key), the server often **ignores your submitted value
+and derives its own** — so `create_echoes_inputs` sees "sent 170, got 1" and fails.
+Default such a derivable FK to `computed` (drop it from the create body) from the start;
+only promote it to a settable input if a record proves the server actually honors it.
+If you do hit the mismatch, diagnose it from the FIRST cassette (sent X, got Y) and flip
+that one field to `computed` — never blind-re-record to "try again".
 
 ### 3. Preflight, then record a cassette with `agentprovider record`
 

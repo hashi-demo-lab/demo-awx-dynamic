@@ -1,0 +1,111 @@
+apiVersion: agentprovider/v1
+kind: Resource
+type: aap_organization
+
+connection:
+  base_url: ${env.AWX}
+  allow_insecure: true
+  allow_private_host: true
+  auth:
+    type: basic
+    username: ${env.AWX_USERNAME}
+    password: ${env.AWX_PASSWORD}
+  headers:
+    Content-Type: application/json
+
+identity:
+  attribute: id
+  known_after: create
+  response_field: id
+
+lifecycle:
+  create:
+    method: POST
+    path: /api/v2/organizations/
+    expect_status:
+      - 201
+    body:
+      - name
+      - description
+      - max_hosts
+      - default_environment
+  read:
+    method: GET
+    path: /api/v2/organizations/${id}/
+    expect_status:
+      - 200
+    not_found_status:
+      - 404
+  update:
+    method: PUT
+    path: /api/v2/organizations/${id}/
+    expect_status:
+      - 200
+    body:
+      - name
+      - description
+      - max_hosts
+      - default_environment
+    refresh_after: true
+  delete:
+    method: DELETE
+    path: /api/v2/organizations/${id}/
+    expect_status:
+      - 204
+    not_found_status:
+      - 404
+
+schema:
+  attributes:
+    id:
+      computed: true
+      type: string
+    name:
+      required: true
+      type: string
+    description:
+      optional: true
+      type: string
+      default: ""
+    max_hosts:
+      optional: true
+      type: number
+      default: 0
+    default_environment:
+      optional: true
+      type: number
+
+ignore_server_fields:
+  - related
+  - summary_fields
+  - url
+  - type
+  - created
+  - modified
+  - custom_virtualenv
+  - detail
+
+conformance:
+  example:
+    name: apr3-org-6181
+    description: "APR3 eval organization"
+    max_hosts: 0
+  update_to:
+    name: apr3-org-6181
+    description: "APR3 eval organization updated"
+    max_hosts: 10
+    default_environment: null
+  expect:
+    id:
+      not_null: true
+  invariants:
+    - id_is_computed_and_nonempty
+    - create_echoes_inputs
+    - optional_default_consistency
+    - read_matches_create
+    - update_then_read_reflects
+    - second_apply_is_noop
+    - delete_then_read_404
+    - state_matches_expect
+    - import_reconstructs
+    - id_stable_across_update

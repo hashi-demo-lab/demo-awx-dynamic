@@ -1,0 +1,448 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 153
+        host: localhost:30080
+        body: '{"description":"eval host for agentprovider record","enabled":true,"instance_id":"","inventory":206,"name":"apeval-r16r2-202944-host-rec","variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1804
+        body: '{"ansible_facts_modified":null,"created":"2026-05-31T10:31:44.280069Z","description":"eval host for agentprovider record","enabled":true,"has_active_failures":false,"has_inventory_sources":false,"id":150,"instance_id":"","inventory":206,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-31T10:31:44.280078Z","name":"apeval-r16r2-202944-host-rec","related":{"activity_stream":"/api/v2/hosts/150/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/150/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/150/ad_hoc_commands/","all_groups":"/api/v2/hosts/150/all_groups/","ansible_facts":"/api/v2/hosts/150/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/150/groups/","inventory":"/api/v2/inventories/206/","inventory_sources":"/api/v2/hosts/150/inventory_sources/","job_events":"/api/v2/hosts/150/job_events/","job_host_summaries":"/api/v2/hosts/150/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/apeval-r16r2-202944-host-rec++apeval-r16r2-202944-fixture-inv++apeval-r16r2-202944-fixture-org/","smart_inventories":"/api/v2/hosts/150/smart_inventories/","variable_data":"/api/v2/hosts/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":206,"inventory_sources_with_failures":0,"kind":"","name":"apeval-r16r2-202944-fixture-inv","organization_id":171,"total_groups":0,"total_hosts":0,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/150/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, POST, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1804"
+            Content-Type:
+                - application/json
+            Location:
+                - /api/v2/hosts/150/
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - c8bac11ed9a84bdb831acb6fdb59411e
+            X-Api-Time:
+                - 0.029s
+            X-Api-Total-Time:
+                - 0.048s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 201 Created
+        code: 201
+        duration: 55.956042ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/150/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1804
+        body: '{"ansible_facts_modified":null,"created":"2026-05-31T10:31:44.280069Z","description":"eval host for agentprovider record","enabled":true,"has_active_failures":false,"has_inventory_sources":false,"id":150,"instance_id":"","inventory":206,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-31T10:31:44.280078Z","name":"apeval-r16r2-202944-host-rec","related":{"activity_stream":"/api/v2/hosts/150/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/150/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/150/ad_hoc_commands/","all_groups":"/api/v2/hosts/150/all_groups/","ansible_facts":"/api/v2/hosts/150/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/150/groups/","inventory":"/api/v2/inventories/206/","inventory_sources":"/api/v2/hosts/150/inventory_sources/","job_events":"/api/v2/hosts/150/job_events/","job_host_summaries":"/api/v2/hosts/150/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/apeval-r16r2-202944-host-rec++apeval-r16r2-202944-fixture-inv++apeval-r16r2-202944-fixture-org/","smart_inventories":"/api/v2/hosts/150/smart_inventories/","variable_data":"/api/v2/hosts/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":206,"inventory_sources_with_failures":0,"kind":"","name":"apeval-r16r2-202944-fixture-inv","organization_id":171,"total_groups":0,"total_hosts":1,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/150/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1804"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - fc2123b37a0f48c99e832e4812b7ba77
+            X-Api-Time:
+                - 0.026s
+            X-Api-Total-Time:
+                - 0.039s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 41.0105ms
+    - id: 2
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 137
+        host: localhost:30080
+        body: '{"description":"updated eval host","enabled":false,"instance_id":"","inventory":206,"name":"apeval-r16r2-202944-host-rec","variables":""}'
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/150/
+        method: PATCH
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1788
+        body: '{"ansible_facts_modified":null,"created":"2026-05-31T10:31:44.280069Z","description":"updated eval host","enabled":false,"has_active_failures":false,"has_inventory_sources":false,"id":150,"instance_id":"","inventory":206,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-31T10:31:44.477879Z","name":"apeval-r16r2-202944-host-rec","related":{"activity_stream":"/api/v2/hosts/150/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/150/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/150/ad_hoc_commands/","all_groups":"/api/v2/hosts/150/all_groups/","ansible_facts":"/api/v2/hosts/150/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/150/groups/","inventory":"/api/v2/inventories/206/","inventory_sources":"/api/v2/hosts/150/inventory_sources/","job_events":"/api/v2/hosts/150/job_events/","job_host_summaries":"/api/v2/hosts/150/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/apeval-r16r2-202944-host-rec++apeval-r16r2-202944-fixture-inv++apeval-r16r2-202944-fixture-org/","smart_inventories":"/api/v2/hosts/150/smart_inventories/","variable_data":"/api/v2/hosts/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":206,"inventory_sources_with_failures":0,"kind":"","name":"apeval-r16r2-202944-fixture-inv","organization_id":171,"total_groups":0,"total_hosts":1,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/150/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1788"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 703b8322522142a8a3f7674c8126df6a
+            X-Api-Time:
+                - 0.034s
+            X-Api-Total-Time:
+                - 0.047s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 49.542625ms
+    - id: 3
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/150/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1788
+        body: '{"ansible_facts_modified":null,"created":"2026-05-31T10:31:44.280069Z","description":"updated eval host","enabled":false,"has_active_failures":false,"has_inventory_sources":false,"id":150,"instance_id":"","inventory":206,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-31T10:31:44.477879Z","name":"apeval-r16r2-202944-host-rec","related":{"activity_stream":"/api/v2/hosts/150/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/150/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/150/ad_hoc_commands/","all_groups":"/api/v2/hosts/150/all_groups/","ansible_facts":"/api/v2/hosts/150/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/150/groups/","inventory":"/api/v2/inventories/206/","inventory_sources":"/api/v2/hosts/150/inventory_sources/","job_events":"/api/v2/hosts/150/job_events/","job_host_summaries":"/api/v2/hosts/150/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/apeval-r16r2-202944-host-rec++apeval-r16r2-202944-fixture-inv++apeval-r16r2-202944-fixture-org/","smart_inventories":"/api/v2/hosts/150/smart_inventories/","variable_data":"/api/v2/hosts/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":206,"inventory_sources_with_failures":0,"kind":"","name":"apeval-r16r2-202944-fixture-inv","organization_id":171,"total_groups":0,"total_hosts":1,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/150/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1788"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 746d5a97f6804192b198151fe639f676
+            X-Api-Time:
+                - 0.025s
+            X-Api-Total-Time:
+                - 0.036s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 38.462ms
+    - id: 4
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/150/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 1788
+        body: '{"ansible_facts_modified":null,"created":"2026-05-31T10:31:44.280069Z","description":"updated eval host","enabled":false,"has_active_failures":false,"has_inventory_sources":false,"id":150,"instance_id":"","inventory":206,"last_job":null,"last_job_host_summary":null,"modified":"2026-05-31T10:31:44.477879Z","name":"apeval-r16r2-202944-host-rec","related":{"activity_stream":"/api/v2/hosts/150/activity_stream/","ad_hoc_command_events":"/api/v2/hosts/150/ad_hoc_command_events/","ad_hoc_commands":"/api/v2/hosts/150/ad_hoc_commands/","all_groups":"/api/v2/hosts/150/all_groups/","ansible_facts":"/api/v2/hosts/150/ansible_facts/","created_by":"/api/v2/users/1/","groups":"/api/v2/hosts/150/groups/","inventory":"/api/v2/inventories/206/","inventory_sources":"/api/v2/hosts/150/inventory_sources/","job_events":"/api/v2/hosts/150/job_events/","job_host_summaries":"/api/v2/hosts/150/job_host_summaries/","modified_by":"/api/v2/users/1/","named_url":"/api/v2/hosts/apeval-r16r2-202944-host-rec++apeval-r16r2-202944-fixture-inv++apeval-r16r2-202944-fixture-org/","smart_inventories":"/api/v2/hosts/150/smart_inventories/","variable_data":"/api/v2/hosts/150/variable_data/"},"summary_fields":{"created_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"groups":{"count":0,"results":[]},"inventory":{"description":"","has_active_failures":false,"has_inventory_sources":false,"hosts_with_active_failures":0,"id":206,"inventory_sources_with_failures":0,"kind":"","name":"apeval-r16r2-202944-fixture-inv","organization_id":171,"total_groups":0,"total_hosts":1,"total_inventory_sources":0},"modified_by":{"first_name":"","id":1,"last_name":"","username":"admin"},"recent_jobs":[],"user_capabilities":{"delete":true,"edit":true}},"type":"host","url":"/api/v2/hosts/150/","variables":""}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "1788"
+            Content-Type:
+                - application/json
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 836bc7b2cd524419bb3b047885cf48cb
+            X-Api-Time:
+                - 0.025s
+            X-Api-Total-Time:
+                - 0.036s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 200 OK
+        code: 200
+        duration: 37.693625ms
+    - id: 5
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/150/
+        method: DELETE
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        body: ""
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Cache-Control:
+                - no-cache, no-store, must-revalidate
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "0"
+            Pragma:
+                - no-cache
+            Server:
+                - nginx
+            Strict-Transport-Security:
+                - max-age=15768000
+            Vary:
+                - Accept, Accept-Language, origin
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - fe1b0fa0168e4ee4956cfc26a46eb81c
+            X-Api-Time:
+                - 0.047s
+            X-Api-Total-Time:
+                - 0.064s
+            X-Content-Type-Options:
+                - nosniff
+            X-Frame-Options:
+                - DENY
+        status: 204 No Content
+        code: 204
+        duration: 65.763417ms
+    - id: 6
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 0
+        host: localhost:30080
+        headers:
+            Accept:
+                - application/json
+            Authorization:
+                - REDACTED
+            Content-Type:
+                - application/json
+            User-Agent:
+                - agentprovider-engine/0.2 (+terraform-dynamic-provider)
+        url: http://localhost:30080/api/v2/hosts/150/
+        method: GET
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 45
+        body: '{"detail":"No Host matches the given query."}'
+        headers:
+            Access-Control-Expose-Headers:
+                - X-API-Request-Id
+            Allow:
+                - GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "45"
+            Content-Type:
+                - application/json
+            Server:
+                - nginx
+            Vary:
+                - Accept, Accept-Language, origin
+            X-Api-Node:
+                - awx-demo-web-5967b569d6-zbwjm
+            X-Api-Product-Name:
+                - AWX
+            X-Api-Product-Version:
+                - 24.6.1
+            X-Api-Request-Id:
+                - 484185d5a5554836b55853c28dafe3b5
+            X-Api-Time:
+                - 0.015s
+            X-Api-Total-Time:
+                - 0.020s
+        status: 404 Not Found
+        code: 404
+        duration: 22.474375ms
+
+provenance:
+  recorded_at: "2026-05-31T10:31:44Z"
+  host: "localhost:30080"
+  api_version: "nginx"

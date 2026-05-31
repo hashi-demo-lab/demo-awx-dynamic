@@ -1,0 +1,24 @@
+{
+  "contract": "aap_job_template",
+  "contract_hash": "sha256:91d0d75f9bdd891f58733d9da0d0badf0cba50c7bf32ec3998b4fb25fbe0d8da",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "settable_coverage": 1,
+  "cassette": "../eval-cassettes/job_template.cassette.yaml",
+  "cassette_hash": "sha256:db087a3a88873fb6730d38dbc1039a3bf703396213b5e96f8f465ed5f16e4b7e",
+  "generated_at": "2026-05-31T02:15:23Z"
+}
