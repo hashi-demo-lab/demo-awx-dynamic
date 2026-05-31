@@ -34,9 +34,9 @@ introspect (live field discovery, no writes, when available)  →  bootstrap (se
 
 **A seeded draft must exist before you `record`** — `record` replays an existing
 contract, so seed first. The default seed is `agentprovider bootstrap` (from an
-OpenAPI spec or a tiny sample response); when introspect gave you the settable
-surface, the blessed fast path is to bootstrap a thin scaffold and lift the schema
-from introspect (see §1's efficiency note). _Narrow exception:_ if you hand-author
+OpenAPI spec, high-confidence introspection JSON, or a tiny sample response); when
+introspect gave you the settable surface, the blessed fast path is
+`bootstrap --from-introspect` (see §1's efficiency note). _Narrow exception:_ if you hand-author
 the whole draft, (a) state that and why, and (b) confirm it loads under strict
 decoding before recording — hand-written YAML is where load errors creep in (e.g. an
 unquoted `${id}` in a flow-mapping `path:` breaks YAML; quote such paths).
@@ -78,29 +78,31 @@ means repair credentials/scope once before authoring, while `metadata_unavailabl
 means ordinary fallback to review-only sample evidence.
 
 **Efficiency — build the schema FROM introspect, don't re-derive it from a verbose
-response.** Each high-confidence `--format json` field carries a ready-to-paste
+response.** Each high-confidence `--format json` field carries a ready-to-use
 `attribute` object already encoding the right shape (`required`,
-`optional`+`default:<lit>`, `optional`+`computed`). Assemble `schema.attributes` by
-**lifting those snippets directly**. On a 40+-field resource the by-hand rewrite of a
-full `--response` draft is the single biggest token/time sink in the loop, and
-introspect has already done that classification — so the fast path is: lift the
-high-confidence `attribute`s → resolve only the `review_descriptor_metadata` rows by
-hand (FK ids → settable `type: number`; JSON blobs like `extra_vars`/`variables` →
-`type: string`, `default: ""`) → seed the lifecycle/connection scaffold + a tiny
-sample for the response shape. This **is** the seeded draft — running `bootstrap`
-with `--response` (a tiny sample) for the scaffold and then replacing its schema with
-the lifted introspect attributes satisfies the bootstrap step; if you assemble the
-draft by hand instead, say so and confirm it loads under `validate` before recording
-(the narrow exception). Don't seed a giant `--response` draft and prune it when the
-settable surface is already in hand.
+`optional`+`default:<lit>`, `optional`+`computed`). Feed that JSON straight into
+bootstrap:
+
+```bash
+agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --format json > /tmp/widgets.introspect.json
+agentprovider bootstrap --from-introspect /tmp/widgets.introspect.json --type widget --out contracts/widget.yaml
+```
+
+`--from-introspect` keeps high-confidence copyable top-level attributes, leaves
+review/reduced-confidence/nested rows out of the scaffold, and builds create/update
+bodies from settable fields only. On a 40+-field resource this avoids the biggest
+token/time sink in the loop: pruning a full `--response` draft. Resolve any
+`review_descriptor_metadata` rows by hand before recording (FK ids → settable
+`type: number`; JSON blobs like `extra_vars`/`variables` → `type: string`,
+`default: ""`). If you assemble the draft by hand instead, say so and confirm it
+loads under `validate` before recording (the narrow exception).
 
 **Two traps that turn the fast path into a slow one — both cost re-records, the most
 expensive thing in the loop, so get them right before the first `record`:** (1)
-introspect's type for a **choice/enum** field can be wrong — e.g. an integer choice
-rendered as `string`, or marked `optional+computed` when it is really a defaulted
-scalar. Sanity-check any `review_descriptor_metadata` or enum-looking field against
-the OPTIONS `choices`/`type` before lifting (a numeric choice → `type: number`,
-`default: <int>`). (2) **An `optional+computed` field the server defaults is still
+introspect now recognizes DRF integer choices when the choice values are numeric
+(and keeps the default numeric when present), but still sanity-check any
+`review_descriptor_metadata` or enum-looking field against the OPTIONS
+`choices`/`type` before lifting. (2) **An `optional+computed` field the server defaults is still
 sent in the request body, so it MUST appear in `conformance.example` (and `update_to`)
 with the server's value** — leave it unpinned and the replayed body won't match the
 cassette, forcing a re-record loop. When in doubt, pin defaulted scalars as
@@ -128,6 +130,9 @@ agentprovider bootstrap --openapi spec.yaml --path /widgets --method post --out 
 agentprovider bootstrap --response sample.json --type widget --kind resource --out contracts/widget.yaml
 cat sample.json | agentprovider bootstrap --response - --type widget --kind datasource
 
+# from introspect JSON: preferred for verbose resources with a live schema surface
+agentprovider bootstrap --from-introspect /tmp/widgets.introspect.json --type widget --out contracts/widget.yaml
+
 # ephemeral (open/renew/close) and action (actions block) kinds
 agentprovider bootstrap --openapi spec.yaml --operation login --kind ephemeral --out contracts/auth_token.yaml
 agentprovider bootstrap --openapi spec.yaml --operation rotateKey --kind action --action rotate --out contracts/key.yaml
@@ -143,14 +148,18 @@ From an OpenAPI spec the importer also marks credential fields `sensitive: true`
 carries non-sensitive string/bool `default`s (secrets are never written), and
 auto-detects the identity attribute for a single-path-param by-id read
 (`/pets/{petId}` → `${id}`). `--alias <param>=<attribute>` forces that link;
-`--ignore <name>` drops pagination/noise (OpenAPI importer only — full flags in
+`--ignore <name>` drops pagination/noise (OpenAPI/introspect importers — full flags in
 `references/cli-loop.md`). A `--response` seed mirrors the *whole* example
 faithfully and has no pruning, so on a verbose API (mostly `related`/`summary_fields`/
 timestamps) **rewrite it down to the practitioner fields** — but per the efficiency
-note above, when introspect gave you the settable surface, prefer lifting those
-`attribute`s over rewriting a giant draft. The ephemeral and action kinds emit valid
+note above, when introspect gave you the settable surface, prefer
+`--from-introspect` over rewriting a giant draft. The ephemeral and action kinds emit valid
 but **not-yet-conforming** drafts (placeholder `renew`/`close` paths; placeholder
 `conformance.example` outputs) — repair them before `conform` (`references/repair-hints.md`).
+`--kind action` emits an action-only contract (no `identity`, no resource
+`lifecycle`); OpenAPI path params and response-seeded target placeholders are
+required string inputs distinct from computed output ids. Set the real action
+endpoint path and replace placeholder output expectations before conforming.
 
 Then read the draft and fill the gaps, asking the CLI for authoritative rules rather
 than reading Go source: `agentprovider schema` (the JSON Schema for the whole
@@ -165,6 +174,9 @@ id (the common single-path-param by-id case is auto-detected; see above),
 `refresh_after` (empty write responses), `ignore_server_fields` (server
 timestamps), `auth`, `async`, `pagination`, `carry_on_read`/`normalize`,
 ephemeral `renew`/`close` paths, and an action's real expected output value.
+Bootstrap uses a per-type env placeholder for `connection.base_url` (for example
+`${env.WIDGET_BASE_URL}`); for basic auth, add `connection.auth.type: basic` with
+`username` and `password` keys.
 
 ### 3. Preflight, then record a cassette with `agentprovider record`
 
@@ -378,19 +390,37 @@ the symptom→fix mapping are in `references/gotchas.md` (and `references/repair
 - **`http://`/private host** → set both `allow_insecure` and `allow_private_host` in
   `connection` (else the SSRF guard rejects it at record/plan).
 - **`auth` nests under `connection`** (not a top-level key) — the #1 first-`validate`
-  failure. Canonical block: `connection: { base_url, allow_insecure, allow_private_host, auth: {...} }`.
+  failure. Canonical basic-auth block (the field names are `username`/`password`, NOT
+  `username_env`/`password_env` — a frequent bootstrap-scaffold trap): `connection: {
+  base_url, allow_insecure, allow_private_host, auth: { type: basic, username:
+  "${env.USER}", password: "${env.PASS}" } }`.
 - **`connection.base_url` must resolve at RUNTIME** — `${env.VAR}`/provider config,
   **never an undefined `${var.*}`**. `conform` doesn't exercise `base_url`, so a bad
   one passes every invariant and fails only at `terraform apply` (`unsupported
   protocol scheme ""`). Keep it identical across every contract.
 - **Paths interpolate `${...}`, never `{...}`**; **base_url is ORIGIN only** — the
   full `/api/v2/...` path lives in each op.
-- **Every op declares `expect_status`** — even a 200 read (no default-accept).
+- **Every op declares `expect_status`** — even a 200 read (no default-accept). Watch
+  **async-accepted mutations: some APIs return `202` (accepted) for DELETE/PUT**
+  instead of `204`/`200` — set the op's `expect_status` to the observed success and
+  re-record, or the first `record` fails at that step.
 - **`update.body` and `conformance.update_to` must list the SAME attribute keys**
-  (both ways) — a mismatch makes the replayed body miss the cassette.
+  (both ways) — a mismatch makes the replayed body miss the cassette. **The most
+  frequent offender: a nullable `optional+computed` FK/reference attribute** is
+  serialized as `null` into the live PATCH/PUT body, so it sits in `update.body` —
+  mirror it in `update_to` (with its value or `null`), or drop it from `update.body`.
+  Omitting it from `update_to` alone makes the replayed body shorter than the cassette
+  → a replay miss that surfaces as `second_apply_is_noop`/`update_then_read` failures.
 - **Re-record only when you change a replayed REQUEST** (example/update_to input, op
   body); an assertion-only edit (expect matcher, action output) needs no re-record.
 - **Reserved meta-args (`count`, …) can't be attribute names** (remap with `field:`); **object/nested attributes need an explicit `required`/`optional`/`computed`** marker.
+- **`field:` can remap top-level fields and explicit dotted response paths**:
+  `job_id: { field: id }`, `value: { field: count }`, and
+  `group_name: { field: summary.groups.name }` work. Projection reads from the raw
+  response before ignored parent envelopes are stripped, so a modeled leaf under
+  `summary` can coexist with `ignore_server_fields: [summary]`. Keep the path explicit
+  and simple: object keys and numeric array segments are supported; arbitrary list
+  reshaping is still a separate modeling problem.
 - **Pick attribute shape by what the server does on OMIT** (four-way rubric: rejects →
   `required`; null/absent → `optional`; stable scalar → `optional+default:<lit>`;
   non-pinnable → `optional+computed`). Don't reflexively mark everything `computed`.

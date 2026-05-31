@@ -86,6 +86,7 @@ does not add hidden gates to other commands.
 
 ```
 agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path <p> --method <m>]
+                   | --from-introspect <introspect.json|->
                    | --response <file.json|-> [--type <name>]
                    [--kind resource|datasource|ephemeral|action] [--action <verb>])
                    [--alias <param>=<attribute>]... [--ignore <name>]...
@@ -94,6 +95,9 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
 
 - `--openapi <spec>`: OpenAPI v3 spec; pick the resource anchor with `--operation`
   (operationId) or `--path` + `--method`.
+- `--from-introspect <file|->`: seed a draft from `agentprovider introspect
+  --format json` output. High-confidence fields become schema attributes and
+  create/update bodies are limited to settable inputs.
 - `--response <file|->`: infer from one example JSON response (`-` = stdin).
 - `--type`: contract type name (default inferred). `--out`: defaults to
   `.agentprovider/contracts/<type>.yaml`.
@@ -102,8 +106,9 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
     and the `ephemeral_open_renew_close` invariant. From `--openapi`, request-body
     fields become optional inputs and response fields become computed outputs; from
     `--response` every field is a computed output and `open.body` is empty.
-  - `action` → an action-only `kind: Resource` draft (an `actions:` block + a no-op
-    read, **no** create/update/delete) declaring `action_returns_expected`.
+  - `action` → an action-only `kind: Resource` draft (`actions:`, schema, and
+    conformance only; **no** `identity` or resource lifecycle) declaring
+    `action_returns_expected`.
 - `--action <verb>`: names the action verb for `--kind action` (default derived from
   the operationId/path, falling back to `invoke`). Only valid with `--kind action`.
 - `--alias <param>=<attribute>` (repeatable): map a path parameter onto a contract
@@ -170,8 +175,9 @@ agentprovider introspect <endpoint> --base-url <url>
   to get `source: options, confidence: high`.
 - High-confidence `OPTIONS` rows may include copyable attribute snippets for
   `required`, `optional+default`, `optional+computed`, or `computed` fields.
-  Sample-derived rows, nested paths, unknown requiredness, and malformed boolean
-  metadata are review-only and intentionally omit a copyable `attribute`.
+  Sample-derived rows, nested paths, unknown requiredness, malformed boolean
+  metadata, and shape-less object/list descriptors are review-only and
+  intentionally omit a copyable `attribute`.
 - It writes no files. Use it to guide bootstrapping and first-pass contract
   authoring before `preflight` / `record`; if `completeness --metadata` or proof
   emission needs a reusable DRF metadata file, save the reviewed full `OPTIONS`

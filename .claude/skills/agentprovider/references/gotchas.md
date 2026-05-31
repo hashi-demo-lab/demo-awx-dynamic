@@ -112,6 +112,13 @@ this file is the detail.
   "id"`). It surfaces only at `record`/replay, so it costs a re-record. Name by-id
   inputs distinctly — `<resource>_id` (`template_id`, `pipeline_id`).
 
+- **`bootstrap --kind action` is action-only now, but the endpoint is still a
+  draft.** The generated contract is `kind: Resource` with an `actions:` block and
+  no resource `identity`/`lifecycle`; OpenAPI path params and response-seeded
+  target placeholders become required string inputs distinct from computed output
+  ids. You still must set the real action endpoint path and replace placeholder
+  computed outputs before `conform`.
+
 - **Custom-action invariants are name-keyed** — `action_increment_changes_count` /
   `action_decrement_changes_count` drive actions named exactly `increment` /
   `decrement`; match the names.
@@ -133,10 +140,18 @@ this file is the detail.
   action proof with no computed output expectation is vacuous and should fail
   closed.
 
-- **An identity used verbatim in URLs should be `type: string`** unless the id is a
-  canonical integer. Terraform stores numbers as floats, so a non-canonical token
+- **`field:` can project explicit dotted response paths, but it is not a broad
+  object-shaping language.** `job_id: { field: id }`, `value: { field: count }`,
+  and `group_name: { field: summary.groups.name }` work. Projection reads from
+  the raw response before ignored parent envelopes are stripped, so a modeled leaf
+  under `summary` can coexist with `ignore_server_fields: [summary]`. Keep the path
+  explicit and simple: object keys and numeric array segments are supported by the
+  shared selector; arbitrary list reshaping is still a separate modeling problem.
+
+- **An identity used verbatim in URLs should be `type: string`.** Bootstrap now
+  defaults inferred path identities to string, but hand-authored contracts still
+  need the rule. Terraform stores numbers as floats, so a non-canonical token
   (`007`, `1e6`, `1.0`) is canonicalized and the rebuilt URL won't match. `conform`
   enforces this and emits a "declare type: string" hint, so you catch it up front.
-  Rule of thumb: the resource's own **identity token → `type: string`**; an integer
-  **foreign-key id used in a path** (`project_id`, `inventory`) stays `type: number`
-  — a canonical integer renders cleanly into `${...}`, no float artifact.
+  Integer foreign-key ids can remain `type: number` only when the API truly uses
+  canonical integer path segments.
