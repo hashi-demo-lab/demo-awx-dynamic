@@ -1,4 +1,6 @@
 provider_installation {
-  dev_overrides { "hashi-demo-lab/dynamic" = "/Users/simon.lynch/git/demo-awx-dynamic" }
+  dev_overrides {
+    "hashi-demo-lab/dynamic" = "/Users/simon.lynch/git/research-dynamic-provider/.agents/skills/agentprovider-workspace/bin-after"
+  }
   direct {}
 }

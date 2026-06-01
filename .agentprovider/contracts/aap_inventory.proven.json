@@ -1,0 +1,23 @@
+{
+  "contract": "aap_inventory",
+  "contract_hash": "sha256:7a635bb2809c37eb59d1ecf50f88e7aeec4da39862012fe31cd38e698f4a0fab",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/aap_inventory.cassette.yaml",
+  "cassette_hash": "sha256:bae2625d076c775ca0dedfc82896f83e04f46e0dc9983154f222bfefc21b669a",
+  "generated_at": "2026-06-01T00:54:41Z"
+}

@@ -2,8 +2,9 @@
 
 All commands below use the `agentprovider` CLI; make sure it's available on your
 PATH before you start. The core authoring subcommands are `bootstrap`, `schema`,
-`invariants`, `validate`, `describe`, `introspect`, `preflight`, `record`, and
-`conform`, with `completeness` (coverage gate) and `refresh` (drift gate) alongside; serving an
+`invariants`, `validate`, `describe`, `introspect`, `preflight`, `record`,
+`conform`, `prove` (terminal proof gate), `completeness` (coverage gate), and
+`refresh` (drift gate), plus `workflow` for compact artifact-driven runs; serving an
 already-authored provider is separate (see `docs/RUNNING.md`).
 
 Run `agentprovider help` for the command listing, and `agentprovider help <command>`
@@ -18,6 +19,46 @@ alias always forces JSON). `schema` is a deliberate exception: it emits the
 contract-file schema as `--format json` or `--format yaml`, with no text mode.
 `introspect` is the other deliberate exception: it defaults to text for humans,
 and supports `--json` / `--format json` for agents and scripts.
+
+## workflow — compact artifact-driven runs
+
+Use a workflow file when you already know the artifact paths and want one compact
+JSON result instead of repeatedly planning and parsing separate commands:
+
+```yaml
+contract: contracts/widget.yaml
+cassette: .agentprovider/cassettes/widget.cassette.yaml
+base_url_env: API_BASE_URL
+uplift: true
+min_completeness: 100
+min_settable_coverage: 40
+steps:
+  - validate
+  - name: preflight
+    stage: record
+  - name: record
+    suggest: true
+    allow_mutations: true
+  - name: prove
+```
+
+Run it with:
+
+```bash
+agentprovider workflow workflow.yaml
+cat workflow.yaml | agentprovider workflow -
+```
+
+Supported step names are built-in only: `validate`, `preflight`, `record`,
+`refresh`, `conform`, `completeness`, and `prove`. The workflow runner does not
+execute shell commands. Top-level fields are defaults; a step can override
+`contract`, `cassette`, `base_url`, `base_url_env`, `openapi`, `operation`,
+`path`, `method`, `metadata`, thresholds, freshness flags, `uplift`,
+`allow_mutations`, `force`, `suggest`, and `stage`. Use `base_url_env` to keep
+live URLs out of reusable workflow files; the env var must be set at run time.
+String steps such as `- validate` are accepted when no per-step options are
+needed. By default each step stores a compact `summary`; pass `--include-output`
+before the workflow path when you need full nested command JSON for debugging.
 
 On a **runtime** fatal error (exit 1) in JSON mode, a command prints a structured
 envelope to stdout. Some commands add `next_action`, `suggestions[]`, and `retry`
@@ -97,7 +138,10 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
   (operationId) or `--path` + `--method`.
 - `--from-introspect <file|->`: seed a draft from `agentprovider introspect
   --format json` output. High-confidence fields become schema attributes and
-  create/update bodies are limited to settable inputs.
+  create/update bodies are limited to settable inputs. For action endpoints, the
+  scaffold uses the introspected endpoint as an action path, converts a numeric
+  by-id segment into a required target input, carries required body inputs only,
+  and does not invent output proof.
 - `--response <file|->`: infer from one example JSON response (`-` = stdin).
 - `--type`: contract type name (default inferred). `--out`: defaults to
   `.agentprovider/contracts/<type>.yaml`.
@@ -107,8 +151,9 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
     fields become optional inputs and response fields become computed outputs; from
     `--response` every field is a computed output and `open.body` is empty.
   - `action` → an action-only `kind: Resource` draft (`actions:`, schema, and
-    conformance only; **no** `identity` or resource lifecycle) declaring
-    `action_returns_expected`.
+    conformance only; **no** `identity` or resource lifecycle). OpenAPI/response
+    seeds declare output proof when response fields are available; introspection
+    seeds are shape-only until `record` captures real outputs.
 - `--action <verb>`: names the action verb for `--kind action` (default derived from
   the operationId/path, falling back to `invoke`). Only valid with `--kind action`.
 - `--alias <param>=<attribute>` (repeatable): map a path parameter onto a contract
@@ -128,8 +173,10 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
 - The output self-validates under strict decoding before it's written, so a draft
   always loads. Treat it as a starting point to repair — and note that the new
   kinds are valid but **not yet conforming**: ephemeral drafts carry placeholder
-  `renew`/`close` paths and action drafts carry placeholder `conformance.example`
-  output values you must replace before `conform` passes (see `repair-hints.md`).
+  `renew`/`close` paths, OpenAPI/response action drafts carry placeholder
+  `conformance.example` output values, and introspection action drafts need real
+  computed outputs added after record captures the response (see
+  `repair-hints.md`).
 
 JSON shape (default):
 
@@ -141,7 +188,7 @@ JSON shape (default):
   "type": "widget",
   "next": [
     "agentprovider record .agentprovider/contracts/widget.yaml --base-url <real-api-base-url> --out .agentprovider/cassettes/widget.cassette --suggest",
-    "agentprovider conform .agentprovider/contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml"
+    "agentprovider prove .agentprovider/contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --uplift"
   ]
 }
 ```
@@ -169,7 +216,7 @@ agentprovider introspect <endpoint> --base-url <url>
   review credentials once instead of looping the same introspect command. Ordinary
   metadata absence is reported as `metadata_unavailable` with low confidence.
 - `--auth-env` is **bearer-only**; for a basic-auth API mint a token first. Use a
-  **write-scoped** token: DRF APIs (AWX/AAP) only return the `actions.POST`
+  **write-scoped** token: some DRF APIs only return the `actions.POST`
   descriptor on `OPTIONS` to a principal with add permission, so a read-only token
   silently yields `source: sample, confidence: reduced`. Re-mint with write scope
   to get `source: options, confidence: high`.
@@ -215,17 +262,11 @@ agentprovider record <contract.yaml> --base-url <url>
   naming the lifecycle/action operation and observed status; update the contract
   only if that status is truly a success for the API, then re-record with
   `--force`.
-- Retry/backoff diagnostics are bounded to server-level transients: 5xx responses
-  and transport timeouts. Validation errors, replay misses, schema ambiguity,
-  contract status mismatches, and ordinary non-server 4xx responses are repair
-  paths, not wait-and-retry paths. Mutating record operations are not retried
-  automatically without an explicit idempotency guarantee.
-- **Action-only contracts** (a `Resource` with `actions` and no `create`) record
-  fine: `record` invokes the declared action verb against `--base-url` and captures
-  the action request/response into the cassette. Pass `--allow-mutations` if the
-  action mutates (e.g. a job launch). `conform` then replays it against
-  `action_returns_expected`. No special flag is needed — `record` keys off the
-  contract shape.
+- Retry/backoff is bounded to server-level transients (5xx, transport timeouts);
+  4xx, replay misses, schema ambiguity, and status mismatches are repair paths.
+- **Action-only contracts** record fine — `record` invokes the declared verb against
+  `--base-url` (add `--allow-mutations` if it mutates) and `prove` replays it against
+  `action_returns_expected`. No special flag; `record` keys off the contract shape.
 
 JSON shape (default). `suggestions` is present only with `--suggest`:
 
@@ -234,7 +275,7 @@ JSON shape (default). `suggestions` is present only with `--suggest`:
   "command": "record",
   "ok": true,
   "cassette": ".agentprovider/cassettes/widget.cassette.yaml",
-  "next": "agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml",
+  "next": "agentprovider prove contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --uplift",
   "suggestions": {
     "identity_response_field": ["_id"],
     "ignore_server_fields": ["createdAt"],
@@ -253,7 +294,14 @@ JSON shape (default). `suggestions` is present only with `--suggest`:
 }
 ```
 
-## conform — the machine verdict (the loop driver)
+## conform — focused repair detail (fallback under `prove`)
+
+The terminal proof gate is `prove --uplift` (see the `prove` section below); it
+already runs `conform --mutation-check --emit-proof` plus the completeness gate in
+one pass. Use `conform` directly only when you need a focused correctness verdict
+or finer repair detail than the aggregate `prove` output gives you — not as your
+default proof path.
+
 
 ```
 agentprovider conform <contract.yaml> <cassette.yaml>
@@ -319,6 +367,61 @@ Loop: while `overall_passed` is false, apply the top `repair_hints` entry (see
 the same stream with `name: "contract_validation"`, so there is one parse path for
 both schema and replay failures. Exit code is non-zero when `overall_passed` is
 false.
+
+## prove — terminal correctness + coverage proof gate
+
+```
+agentprovider prove <contract.yaml> <cassette.yaml>
+               [--min-completeness <pct>] [--min-settable-coverage <pct>]
+               [--openapi <spec>] [--operation <opId> | --path <path> --method <method>]
+               [--metadata <json>] [--uplift] [--strict-freshness]
+               [--max-cassette-age <dur>] [--reference-version <v>]
+               [--format json|text] [--json]
+```
+
+Use `--uplift` on the first proof pass after recording. It adds missing standard
+invariants and applies safe response-field repairs from cassette evidence:
+top-level response-only scalar fields become computed outputs, and top-level
+structured response envelopes become `ignore_server_fields`. Request/settable
+fields and nested mappings still require review.
+
+`prove` is an offline replay command. Its positional inputs are exactly
+`<contract.yaml> <cassette.yaml>`; it does not accept live recording flags such as
+`--base-url`. Do not pass `agentprovider introspect --format json` output to
+`--metadata`: that wrapper is for `bootstrap --from-introspect`. `--metadata` is
+only for reviewed request-schema evidence such as a raw DRF `OPTIONS` envelope;
+metadata/openapi evidence can tighten settable coverage, but `--uplift` only
+auto-promotes fields that were observed in cassette responses.
+
+Use `prove --uplift` as the first terminal pass after recording. For resource and
+data-source contracts it runs `completeness` (default threshold 100%) and then
+`conform --mutation-check --emit-proof`, returning one aggregate verdict and
+writing the `<contract>.proven.json` sidecar only when every gate passes. Run
+standalone `conform` only when the aggregate output lacks enough repair detail.
+`--metadata`/`--openapi` are forwarded to both sub-gates, so ignored settable
+inputs still trigger the green-washing refusal. `--min-settable-coverage` remains
+optional and defaults to report-only.
+
+Action-only and ephemeral contracts are intentionally sidecar-free: `prove` skips
+the completeness/sidecar gate and runs mutation-checked conformance. A targeted
+mutation-check failure or inconclusive result remains a proof failure; add a real
+asserted output or `conformance.expect` matcher instead of weakening invariants.
+
+Stable JSON shape (emitted by default):
+
+```json
+{
+  "contract": "contracts/widget.yaml",
+  "cassette": ".agentprovider/cassettes/widget.cassette.yaml",
+  "kind": "Resource",
+  "overall_passed": true,
+  "action_only": false,
+  "completeness": {"passed": true, "completeness_percent": 100},
+  "conform": {"overall_passed": true, "mutation_check": {"passed": true}},
+  "proof_emitted": true,
+  "proof_path": "contracts/widget.proven.json"
+}
+```
 
 ## completeness — does the contract model the full API surface?
 

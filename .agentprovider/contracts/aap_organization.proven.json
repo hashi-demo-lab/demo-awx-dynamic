@@ -1,0 +1,23 @@
+{
+  "contract": "aap_organization",
+  "contract_hash": "sha256:9e5d710fdbaf16544d7741d6d4ea8aa22148f93491c2b6a08db55c4764b47504",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/aap_organization.cassette.yaml",
+  "cassette_hash": "sha256:6099ca79a484a28e3cf3e3570db18aca4a5de40a7d5ec854bcf25e2a77ff89d2",
+  "generated_at": "2026-06-01T00:54:28Z"
+}

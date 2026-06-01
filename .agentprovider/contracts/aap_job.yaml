@@ -1,0 +1,118 @@
+kind: Resource
+type: aap_job
+connection:
+    allow_insecure: true
+    allow_private_host: true
+    auth:
+        failure_status:
+            - 401
+            - 403
+        type: basic
+        username: ${env.AWX_USERNAME}
+        password: ${env.AWX_PASSWORD}
+    base_url: ${env.AWX}
+    headers:
+        Content-Type: application/json
+actions:
+    launch:
+        expect_status:
+            - 201
+        method: POST
+        path: /api/v2/job_templates/${job_template_id}/launch/
+schema:
+    attributes:
+        job_template_id:
+            required: true
+            type: string
+        limit:
+            optional: true
+            type: string
+        extra_vars:
+            optional: true
+            type: string
+        job_type:
+            optional: true
+            type: string
+        verbosity:
+            optional: true
+            computed: true
+            type: number
+        job:
+            computed: true
+            type: number
+        status:
+            computed: true
+            type: string
+ignore_server_fields:
+    - id
+    - type
+    - url
+    - related
+    - summary_fields
+    - ignored_fields
+    - created
+    - modified
+    - name
+    - description
+    - unified_job_template
+    - launch_type
+    - started
+    - finished
+    - canceled_on
+    - elapsed
+    - job_explanation
+    - execution_node
+    - controller_node
+    - result_traceback
+    - execution_environment
+    - artifacts
+    - playbook
+    - scm_branch
+    - forks
+    - skip_tags
+    - job_tags
+    - timeout
+    - job_slice_number
+    - job_slice_count
+    - allow_simultaneous
+    - inventory
+    - project
+    - organization
+    - credential
+    - vault_credential
+    - instance_groups
+    - labels
+    - diff_mode
+    - job_template
+    - passwords_needed_to_start
+    - ask_scm_branch_on_launch
+    - ask_variables_on_launch
+    - ask_tags_on_launch
+    - ask_diff_mode_on_launch
+    - ask_skip_tags_on_launch
+    - ask_job_type_on_launch
+    - ask_limit_on_launch
+    - ask_verbosity_on_launch
+    - ask_inventory_on_launch
+    - ask_credential_on_launch
+    - ask_execution_environment_on_launch
+    - ask_labels_on_launch
+    - ask_forks_on_launch
+    - ask_job_slice_count_on_launch
+    - ask_timeout_on_launch
+    - ask_instance_groups_on_launch
+conformance:
+    action: launch
+    example:
+        job_template_id: "7"
+        job: 456
+        status: pending
+    invariants:
+        - action_returns_expected
+        - state_matches_expect
+    expect:
+        job:
+            not_null: true
+        status:
+            not_null: true
+apiVersion: agentprovider/v1

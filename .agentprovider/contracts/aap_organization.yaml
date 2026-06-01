@@ -1,0 +1,117 @@
+apiVersion: agentprovider/v1
+conformance:
+    example:
+        description: apeval org
+        max_hosts: 0
+        name: apeval-r7-105114-org
+    expect:
+        id:
+            not_null: true
+    invariants:
+        - id_is_computed_and_nonempty
+        - create_echoes_inputs
+        - optional_default_consistency
+        - read_matches_create
+        - update_then_read_reflects
+        - second_apply_is_noop
+        - delete_then_read_404
+        - state_matches_expect
+        - import_reconstructs
+        - id_stable_across_update
+    update_to:
+        description: apeval org updated
+        max_hosts: 10
+        name: apeval-r7-105114-org-updated
+connection:
+    allow_insecure: true
+    allow_private_host: true
+    auth:
+        failure_status:
+            - 401
+            - 403
+        password: ${env.AWX_PASSWORD}
+        type: basic
+        username: ${env.AWX_USERNAME}
+    base_url: ${env.AWX}
+    headers:
+        Content-Type: application/json
+identity:
+    attribute: id
+    known_after: create
+    response_field: id
+ignore_server_fields:
+    - related
+    - summary_fields
+kind: Resource
+lifecycle:
+    create:
+        body:
+            - description
+            - max_hosts
+            - name
+        expect_status:
+            - 200
+            - 201
+        method: POST
+        path: /api/v2/organizations/
+    delete:
+        expect_status:
+            - 200
+            - 204
+        method: DELETE
+        not_found_status:
+            - 404
+        path: /api/v2/organizations/${id}/
+    read:
+        expect_status:
+            - 200
+        method: GET
+        not_found_status:
+            - 404
+        path: /api/v2/organizations/${id}/
+    update:
+        body:
+            - description
+            - max_hosts
+            - name
+        expect_status:
+            - 200
+        method: PATCH
+        path: /api/v2/organizations/${id}/
+        refresh_after: true
+schema:
+    attributes:
+        created:
+            computed: true
+            type: string
+        custom_virtualenv:
+            computed: true
+            type: string
+        default_environment:
+            computed: true
+            optional: true
+            type: number
+        description:
+            default: ""
+            optional: true
+            type: string
+        id:
+            computed: true
+            type: string
+        max_hosts:
+            default: 0
+            optional: true
+            type: number
+        modified:
+            computed: true
+            type: string
+        name:
+            required: true
+            type: string
+        type:
+            computed: true
+            type: string
+        url:
+            computed: true
+            type: string
+type: aap_organization

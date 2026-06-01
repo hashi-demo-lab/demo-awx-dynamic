@@ -1,0 +1,153 @@
+apiVersion: agentprovider/v1
+conformance:
+    example:
+        description: ""
+        enabled: true
+        instance_id: ""
+        inventory: 290
+        name: apeval-r7-105114-host
+        variables: ""
+    expect:
+        id:
+            not_null: true
+    invariants:
+        - id_is_computed_and_nonempty
+        - create_echoes_inputs
+        - optional_default_consistency
+        - read_matches_create
+        - update_then_read_reflects
+        - second_apply_is_noop
+        - delete_then_read_404
+        - state_matches_expect
+        - import_reconstructs
+        - id_stable_across_update
+    update_to:
+        description: updated description
+        enabled: true
+        instance_id: ""
+        inventory: 290
+        name: apeval-r7-105114-host-updated
+        variables: ""
+connection:
+    allow_insecure: true
+    allow_private_host: true
+    auth:
+        failure_status:
+            - 401
+            - 403
+        password: ${env.AWX_PASSWORD}
+        type: basic
+        username: ${env.AWX_USERNAME}
+    base_url: ${env.AWX}
+    headers:
+        Content-Type: application/json
+identity:
+    attribute: id
+    known_after: create
+    response_field: id
+ignore_server_fields:
+    - related
+    - summary_fields
+kind: Resource
+lifecycle:
+    create:
+        body:
+            - description
+            - enabled
+            - instance_id
+            - inventory
+            - name
+            - variables
+        expect_status:
+            - 200
+            - 201
+        method: POST
+        path: /api/v2/hosts/
+    delete:
+        expect_status:
+            - 200
+            - 204
+        method: DELETE
+        not_found_status:
+            - 404
+        path: /api/v2/hosts/${id}/
+    read:
+        expect_status:
+            - 200
+        method: GET
+        not_found_status:
+            - 404
+        path: /api/v2/hosts/${id}/
+    update:
+        body:
+            - description
+            - enabled
+            - instance_id
+            - inventory
+            - name
+            - variables
+        expect_status:
+            - 200
+        method: PATCH
+        path: /api/v2/hosts/${id}/
+        refresh_after: true
+schema:
+    attributes:
+        ansible_facts_modified:
+            computed: true
+            type: string
+        created:
+            computed: true
+            type: string
+        description:
+            default: ""
+            optional: true
+            type: string
+        enabled:
+            default: true
+            optional: true
+            type: bool
+        groups:
+            element:
+                type: number
+            optional: true
+            type: list
+        has_active_failures:
+            computed: true
+            type: bool
+        has_inventory_sources:
+            computed: true
+            type: bool
+        id:
+            computed: true
+            type: string
+        instance_id:
+            default: ""
+            optional: true
+            type: string
+        inventory:
+            required: true
+            type: number
+        last_job:
+            computed: true
+            type: string
+        last_job_host_summary:
+            computed: true
+            type: string
+        modified:
+            computed: true
+            type: string
+        name:
+            required: true
+            type: string
+        type:
+            computed: true
+            type: string
+        url:
+            computed: true
+            type: string
+        variables:
+            default: ""
+            optional: true
+            type: string
+type: aap_host

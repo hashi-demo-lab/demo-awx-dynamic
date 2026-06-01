@@ -1,0 +1,23 @@
+{
+  "contract": "aap_job_template",
+  "contract_hash": "sha256:de4292f3cd0740e231f012bdbae094b59c2311690794f9655309d09af13cd9f1",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/aap_job_template.cassette.yaml",
+  "cassette_hash": "sha256:922468f0222716d528fc96a55352207376854524e79562bc6dbd6fe3cdaf55ea",
+  "generated_at": "2026-06-01T00:55:48Z"
+}

@@ -1,0 +1,81 @@
+{
+  "skill_name": "agentprovider",
+  "eval_kind": "live-lean",
+  "notes": "Lean live AWX optimization eval for measuring skill and CLI changes before spending a full seven-contract AWX proof run. It covers the friction shapes from the 2026-05-31 demo log: scaffold hand-edits, auth/base_url/path/identity/status defaults, action-only modeling, server-derived input detection, verbose relationship-heavy field review, distinct namespaces, and verified cleanup. This eval is not a replacement for awx-live.json; it is the cheap comparison loop.",
+  "requires": [
+    "AWX reachable at $AWX with credentials in $AWX_USERNAME and $AWX_PASSWORD",
+    "agentprovider CLI and terraform-provider-dynamic built from the current checkout",
+    "terraform installed",
+    "ruby installed for deterministic YAML patching in the bundled harness",
+    "one project/inventory/playbook fixture suitable for creating a tagged job template"
+  ],
+  "metric_schema": {
+    "skill_version": "git ref or skill snapshot under test",
+    "cli_version": "agentprovider git ref or binary version under test",
+    "changed_lever": "skill, cli, eval, or mixed",
+    "token_total": "total agent tokens for the run",
+    "wall_seconds": "elapsed seconds from first authoring command through verified cleanup",
+    "record_iterations": "number of record attempts per contract",
+    "conform_iterations": "number of conform attempts per contract",
+    "rerecord_count": "number of forced rerecords after request-shape changes",
+    "source_reads": "engine/provider/CLI source files read by the agent under test",
+    "manual_scaffold_edits": "avoidable hand repairs to generated scaffold before the first successful record; do not count deterministic per-run conformance example values, fixture ids, or action outputs learned from the first record",
+    "proof_quality": "conform, completeness, mutation/proof, terraform, action, no-op-plan, and cleanup outcomes",
+    "cleanup_status": "verified_clean, failed, or skipped with reason"
+  },
+  "automation": {
+    "script": ".agents/skills/agentprovider/scripts/run_awx_lean_eval.sh",
+    "example": "RUN_TAG=YYYYMMDDlabel sh .agents/skills/agentprovider/scripts/run_awx_lean_eval.sh",
+    "metrics_output": "metrics.json in the temporary workspace",
+    "scored_wrapper": ".agents/skills/agentprovider/scripts/run_codex_scored_eval.sh .agents/skills/agentprovider/evals/awx-lean-codex-prompt.md",
+    "scored_prompt": ".agents/skills/agentprovider/evals/awx-lean-codex-prompt.md",
+    "token_note": "The shell harness records command-side wall_seconds and proof gates. The Codex scored wrapper captures token_total, cached_input_tokens, output_tokens, duration_seconds, event JSONL, stderr, and the final agent message for comparable eval rounds."
+  },
+  "setup": [
+    "Run from the repository root and source the repo-local environment without printing it.",
+    "Mint one write-scoped bearer token for introspect and revoke it during cleanup.",
+    "Export one RUN_TAG for the whole lean run; every created object must be named apeval-${RUN_TAG}-lean-*.",
+    "Pre-clean only stale apeval-* objects from earlier runs, preserving documented keep-fixtures."
+  ],
+  "coverage_map": [
+    {"demo_item": "A1", "coverage": "base_url placeholders are measured as manual_scaffold_edits and guarded by first-record success; --from-introspect should produce shared API_BASE_URL"},
+    {"demo_item": "A2", "coverage": "auth scaffold validity and env-key diagnostics are measured before first record; --from-introspect should carry non-secret auth_env into a valid bearer header scaffold"},
+    {"demo_item": "A3", "coverage": "path interpolation is checked by record/conform without hand-changing {param} tokens; --from-introspect should carry the discovered collection and item paths"},
+    {"demo_item": "A4", "coverage": "identity response-field choice is checked by conform and import/id-stability invariants; OPTIONS-only scaffolds should seed a default computed id"},
+    {"demo_item": "A5", "coverage": "unexpected live success statuses count as record_iterations until expect_status is repaired"},
+    {"demo_item": "A6", "coverage": "action-only bootstrap must avoid resource lifecycle and must expose a real target input"},
+    {"demo_item": "B1", "coverage": "sent-vs-returned divergence and field-level 400 validation failures must be diagnosed before repeated blind rerecords"},
+    {"demo_item": "B2", "coverage": "dotted field projection remains covered by CLI/unit tests and is exercised when modeling nested outputs"},
+    {"demo_item": "B3", "coverage": "relationship-heavy job template field classification is counted as manual review and source_reads; DRF id and string-default json descriptor rows should lift without review_descriptor_metadata"},
+    {"demo_item": "C1-C3", "coverage": "skill edits are compared by token_total, wall_seconds, source_reads, and rerecord_count"},
+    {"demo_item": "D1-D2", "coverage": "cleanup_status and RUN_TAG namespace separation are hard assertions"}
+  ],
+  "evals": [
+    {
+      "id": "awx-lean-organization-and-job-template",
+      "name": "awx-lean-optimization-loop",
+      "coverage": "live",
+      "requires": ["awx", "terraform"],
+      "prompt": "Use the agentprovider skill to author two fresh AWX contracts from a clean slate: one lower-friction CRUD resource and one verbose relationship-heavy CRUD resource. Follow the CLI-first loop: introspect with a write-scoped token when metadata exists, bootstrap from introspect, validate/preflight, record with suggestions, then run the skill's terminal proof gate until it passes (do not pre-script which subcommand that is — follow the loop and the CLI 'next' hints the skill prescribes), then create a minimal Terraform example and verify a no-op second plan. Use env placeholders for credentials and base_url; never print credential values. Record the metric_schema fields in a markdown table, including every record/conform/prove attempt, forced rerecord, source read, and manual scaffold edit. Use a single RUN_TAG and distinct namespaces for setup fixtures and per-contract record objects. Run teardown and fail the eval if any apeval-${RUN_TAG}-lean-* object remains.",
+      "assertions": [
+        {"kind": "lean_metrics_reported", "text": "the final report includes skill_version, cli_version, changed_lever, token_total, wall_seconds, record_iterations, conform_iterations, rerecord_count, source_reads, manual_scaffold_edits, proof_quality, and cleanup_status"},
+        {"kind": "first_record_scaffold_quality", "text": "base_url, auth, path interpolation, identity, and expect_status scaffold repairs are counted explicitly instead of hidden in prose"},
+        {"kind": "introspect_first", "text": "introspect is attempted before bootstrap for both resources, or the report explains why live metadata was unavailable"},
+        {"kind": "from_introspect_seed", "text": "bootstrap --from-introspect is used when high-confidence metadata exists, so create/update bodies start from settable fields only, auth/base_url/path/id scaffolds do not need hand repair, and update_to is seeded before the first record"},
+        {"kind": "relationship_field_reviewed", "text": "relationship/FK/server-derived fields are classified with evidence; fixture FKs needed for create are supplied explicitly, and settable inputs are not parked in ignore_server_fields to inflate completeness"},
+        {"kind": "conform_and_completeness_pass", "text": "both contracts conform and pass agentprovider prove, including completeness/classification and mutation proof, before Terraform runtime proof"},
+        {"kind": "terraform_runtime_checked", "text": "Terraform apply succeeds for the lean example and a second plan is a no-op"},
+        {"kind": "cleanup_complete", "text": "teardown removes all apeval-${RUN_TAG}-lean-* objects and revokes the minted token; any leftover object fails the eval"}
+      ],
+      "efficiency_targets": {
+        "source_reads": 0,
+        "manual_scaffold_edits": 0,
+        "conform_iterations_per_contract": 1,
+        "rerecord_count": 0,
+        "record_plan_time_surprises": 0,
+        "note": "Targets are comparison anchors, not proof by themselves. A run that reduces tokens by skipping completeness, mutation/proof, Terraform, action checks, or cleanup is a regression."
+      },
+      "cleanup": "Terraform destroy first, then API sweep every object named apeval-${RUN_TAG}-lean-* across the mutated AWX endpoints, delete leaf objects before parents or rely on org cascade when safe, revoke the setup token, verify name__startswith=apeval-${RUN_TAG}-lean- returns count 0 for every touched endpoint, and remove authored contracts, cassettes, proof sidecars, and Terraform state from the workspace."
+    }
+  ]
+}

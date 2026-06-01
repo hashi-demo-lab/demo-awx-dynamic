@@ -9,541 +9,192 @@ description: >-
   an async 202-poll create. Also triggers on agentprovider,
   terraform-provider-dynamic, or `agentprovider bootstrap/introspect/record/conform/preflight`
   (including repair-hint questions). Drives the introspect/bootstrap →
-  preflight → record → conform → completeness/proof loop until the contract is
-  proven against recorded responses. NOT
-  for running an already-authored provider (docs/RUNNING.md), hand-writing a
-  provider with terraform-plugin-framework, editing the engine internals, or
-  debugging an existing third-party Terraform provider.
+  preflight → record → prove loop until the contract is proven against recorded
+  responses. NOT for running an already-authored provider (docs/RUNNING.md),
+  hand-writing a provider with terraform-plugin-framework, editing the engine
+  internals, or debugging an existing third-party Terraform provider.
 ---
 
 # Authoring an agentprovider contract
 
-agentprovider builds a Terraform provider by **interpreting a declarative YAML
-contract at runtime** — there is no per-API Go to write. Author one contract for
-a target API and **prove it correct** against recorded responses, using the
-`agentprovider` CLI's authoring seams. The contract is the unit of work; the
-conformance verdict is the definition of done.
+agentprovider turns a declarative YAML contract into a Terraform provider at
+runtime — there is no per-API Go to write. Author one contract for a target API and
+**prove it correct** against recorded responses. The contract is the unit of work;
+the conformance verdict is the definition of done.
 
-The mandatory loop, in order. When a live schema-bearing endpoint exists, run
-`introspect` before seeding the draft; otherwise start at `bootstrap` and note
-why live discovery was unavailable.
+## The loop
 
 ```
-introspect (live field discovery, no writes, when available)  →  bootstrap (seed)  →  schema/invariants/describe/validate (authoring introspection)  →  preflight  →  record (capture a cassette)  →  conform (machine verdict)  →  apply repair_hints  →  re-run until overall_passed  →  completeness/classification (coverage + field repair gate)  →  conform --mutation-check --emit-proof  →  Terraform apply (runtime proof)
+introspect (when a live schema endpoint exists) → bootstrap (seed) → preflight → record (cassette) → prove --uplift → apply repair_hints / classify fields → re-run until overall_passed → terraform apply (runtime proof)
 ```
 
-**A seeded draft must exist before you `record`** — `record` replays an existing
-contract, so seed first. The default seed is `agentprovider bootstrap` (from an
-OpenAPI spec, high-confidence introspection JSON, or a tiny sample response); when
-introspect gave you the settable surface, the blessed fast path is
-`bootstrap --from-introspect` (see §1's efficiency note). _Narrow exception:_ if you hand-author
-the whole draft, (a) state that and why, and (b) confirm it loads under strict
-decoding before recording — hand-written YAML is where load errors creep in (e.g. an
-unquoted `${id}` in a flow-mapping `path:` breaks YAML; quote such paths).
+**Every command prints a compact JSON verdict and a `next:` hint — follow the
+hints; they encode this loop.** For repeat passes over known paths, prefer
+`agentprovider workflow <file|->` (one compact JSON summary; `--include-output` for
+full detail). Ask the CLI for authoritative rules instead of reading Go source:
+`agentprovider schema | invariants <c> | describe <field-path> | validate <c>`.
+Exact flags and stable JSON shapes: `references/cli-loop.md`.
 
-`conform` returning `overall_passed` is the correctness loop; `completeness` is a
-mandatory follow-on gate (model enough of the surface, classify missing fields). For
-Terraform-provider tasks, don't report `PROVEN` until all contracts conform,
-completeness has been checked for each, and the Terraform example has applied.
-Input can be an OpenAPI spec, a sample JSON response, or a base URL + your knowledge
-of the API. To only *run* an existing provider, see `docs/RUNNING.md`, not this skill.
+Three rules that govern the whole loop:
 
-## The loop in detail
+- **Seed before you `record`.** `record` replays an *existing* contract, so seed
+  first. Default seed is `bootstrap`; when a live schema endpoint exists,
+  `bootstrap --from-introspect` is the fast path — it builds create/update bodies
+  from settable fields only, avoiding the loop's biggest sink (pruning a giant
+  `--response` draft). Hand-authoring is a narrow exception: say so, and `validate`
+  that it loads under strict decoding before recording (quote `${id}` in flow-map
+  `path:` values — unquoted breaks YAML).
+- **`agentprovider prove --uplift` is THE terminal gate.** It runs the completeness
+  gate *and* `conform --mutation-check --emit-proof` in one pass and writes the
+  proof sidecar; `--uplift` auto-routes server-owned fields to reach 100%.
+  Anti-pattern: hand-assembling standalone `completeness` + `conform --emit-proof`
+  as your default — `prove` wraps them, so running them separately just doubles
+  work. Use standalone `conform`/`completeness` only for focused repair detail.
+- **Re-record only after changing a *replayed request*** (body, path,
+  `conformance.example`, or `update_to`). Field classification and
+  `ignore_server_fields` are diff-only — just re-run `prove`.
 
-### 1. Discover live settable fields with `agentprovider introspect`
+## Per-command notes
 
-Run `introspect` before authoring or bootstrapping when the API can describe its
-create/update surface live (for example, a DRF endpoint with `OPTIONS` metadata),
-or when you only have a sample endpoint and need a reduced-confidence field map
-to review. It is read-only and writes no contract, cassette, metadata file, or
-proof.
+- **introspect** — read-only live field discovery; writes nothing. Use a
+  **write-scoped** token: many DRF APIs only serve the `actions.POST` `OPTIONS`
+  descriptor to a principal with add permission, and a read-only token silently
+  degrades to `source: sample, confidence: reduced`. `--auth-env` takes an env-var
+  *name* and is bearer-only. `--allow-private-host`/`--allow-insecure` for reviewed
+  dev targets. Each high-confidence `--format json` row carries a ready-to-use
+  `attribute` object — feed the JSON straight into `bootstrap --from-introspect`,
+  then resolve only the `review_descriptor_metadata` rows by hand (FK ids →
+  `type: number`; JSON/blob inputs → `type: string, default: ""`).
+- **bootstrap** — seed from `--openapi` (`--operation` or `--path`+`--method`),
+  `--response` (a sample JSON body), or `--from-introspect`. `--kind` is
+  `resource` (default) | `datasource` | `ephemeral` | `action`; `--action <verb>`
+  names an action verb. `--alias param=attr` links a path param to an attribute;
+  `--ignore <name>` drops pagination/noise. The draft is a starting point to
+  *repair*: bootstrap fills what the spec states and leaves quirks (non-conventional
+  `_id`, empty PUT, 202 poll, `auth`, `async`, `pagination`, `refresh_after`,
+  `ignore_server_fields`, ephemeral renew/close, an action's real expected output)
+  for you. Ephemeral/action drafts are valid but **not-yet-conforming** (placeholder
+  paths/outputs) — repair before `conform`. Narrative on every block:
+  `references/contract-format.md`.
+- **preflight** — `agentprovider preflight <c> --stage record --base-url "$URL"`
+  reports blockers/warnings/expectations and the exact next command. Advisory; does
+  not mutate the contract.
+- **record** — one live pass captures byte-accurate responses into a replayable
+  cassette. Add `--allow-mutations` to issue create/update/delete; `--suggest` for
+  `ignore_server_fields`/unmodeled-field hints (advisory, never an auto-edit; weigh
+  lightly on read-only data sources). Every id you reference must already exist
+  live — create a throwaway fixture for a by-id data source or action. Recording
+  sends **real credentials** to `base_url`: record against a reviewed staging
+  `--base-url`, never an unread production URL (the engine rejects private/loopback
+  hosts unless `allow_private_host`). Cassettes are auto-redacted, but review before
+  commit. If `record` reports an async status outside `expect_status`, or refuses an
+  existing cassette, follow its `next_action`/`set_expect_status` suggestion and
+  re-record with `--force` — don't fork a parallel cassette. Back off only on 5xx /
+  transport timeouts (bounded, jittered); 4xx and replay misses are repair paths.
+- **prove** — offline replay; positional `<contract> <cassette>` only (no
+  `--base-url`; don't pass introspect JSON to `--metadata`). **stdout is pure JSON,
+  human status lines go to stderr** — parse `prove … 2>/dev/null | parser`. On
+  `overall_passed: false`, apply the top `conform.repair_hints[]` and re-run. A
+  contract must declare `conformance.invariants` — the harness fails closed on zero
+  checks. Invariant set + repair-hint catalog (symptom → fix → why):
+  `references/repair-hints.md`.
 
-```bash
-agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --auth-env AWX_TOKEN
-agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --format json
-```
+## Classify fields — the one test
 
-Add `--allow-private-host` for a reviewed local/dev host and `--allow-insecure` for
-credentialed `http://`. `--auth-env` takes an env-var **name** and is **bearer-only**
-— for a basic-auth API (AWX), mint a token (`POST /api/v2/tokens/`) and point
-`--auth-env` at it. Full flags: `references/cli-loop.md`.
+*Does the API accept this field as a create/update input?* **Yes** → model it in
+`schema.attributes` as `optional` (`+computed` only for a non-pinnable server
+default; prefer `default: <literal>`). **Pure server output** (timestamps,
+`related`, `summary_fields`, `url`, `detail`, counters, `*_role`) →
+`ignore_server_fields`. **FK/reference ids and behavior toggles (`enable_*`,
+`*_enabled`, the whole `ask_*` / `*_on_launch` family) ARE settable** — modeling a
+few while sweeping dozens of settable knobs into `ignore_server_fields` to hit 100%
+is **green-washing**, and `prove --metadata <schema>` refuses it
+(`green-washing refusal: ignored N settable inputs`). A read-only DataSource /
+Ephemeral has no settable inputs (route the envelope to `ignore_server_fields`,
+model useful outputs as `computed`); an action is low-by-design on completeness —
+judge it by `action_returns_expected`, not a percent. Full rubric, blind-spot, and
+server-envelope starter set: `references/completeness-and-greenwashing.md`.
 
-**Use a token with *write* scope.** Many DRF APIs (AWX/AAP) only expose the
-`actions.POST` descriptor on `OPTIONS` to a principal with *add* permission; a
-read-only token silently degrades introspect to `source: sample, confidence: reduced`
-(every field `unknown`, no copyable `attribute`). A write-scoped token returns
-`source: options, confidence: high`. If you see `confidence: reduced` against an API
-you know serves `OPTIONS`, inspect JSON `degradation`: `insufficient_scope_or_permission`
-means repair credentials/scope once before authoring, while `metadata_unavailable`
-means ordinary fallback to review-only sample evidence.
+You reach 100% on a verbose API by routing the **server-owned envelope** into
+`ignore_server_fields` (a diff-only change, no re-record), **not** by sweeping
+settable inputs into it. The proof sidecar is `<type>.proven.json` (the `.yaml` is
+replaced, not appended) and must carry `mutation_status: "passed_targeted"`.
 
-**Efficiency — build the schema FROM introspect, don't re-derive it from a verbose
-response.** Each high-confidence `--format json` field carries a ready-to-use
-`attribute` object already encoding the right shape (`required`,
-`optional`+`default:<lit>`, `optional`+`computed`). Feed that JSON straight into
-bootstrap:
+## Get these right up front (loop-burners)
 
-```bash
-agentprovider introspect /api/v2/widgets/ --base-url "$BASE_URL" --format json > /tmp/widgets.introspect.json
-agentprovider bootstrap --from-introspect /tmp/widgets.introspect.json --type widget --out contracts/widget.yaml
-```
+Keep these in working memory; open `references/gotchas.md` /
+`references/repair-hints.md` only when a rule needs detail or a symptom needs mapping.
 
-`--from-introspect` keeps high-confidence copyable top-level attributes, leaves
-review/reduced-confidence/nested rows out of the scaffold, and builds create/update
-bodies from settable fields only. On a 40+-field resource this avoids the biggest
-token/time sink in the loop: pruning a full `--response` draft. Resolve any
-`review_descriptor_metadata` rows by hand before recording (FK ids → settable
-`type: number`; JSON blobs like `extra_vars`/`variables` → `type: string`,
-`default: ""`). If you assemble the draft by hand instead, say so and confirm it
-loads under `validate` before recording (the narrow exception).
-
-**Two traps that turn the fast path into a slow one — both cost re-records, the most
-expensive thing in the loop, so get them right before the first `record`:** (1)
-introspect now recognizes DRF integer choices when the choice values are numeric
-(and keeps the default numeric when present), but still sanity-check any
-`review_descriptor_metadata` or enum-looking field against the OPTIONS
-`choices`/`type` before lifting. (2) **An `optional+computed` field the server defaults is still
-sent in the request body, so it MUST appear in `conformance.example` (and `update_to`)
-with the server's value** — leave it unpinned and the replayed body won't match the
-cassette, forcing a re-record loop. When in doubt, pin defaulted scalars as
-`optional: true, default: <lit>` rather than `optional+computed` (plan-known, and no
-example-pinning needed). These two account for nearly all the re-record churn on a
-verbose resource.
-
-### 2. Seed a draft with `agentprovider bootstrap` — REQUIRED DRAFT STEP
-
-**Always run this for a new or changed contract after live discovery when
-available. Do not hand-author from scratch to skip `bootstrap`** (see the narrow
-exception in the loop note above).
-
-Turn whatever the user has into a first-draft contract. The draft is a starting
-point to *repair*, not a finished contract — bootstrap fills in what the spec
-states and leaves the quirks (the `_id` field, the empty PUT, the 202 poll) for
-you.
-
-```bash
-# from an OpenAPI v3 spec (pick the resource anchor by operationId or path+method)
-agentprovider bootstrap --openapi spec.yaml --operation createWidget --out contracts/widget.yaml
-agentprovider bootstrap --openapi spec.yaml --path /widgets --method post --out contracts/widget.yaml
-
-# from a single example response (resource or data source)
-agentprovider bootstrap --response sample.json --type widget --kind resource --out contracts/widget.yaml
-cat sample.json | agentprovider bootstrap --response - --type widget --kind datasource
-
-# from introspect JSON: preferred for verbose resources with a live schema surface
-agentprovider bootstrap --from-introspect /tmp/widgets.introspect.json --type widget --out contracts/widget.yaml
-
-# ephemeral (open/renew/close) and action (actions block) kinds
-agentprovider bootstrap --openapi spec.yaml --operation login --kind ephemeral --out contracts/auth_token.yaml
-agentprovider bootstrap --openapi spec.yaml --operation rotateKey --kind action --action rotate --out contracts/key.yaml
-
-# override the path-param→attribute link, and drop pagination/noise fields
-agentprovider bootstrap --openapi spec.yaml --path /pets/{petId} --method get --alias petId=id --ignore page --ignore limit
-```
-
-`--kind` is `resource` (default), `datasource`, `ephemeral`, or `action`;
-`--action <verb>` names the verb for action kinds (only valid with `--kind action`).
-
-From an OpenAPI spec the importer also marks credential fields `sensitive: true`,
-carries non-sensitive string/bool `default`s (secrets are never written), and
-auto-detects the identity attribute for a single-path-param by-id read
-(`/pets/{petId}` → `${id}`). `--alias <param>=<attribute>` forces that link;
-`--ignore <name>` drops pagination/noise (OpenAPI/introspect importers — full flags in
-`references/cli-loop.md`). A `--response` seed mirrors the *whole* example
-faithfully and has no pruning, so on a verbose API (mostly `related`/`summary_fields`/
-timestamps) **rewrite it down to the practitioner fields** — but per the efficiency
-note above, when introspect gave you the settable surface, prefer
-`--from-introspect` over rewriting a giant draft. The ephemeral and action kinds emit valid
-but **not-yet-conforming** drafts (placeholder `renew`/`close` paths; placeholder
-`conformance.example` outputs) — repair them before `conform` (`references/repair-hints.md`).
-`--kind action` emits an action-only contract (no `identity`, no resource
-`lifecycle`); OpenAPI path params and response-seeded target placeholders are
-required string inputs distinct from computed output ids. Set the real action
-endpoint path and replace placeholder output expectations before conforming.
-
-Then read the draft and fill the gaps, asking the CLI for authoritative rules rather
-than reading Go source: `agentprovider schema` (the JSON Schema for the whole
-contract-file format — distinct from the contract's own `schema.attributes` block),
-`invariants <contract>`, `describe <field-path>`, and `validate <contract>`. Semantic
-checks (pagination, credential sensitivity, conformance coverage) come from `validate`
-/ `conform`. Flags and JSON shapes: `references/cli-loop.md`.
-
-Use `references/contract-format.md` as narrative context. Common things
-bootstrap can't infer: `identity.response_field` for a genuinely non-conventional
-id (the common single-path-param by-id case is auto-detected; see above),
-`refresh_after` (empty write responses), `ignore_server_fields` (server
-timestamps), `auth`, `async`, `pagination`, `carry_on_read`/`normalize`,
-ephemeral `renew`/`close` paths, and an action's real expected output value.
-Bootstrap uses a per-type env placeholder for `connection.base_url` (for example
-`${env.WIDGET_BASE_URL}`); for basic auth, add `connection.auth.type: basic` with
-`username` and `password` keys.
-
-### 3. Preflight, then record a cassette with `agentprovider record`
-
-Before recording, run:
-
-```bash
-agentprovider preflight contracts/widget.yaml --stage record --base-url "$BASE_URL"
-```
-
-Preflight reports blockers, warnings, expectations, and exact next commands. It
-is advisory unless you choose to use it; it does not mutate the contract.
-
-One live pass captures byte-accurate responses into a replayable cassette and
-(with `--suggest`) proposes refinements such as `ignore_server_fields`
-candidates, unmodeled fields, and field-level probe/repair suggestions.
-
-```bash
-agentprovider record contracts/widget.yaml --base-url https://api.example.com --suggest \
-  --out .agentprovider/cassettes/widget.cassette.yaml
-```
-
-- For **resources**, add `--allow-mutations` only when you intend the recorder to
-  issue create/update/delete against the target. Without it, only read-side /
-  non-mutating calls are captured.
-- Treat `record --suggest` and `completeness` field suggestions as pre-conform
-  proof guidance. `gather_probe_evidence` means the field may be settable but lacks
-  bounded omit/write/readback/stability proof; run the scoped probe path before
-  promoting it into the schema. A suggestion is never an auto-edit.
-- If `record` reports an observed async success status outside `expect_status`,
-  review the `set_expect_status` suggestion, update the relevant lifecycle/action
-  only if the status is a real success for the API, then re-record intentionally
-  with the same `--out` and `--force`.
-- If `record` refuses an existing cassette path after a contract or cassette
-  change, follow the JSON `next_action` / `overwrite_cassette` suggestion and
-  rerun with `--force`; do not create a parallel cassette to dodge the overwrite.
-- **`record` hits the live API, so every id you reference must already exist there.**
-  A `kind: DataSource` that looks up an object by id, and a by-id action whose path
-  interpolates `${...}_id`, both need a real target object at record time — there is
-  nothing to read or act on otherwise. If one doesn't exist yet, create a throwaway
-  fixture (a quick API POST, or apply the sibling resource first) and record against
-  its id.
-- **`--suggest` is resource-tuned** — its `unmodeled_fields` /
-  `ignore_server_fields` suggestions target a create/update surface, so weigh them
-  lightly on a read-only data source and ignore any that don't fit the kind.
-- **The "conformance.example pins X but the live run observed … will fail conform
-  on re-record" stale-pin warning now compares against the *create-time*
-  observation** (not the post-update one), so a field you deliberately change in
-  `update_to` **no longer trips it** — keep the create value in `example` and the
-  updated value in `update_to` as normal. If the warning *does* fire now, it is
-  real: the pinned **computed output** genuinely diverged from the create-time
-  response between runs (a server-assigned / volatile value — an id, a timestamp,
-  a token). That is the one case where you **should** follow the suggestion and
-  move the field to `conformance.expect.<f>: {not_null: true}` (proven by
-  `state_matches_expect`) rather than pinning a value that won't reproduce. Pin
-  only stable computed values in `example`; never pin a volatile/id-shaped one.
-- **Security — recording sends real credentials to `base_url`.** For a freshly
-  bootstrapped, unreviewed contract, record against a **user-controlled staging
-  `--base-url`**, never an embedded production URL you haven't read. The engine
-  rejects `base_url`/`token_url` that resolve to private/loopback/metadata hosts
-  unless `allow_private_host` is set. Review a bootstrapped contract's URLs before
-  pointing real credentials at them.
-
-Back off only for server-level transients: 5xx responses and transport timeouts,
-and keep any retry bounded and jittered. Contract validation errors, replay
-misses, schema ambiguity, contract status mismatches, and ordinary non-server 4xx
-responses are repair paths. Mutating record operations are not retried
-automatically without an explicit idempotency guarantee.
-- Recorded cassettes are redacted (auth headers, query secrets, OAuth2 tokens,
-  `client_secret`) before they hit disk, but **review a new cassette before
-  committing** anyway. Redaction is conservative substring matching, so a short or
-  common credential *value* (e.g. a username like `admin`) can show as a "redaction
-  hit" against unrelated field-name text — that is over-matching, not a leak. Check
-  that the real secret (the password/token) is absent; don't be alarmed by an
-  incidental match.
-
-### 4. Get a machine verdict with `agentprovider conform`
-
-```bash
-agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml
-```
-
-`conform` emits JSON on stdout **by default** (pass `--format text` for the concise
-human verdict; `--json` is still accepted as an alias). **stdout is pure JSON;
-human status lines go to stderr** — including the `mutation check: targeted
-invariants bite N/M` banner under `--mutation-check`. So parse **stdout alone**
-(`conform … 2>/dev/null | your-json-parser`); never capture `2>&1` and then wonder
-why the JSON won't decode, and don't switch to `--format text` just to dodge a
-"non-JSON preamble" that is actually on stderr. (`record`'s advisory warnings are
-*also* surfaced inside the JSON `warnings[]` array, so a stdout-only reader still
-sees them.) The JSON is stable:
-`{contract, overall_passed, results[], repair_hints[], summary}`. Each failing
-result carries `expected`, `actual`, `contract_path`, and `suggested_fix`;
-`repair_hints` ranks unique fixes in failure order. Loop:
-
-1. If `overall_passed` is true — done.
-2. Otherwise apply the top `repair_hint` (see `references/repair-hints.md` for what
-   each one means and *why*), re-run `conform`, repeat.
-
-A contract must **declare the invariants it wants** under `conformance.invariants`
-— the harness fails closed on a contract with zero checks (a green run with no
-invariants is not a pass). Start from the standard set in
-`references/repair-hints.md`.
-
-### 5. Check completeness with `agentprovider completeness`
-
-This step is mandatory after `conform` passes and before any final Terraform
-runtime proof. Run it for every freshly authored or changed contract. If
-completeness reports important missing fields, model them or deliberately explain
-why they are out of scope before proceeding. Do not treat a green `conform` result
-alone as sufficient proof.
-
-`conform` proves the contract is *correct*; it does not prove it is *complete*. A
-contract can pass every invariant while modeling only a handful of an endpoint's
-fields. After it conforms, measure how much of the API surface you actually model:
-
-```bash
-# offline: diff against the fields recorded in the cassette (JSON by default)
-agentprovider completeness contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml
-agentprovider completeness contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --openapi spec.yaml --operation createWidget --format text
-# dynamic: diff against what the live API returns right now
-agentprovider completeness contracts/widget.yaml --base-url https://api.example.com --min-completeness 90
-```
-
-It reports `completeness_percent`, `missing` (API returns them, no attribute models
-them), `extra` (modeled but unseen — usually fine), plus `fields[]` classifications,
-`suggestions[]`, and — for resources — a **`settable_coverage`** ratio and
-**`ignored_settable`** list. `--min-completeness <pct>` makes it a gate.
-
-The decisive rule, **the one test**: *does the API accept this field as a
-create/update input?* If yes it is a practitioner knob → `schema.attributes` as
-`optional` (`+computed` only when the server defaults it to a non-pinnable value;
-prefer `default: <literal>`). If it's pure server-owned output (timestamps,
-`related`, `summary_fields`, `url`, `detail`, counters, `*_role`) → `ignore_server_fields`.
-**FK/reference ids and behavior toggles (`enable_*`, `*_enabled`, the whole `ask_*` /
-`*_on_launch` family) ARE settable** — modeling a handful while dumping dozens of
-settable fields to hit 100% is **green-washing**.
-
-**Make the gate mechanical, not judgement-based: feed a request schema.**
-`settable_coverage` derived from the cassette alone is blind to inputs you never
-modeled/sent (false `1.0`). Whenever the API serves a schema (OpenAPI, or a DRF
-`OPTIONS` `actions.POST` envelope), pass it as `--metadata`/`--openapi` to **both**
-`completeness` and `conform --emit-proof` — `ignored_settable` then names every
-dumped input, and `emit-proof` *refuses* a green-washed contract
-(`green-washing refusal: ignored N settable inputs …`).
-
-Kind-specific: a read-only **DataSource/Ephemeral** has no settable inputs, so
-routing the envelope to `ignore_server_fields` is legitimate — instead model the
-practitioner-useful outputs as `computed`. An **action/ephemeral** is low-by-design
-on completeness — judge by `action_returns_expected`, not a percentage, and don't
-point `--min-completeness`/`--emit-proof` at it.
-
-**The full classification rubric, the green-washing blind-spot, the field-suggestion
-catalog, and the standard server-envelope starter set live in
-`references/completeness-and-greenwashing.md` — read it when classifying fields or
-completing a verbose resource.**
-
-### 6. Emit proof only after targeted mutation evidence
-
-After `conform` and `completeness` pass, run:
-
-```bash
-agentprovider conform contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --mutation-check --emit-proof
-```
-
-`--emit-proof` gates on **two** things: a passing `--mutation-check` *and* **100%
-completeness** (every recorded field is either modeled or in `ignore_server_fields`)
-— below that it refuses with `completeness N% is below proof threshold 100%` and
-writes no sidecar. **If you also pass `--metadata`/`--openapi`** (recommended when
-the API has a request schema), it adds a third gate: it refuses with a
-`green-washing refusal: ignored N settable inputs …` and writes no sidecar when a
-settable input is parked in `ignore_server_fields` — so a thin contract can't be
-proven. With no request-schema flag this gate is skipped and emit-proof behaves
-exactly as before (offline cassette-only proofs are unaffected). The sidecar, when written, is named `<type>.proven.json` — the
-contract file's `.yaml` extension is **replaced**, not appended (a contract
-`awx_org.yaml` yields `awx_org.proven.json`, not `awx_org.yaml.proven.json`). On a verbose API you reach 100% not by modeling every field but
-by routing the **server-owned envelope** (relation links, summary blocks, URLs,
-timestamps, computed status — anything the practitioner never sets or reads) into
-`ignore_server_fields`. That is a non-request change, so it needs **no re-record** —
-just re-run `completeness` then `--emit-proof`. **Reach the 100% by modeling the
-settable inputs and ignoring only server-owned output — not by sweeping settable
-knobs into `ignore_server_fields`** (that green-washes the gate; see the
-completeness step).
-
-Because of that 100% gate, **`--emit-proof` is a resource / data-source step.** An
-**action-only or ephemeral** contract is low-by-design on completeness (it models
-only a verb's inputs + a few outputs), can never reach the 100% threshold, and so
-gets **no `.proven.json`** — that is expected, not a failure. Prove those kinds at
-`conform` (with `--mutation-check` for targeted-mutation evidence); don't try to
-inflate their completeness to force a sidecar.
-
-`--mutation-check` mutates contract-relevant response evidence first: computed
-outputs pinned in `conformance.example`, `conformance.expect` leaves, identity
-response fields, `field:`-mapped schema attributes, and status-sensitive invariant
-responses. Ignored metadata and fallback response scalars are diagnostic only; a
-proof pass requires at least one targeted mutation to make `conform` fail. If the
-CLI reports `MUTATION CHECK INCONCLUSIVE`, add a real asserted output or
-`conformance.expect` matcher instead of weakening the invariant set. A failed
-targeted mutation check refuses `--emit-proof` and removes any stale
-`<contract>.proven.json`. New proof sidecars must carry
-`mutation_status: "passed_targeted"`; legacy boolean-only `mutation_check: true`
-sidecars are not enough for `--require-proven` and should be regenerated with
-`conform --mutation-check --emit-proof`.
-
-## Get these right up front
-
-These gotchas burn the most conform loops — fix them at authoring time, not one
-failed run at a time. Each is a one-liner here; **the worked detail, the *why*, and
-the symptom→fix mapping are in `references/gotchas.md` (and `references/repair-hints.md`)
-— read it before your first record on a new API.**
-
-- **`http://`/private host** → set both `allow_insecure` and `allow_private_host` in
-  `connection` (else the SSRF guard rejects it at record/plan).
-- **`auth` nests under `connection`** (not a top-level key) — the #1 first-`validate`
-  failure. Canonical basic-auth block (the field names are `username`/`password`, NOT
-  `username_env`/`password_env` — a frequent bootstrap-scaffold trap): `connection: {
-  base_url, allow_insecure, allow_private_host, auth: { type: basic, username:
-  "${env.USER}", password: "${env.PASS}" } }`.
-- **`connection.base_url` must resolve at RUNTIME** — `${env.VAR}`/provider config,
-  **never an undefined `${var.*}`**. `conform` doesn't exercise `base_url`, so a bad
-  one passes every invariant and fails only at `terraform apply` (`unsupported
-  protocol scheme ""`). Keep it identical across every contract.
-- **Paths interpolate `${...}`, never `{...}`**; **base_url is ORIGIN only** — the
-  full `/api/v2/...` path lives in each op.
-- **Every op declares `expect_status`** — even a 200 read (no default-accept). Watch
-  **async-accepted mutations: some APIs return `202` (accepted) for DELETE/PUT**
-  instead of `204`/`200` — set the op's `expect_status` to the observed success and
-  re-record, or the first `record` fails at that step.
-- **`update.body` and `conformance.update_to` must list the SAME attribute keys**
-  (both ways) — a mismatch makes the replayed body miss the cassette. **The most
-  frequent offender: a nullable `optional+computed` FK/reference attribute** is
-  serialized as `null` into the live PATCH/PUT body, so it sits in `update.body` —
-  mirror it in `update_to` (with its value or `null`), or drop it from `update.body`.
-  Omitting it from `update_to` alone makes the replayed body shorter than the cassette
-  → a replay miss that surfaces as `second_apply_is_noop`/`update_then_read` failures.
-- **Re-record only when you change a replayed REQUEST** (example/update_to input, op
-  body); an assertion-only edit (expect matcher, action output) needs no re-record.
-- **Reserved meta-args (`count`, …) can't be attribute names** (remap with `field:`); **object/nested attributes need an explicit `required`/`optional`/`computed`** marker.
-- **`field:` can remap top-level fields and explicit dotted response paths**:
-  `job_id: { field: id }`, `value: { field: count }`, and
-  `group_name: { field: summary.groups.name }` work. Projection reads from the raw
-  response before ignored parent envelopes are stripped, so a modeled leaf under
-  `summary` can coexist with `ignore_server_fields: [summary]`. Keep the path explicit
-  and simple: object keys and numeric array segments are supported; arbitrary list
-  reshaping is still a separate modeling problem.
-- **Pick attribute shape by what the server does on OMIT** (four-way rubric: rejects →
-  `required`; null/absent → `optional`; stable scalar → `optional+default:<lit>`;
-  non-pinnable → `optional+computed`). Don't reflexively mark everything `computed`.
-- **Identity token used in URLs → `type: string`**; an integer FK id in a path stays
-  `type: number`.
-- **Action `type` + verb concatenate to `dynamic_<type>_<verb>`** — for action
-  `awx_job_launch` use `type: awx_job` + verb `launch`, NOT `type: awx_job_launch`.
-- **An action input must not map to the same API field as a computed output** — name
-  by-id inputs `<resource>_id` (`template_id`), never `id`.
-- **Action contracts need a real computed-output check** (`action_returns_expected`
-  with a pinned output) — a config-only action proof is vacuous.
+| Rule | Fast fix |
+|---|---|
+| Private or plaintext dev target | Set `allow_private_host` / `allow_insecure` in `connection` after review. |
+| Auth shape | Put `auth` under `connection`; basic-auth keys are `username` and `password`. |
+| Runtime base URL | Use `${env.VAR}` or provider config; `conform` does not prove `base_url`. |
+| Paths | Use `${...}`, never `{...}`; keep `base_url` as origin, full paths in ops. |
+| Statuses | Every op declares `expect_status`; add observed async statuses only after review. |
+| Update requests | `update.body` and `conformance.update_to` must carry the same request keys. |
+| Field names | Remap Terraform meta-args with `field:`; mark every object/nested attr required/optional/computed. |
+| Attribute shape | By omit behavior: rejects → `required`; null/absent → `optional`; stable scalar → `optional+default`; non-pinnable → `optional+computed`. |
+| URL identities | Identity tokens used in URLs should be `type: string`; integer FK ids can stay numeric. |
+| Actions | `dynamic_<type>_<verb>` comes from the action verb; by-id inputs must not share an API field with computed outputs. |
 
 ### Proving by contract kind
 
-- **Resource** — declare the CRUD invariant set (`id_is_computed_and_nonempty`,
-  `create_echoes_inputs`, `read_matches_create`, `update_then_read_reflects`,
-  `second_apply_is_noop`, `delete_then_read_404`). **Plus the required coverage
-  floor:** an id-keyed resource with `read`+`update` must *also* declare
-  `import_reconstructs` and `id_stable_across_update` — `conform` fails closed
-  until they're present, so add them from the start (don't wait for the first
-  failure).
-- **DataSource** — declare `read_returns_expected` (drives `read` directly, no
-  faked create). Put the read inputs *and* at least one real expected **computed
-  output** in `conformance.example`; it fails closed if no computed output is
-  verified, so don't leave it null.
-- **Ephemeral** — declare `ephemeral_open_renew_close` (requires both
-  `lifecycle.renew` and `lifecycle.close`). Open inputs go in `conformance.example`;
-  computed outputs must come from the open response. If a credential is redacted in
-  the fixture, set the example to the redacted form so the replay matches.
-- **Action** — declare `action_returns_expected` and pin **stable** computed
-  outputs (`status`, `name`) in `conformance.example` for it; declare
-  `state_matches_expect` and put **server-assigned id-shaped** computed outputs
-  in `conformance.expect.<attr>: {not_null: true}` (assert presence without
-  freezing the per-run value). `bootstrap --kind action` emits this split by
-  default; pinning a server-assigned id (e.g. `*_id`) in `conformance.example`
-  is the failure mode `record` now warns about — it passes the frozen cassette
-  but fails the next re-record. A config-only action proof with neither a
-  stable pin nor a `not_null` expect is vacuous and should fail closed.
-  An **action-only** contract is a `kind: Resource` with `actions` and **no
-  `create` lifecycle**: the engine registers it as a Terraform Action
-  (`dynamic_<type>_<verb>`), not a managed resource, so it is exempt from the
-  CRUD coverage floor. Omit `body` on an action that POSTs nothing. See
-  `references/contract-format.md` (actions) for the full worked contract and
-  `references/terraform-usage.md` for the HCL.
+| Kind | Proof shape |
+|---|---|
+| Resource | CRUD invariants + floor `import_reconstructs` and `id_stable_across_update` for id-keyed read+update resources. |
+| DataSource | `read_returns_expected`; example has read inputs + ≥1 real computed output. |
+| Ephemeral | `ephemeral_open_renew_close`; open/renew/close modeled, computed outputs asserted. |
+| Action-only | `action_returns_expected` + `state_matches_expect` (`not_null`) for server ids; no `create` lifecycle, no CRUD floor. |
+
+Action-only contracts are `kind: Resource` in YAML but Terraform sees them as
+Actions (`dynamic_<type>_<verb>`). Worked contracts: `references/contract-format.md`.
 
 ## Two outcomes you must distinguish
 
-`conform` failing is not always the same problem. Read the failure before
-"fixing":
+- **Contract invalid / capability inexpressible** — the contract won't load, or the
+  API needs something the format lacks. Do **not** delete invariants or weaken the
+  contract to pass (that green-washes an unproven contract). If the format genuinely
+  can't express it, say so and stop — a real engine gap to report.
+- **Valid but invariant failed** — a fixable mismatch (wrong status, missing remap,
+  perpetual diff). Apply the repair hint and re-run. The normal loop.
 
-- **Contract invalid / cannot express the capability.** The contract won't load
-  (a validation error), or the API genuinely needs something the contract format
-  does not yet have. Do **not** paper over this by deleting the invariant or
-  weakening the contract until a check passes — that green-washes an unproven
-  contract (e.g. a contract with no auth that passes a weak read invariant has not
-  actually authenticated). If the format can't express it, say so and stop; that
-  is a real engine gap worth reporting, not an authoring failure.
-- **Valid but invariant failed.** The contract loads and the failure is a fixable
-  mismatch (wrong status, missing remap, perpetual diff). Apply the repair hint
-  and re-run. This is the normal loop.
+## Terraform proof
 
-## Consuming the proven contract in Terraform
+After `prove` passes, run a live apply. Mapping is mechanical: `create` →
+`resource "dynamic_<type>"`, DataSource → `data`, Ephemeral → `ephemeral`,
+action-only → `action "dynamic_<type>_<verb>"`. Invoke actions from a sibling
+resource's `action_trigger` (avoids target self-cycles), wire FKs through computed
+ids, keep credentials in env/provider config. Full HCL: `references/terraform-usage.md`.
 
-After `conform` and `completeness` both pass or are explicitly adjudicated, use
-the contract in real Terraform to validate end-to-end with a live `apply`. The mapping is
-mechanical and fully covered here and in `references/terraform-usage.md`:
+## Security (the engine can't enforce these)
 
-- A contract `type: project` (with `create`) → resource `dynamic_project`; a
-  `DataSource` → `data "dynamic_<type>"`; an `Ephemeral` → `ephemeral "dynamic_<type>"`.
-- An **action-only** contract → a Terraform Action `dynamic_<type>_<verb>`, invoked
-  from a sibling resource's `lifecycle { action_trigger { events = [after_create]
-  actions = [action.<name>.<label>] } }`. Attach the trigger to a resource *other
-  than* the action's target to avoid a `resource → action → resource` cycle.
-- Wire foreign keys through computed ids (`project = dynamic_team.main.id`)
-  so Terraform builds the dependency graph; keep credentials in `${env.*}`/`${var.*}`.
+Prefer `auth.type: header|basic|oauth2` over `query` (query auth logs the secret in
+the URL). Mark every credential-bearing attribute `sensitive: true` — the redactor
+scrubs transport but **cannot reach Terraform attribute values**. Source secrets
+from `${env.VAR}` / `auth.env` / provider config, never a literal in the YAML.
 
-`references/terraform-usage.md` has the full HCL surface — provider block,
-`dev_overrides`, the resource/action/data-source/ephemeral forms, the
-`action_trigger` pattern and cycle gotcha, and a complete worked graph.
+## Reference files (load on demand, not up front)
 
-## Security guidance the engine can't enforce for you
+- `references/cli-loop.md` — exact flags + stable JSON shapes for every command.
+- `references/contract-format.md` — every contract block and field, with worked kinds.
+- `references/repair-hints.md` — standard invariant set + repair-hint catalog.
+- `references/completeness-and-greenwashing.md` — field-classification rubric, the
+  green-washing blind-spot and `--metadata` gate, server-envelope set.
+- `references/gotchas.md` — the loop-burner catalog in worked detail.
+- `references/terraform-usage.md` — HCL surface, `action_trigger`, FK wiring, a
+  worked graph for the live `apply` proof.
 
-- Prefer `auth.type: header` / `basic` / `oauth2` over `query`. Query auth puts
-  the secret in the URL, which is logged server-side beyond the redactor's reach —
-  emit `auth.type: query` only when the API mandates it.
-- Mark every credential-bearing attribute `sensitive: true`. The transport
-  redactor scrubs headers/bodies/URLs but **cannot reach Terraform attribute
-  values** — a credential surfaced as a non-sensitive attribute leaks to state.
-  (Load-time validation rejects credential-named attributes that aren't sensitive,
-  but don't rely on it — name and mark deliberately.)
-- Source credentials from `${env.VAR}` / `auth.env` / provider config, never a
-  literal secret committed in the YAML.
+When editing this skill or its evals, run
+`sh .agents/skills/agentprovider/scripts/check_quality.sh` before calling it done.
 
-## Reference files
+## Done means (in this order)
 
-Read these as needed — don't load them all up front:
+1. Fresh/changed contracts with a live schema endpoint used `introspect` first, or the summary says why none existed.
+2. Every fresh/changed contract was seeded with `bootstrap` (or the hand-author exception is stated and the draft confirmed to load).
+3. Contracts recorded with `record` against the intended target.
+4. `agentprovider prove <c> <cassette>` passes for every resource/data-source contract (or the equivalent `completeness` + mutation-proof is shown); important `missing` fields are modeled or judged out of scope — settable inputs as attributes, not swept into `ignore_server_fields`.
+5. The Terraform example that consumes the contracts applies against the runtime.
+6. The cassette is redacted/reviewed; credentials come from env/provider config.
 
-- `references/contract-format.md` — every contract block and field, with the
-  newer capabilities (query/basic/oauth2 auth, async redirect/expiry,
-  carry_on_read, normalize, pagination metadata + start-index).
-- `references/cli-loop.md` — exact `bootstrap` / `introspect` / `record` /
-  `conform` / `completeness` flags and the stable JSON shapes (including
-  `introspect`'s text default and JSON mode for agents).
-- `references/repair-hints.md` — the standard invariant set, what each invariant
-  actually compares, and the repair-hint catalog (symptom → fix → why).
-- `references/gotchas.md` — the full "get these right up front" catalog (the
-  one-liners above, with worked detail and the four-way attribute-shape rubric).
-- `references/completeness-and-greenwashing.md` — the field-classification rubric,
-  the green-washing blind-spot and `--metadata` gate, and the server-envelope set.
-- `references/terraform-usage.md` — the HCL consumption surface: resource / data
-  source / ephemeral / action naming, the `action_trigger` pattern and cycle
-  gotcha, FK wiring, and a complete worked graph for the live `apply` proof.
-
-## Done means
-
-Done means, in this exact order:
-
-1. Fresh or changed contracts with a live schema-bearing endpoint used `agentprovider introspect` for read-only field discovery before bootstrapping/authoring, or the summary states why no live discovery path existed.
-2. Every fresh or changed contract was seeded with `agentprovider bootstrap` (or, if deliberately hand-authored, that exception is stated in the summary and the draft was confirmed to load under strict decoding).
-3. Fresh or changed contracts are recorded with `agentprovider record` against the intended target.
-4. `agentprovider conform <contract> <cassette>` returns `overall_passed: true` (JSON by default) with a non-empty `conformance.invariants` set for every contract.
-5. `agentprovider completeness <contract> <cassette>` is run for every contract, and any important `missing` fields are modeled or explicitly judged out of scope — with settable inputs modeled as `optional`(`+computed`) attributes, not swept into `ignore_server_fields` to inflate the number (green-washing). A resource/data source should expose the practitioner-relevant settable inputs the API accepts, not a thin handful.
-6. For provider-authoring tasks, the Terraform example that consumes the contracts applies successfully against the intended runtime.
-7. The cassette is redacted and reviewed, and credentials are sourced from env/provider config, not committed.
-
-Only report `PROVEN` after all applicable steps above are complete.
+Only report `PROVEN` after all applicable steps are complete.

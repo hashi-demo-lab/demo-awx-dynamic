@@ -1,0 +1,23 @@
+{
+  "contract": "aap_host",
+  "contract_hash": "sha256:bfea2d5882eb891e45ddcfd4533b07dbcf141b737bca04d1ec72e41ab07589db",
+  "overall_passed": true,
+  "invariants": [
+    "id_is_computed_and_nonempty",
+    "create_echoes_inputs",
+    "optional_default_consistency",
+    "read_matches_create",
+    "update_then_read_reflects",
+    "second_apply_is_noop",
+    "delete_then_read_404",
+    "state_matches_expect",
+    "import_reconstructs",
+    "id_stable_across_update"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/aap_host.cassette.yaml",
+  "cassette_hash": "sha256:508f277253b3d6f2dffc9b33b0d7bb22543efbfbaab9015dc6a521b5b1845300",
+  "generated_at": "2026-06-01T00:54:37Z"
+}

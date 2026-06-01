@@ -1,0 +1,92 @@
+kind: Resource
+type: aap_workflow_job
+connection:
+    base_url: ${env.AWX}
+    allow_private_host: true
+    allow_insecure: true
+    auth:
+        type: basic
+        username: ${env.AWX_USERNAME}
+        password: ${env.AWX_PASSWORD}
+    headers:
+        Content-Type: application/json
+actions:
+    launch:
+        expect_status:
+            - 201
+        method: POST
+        path: /api/v2/workflow_job_templates/${workflow_job_template_id}/launch/
+schema:
+    attributes:
+        workflow_job_template_id:
+            required: true
+            type: string
+        id:
+            computed: true
+            type: number
+        workflow_job:
+            computed: true
+            type: number
+        status:
+            computed: true
+            type: string
+        name:
+            computed: true
+            type: string
+        launch_type:
+            computed: true
+            type: string
+        failed:
+            computed: true
+            type: bool
+ignore_server_fields:
+    - url
+    - type
+    - related
+    - summary_fields
+    - created
+    - modified
+    - description
+    - unified_job_template
+    - workflow_job_template
+    - extra_vars
+    - allow_simultaneous
+    - job_args
+    - job_cwd
+    - job_env
+    - job_explanation
+    - result_traceback
+    - launched_by
+    - work_unit_id
+    - is_sliced_job
+    - inventory
+    - limit
+    - scm_branch
+    - webhook_service
+    - webhook_credential
+    - webhook_guid
+    - skip_tags
+    - job_tags
+    - started
+    - finished
+    - canceled_on
+    - elapsed
+    - job_template
+    - ignored_fields
+conformance:
+    action: launch
+    example:
+        workflow_job_template_id: "56"
+        launch_type: manual
+        failed: false
+    expect:
+        id:
+            not_null: true
+        workflow_job:
+            not_null: true
+        status:
+            not_null: true
+    invariants:
+        - action_returns_expected
+        - state_matches_expect
+apiVersion: agentprovider/v1

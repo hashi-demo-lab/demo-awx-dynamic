@@ -1,0 +1,199 @@
+kind: DataSource
+type: aap_job_template_ds
+connection:
+    base_url: ${env.AWX}
+    allow_private_host: true
+    allow_insecure: true
+    headers:
+        Content-Type: application/json
+    auth:
+        type: basic
+        username: ${env.AWX_USERNAME}
+        password: ${env.AWX_PASSWORD}
+identity:
+    attribute: id
+    response_field: id
+lifecycle:
+    read:
+        expect_status:
+            - 200
+        method: GET
+        not_found_status:
+            - 404
+        path: "/api/v2/job_templates/${id}/"
+schema:
+    attributes:
+        id:
+            required: true
+            type: number
+        name:
+            computed: true
+            type: string
+        description:
+            computed: true
+            type: string
+        url:
+            computed: true
+            type: string
+        type:
+            computed: true
+            type: string
+        job_type:
+            computed: true
+            type: string
+        inventory:
+            computed: true
+            type: number
+        project:
+            computed: true
+            type: number
+        organization:
+            computed: true
+            type: number
+        playbook:
+            computed: true
+            type: string
+        scm_branch:
+            computed: true
+            type: string
+        forks:
+            computed: true
+            type: number
+        limit:
+            computed: true
+            type: string
+        verbosity:
+            computed: true
+            type: number
+        extra_vars:
+            computed: true
+            type: string
+        job_tags:
+            computed: true
+            type: string
+        skip_tags:
+            computed: true
+            type: string
+        timeout:
+            computed: true
+            type: number
+        use_fact_cache:
+            computed: true
+            type: bool
+        status:
+            computed: true
+            type: string
+        created:
+            computed: true
+            type: string
+        modified:
+            computed: true
+            type: string
+        last_job_run:
+            computed: true
+            type: string
+        last_job_failed:
+            computed: true
+            type: bool
+        next_job_run:
+            computed: true
+            type: string
+        survey_enabled:
+            computed: true
+            type: bool
+        become_enabled:
+            computed: true
+            type: bool
+        diff_mode:
+            computed: true
+            type: bool
+        allow_simultaneous:
+            computed: true
+            type: bool
+        job_slice_count:
+            computed: true
+            type: number
+        webhook_service:
+            computed: true
+            type: string
+        webhook_credential:
+            computed: true
+            type: string
+        host_config_key:
+            computed: true
+            type: string
+        prevent_instance_group_fallback:
+            computed: true
+            type: bool
+        force_handlers:
+            computed: true
+            type: bool
+        start_at_task:
+            computed: true
+            type: string
+        execution_environment:
+            computed: true
+            type: string
+        custom_virtualenv:
+            computed: true
+            type: string
+        ask_scm_branch_on_launch:
+            computed: true
+            type: bool
+        ask_diff_mode_on_launch:
+            computed: true
+            type: bool
+        ask_variables_on_launch:
+            computed: true
+            type: bool
+        ask_limit_on_launch:
+            computed: true
+            type: bool
+        ask_tags_on_launch:
+            computed: true
+            type: bool
+        ask_skip_tags_on_launch:
+            computed: true
+            type: bool
+        ask_job_type_on_launch:
+            computed: true
+            type: bool
+        ask_verbosity_on_launch:
+            computed: true
+            type: bool
+        ask_inventory_on_launch:
+            computed: true
+            type: bool
+        ask_credential_on_launch:
+            computed: true
+            type: bool
+        ask_execution_environment_on_launch:
+            computed: true
+            type: bool
+        ask_labels_on_launch:
+            computed: true
+            type: bool
+        ask_forks_on_launch:
+            computed: true
+            type: bool
+        ask_job_slice_count_on_launch:
+            computed: true
+            type: bool
+        ask_timeout_on_launch:
+            computed: true
+            type: bool
+        ask_instance_groups_on_launch:
+            computed: true
+            type: bool
+ignore_server_fields:
+    - related
+    - summary_fields
+conformance:
+    example:
+        id: 7
+        name: "Demo Job Template"
+        url: "/api/v2/job_templates/7/"
+        playbook: "hello_world.yml"
+    invariants:
+        - read_returns_expected
+apiVersion: agentprovider/v1

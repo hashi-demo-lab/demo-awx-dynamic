@@ -1,0 +1,14 @@
+{
+  "contract": "aap_job_template_ds",
+  "contract_hash": "sha256:24f694919272e1088efa7bfc298e73cba896d77c3dcc7d7f34d9906f53cec073",
+  "overall_passed": true,
+  "invariants": [
+    "read_returns_expected"
+  ],
+  "mutation_check": true,
+  "mutation_status": "passed_targeted",
+  "completeness_percent": 100,
+  "cassette": "../cassettes/aap_job_template_ds.cassette.yaml",
+  "cassette_hash": "sha256:8b5c120e6401dd85675f08ab54fe8cf38b2612c70c085b0996737a48837a6c7c",
+  "generated_at": "2026-06-01T00:55:25Z"
+}

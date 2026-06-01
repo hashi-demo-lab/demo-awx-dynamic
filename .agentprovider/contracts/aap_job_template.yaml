@@ -1,0 +1,433 @@
+apiVersion: agentprovider/v1
+conformance:
+    example:
+        allow_simultaneous: false
+        ask_credential_on_launch: false
+        ask_diff_mode_on_launch: false
+        ask_execution_environment_on_launch: false
+        ask_forks_on_launch: false
+        ask_instance_groups_on_launch: false
+        ask_inventory_on_launch: false
+        ask_job_slice_count_on_launch: false
+        ask_job_type_on_launch: false
+        ask_labels_on_launch: false
+        ask_limit_on_launch: false
+        ask_scm_branch_on_launch: false
+        ask_skip_tags_on_launch: false
+        ask_tags_on_launch: false
+        ask_timeout_on_launch: false
+        ask_variables_on_launch: false
+        ask_verbosity_on_launch: false
+        become_enabled: false
+        description: ""
+        diff_mode: false
+        extra_vars: ""
+        force_handlers: false
+        forks: 0
+        host_config_key: ""
+        inventory: 290
+        job_slice_count: 1
+        job_tags: ""
+        job_type: run
+        limit: ""
+        name: apeval-r7-105114-jt
+        playbook: hello_world.yml
+        prevent_instance_group_fallback: false
+        project: 6
+        scm_branch: ""
+        skip_tags: ""
+        start_at_task: ""
+        survey_enabled: false
+        timeout: 0
+        use_fact_cache: false
+        verbosity: 0
+    expect:
+        id:
+            not_null: true
+    invariants:
+        - id_is_computed_and_nonempty
+        - create_echoes_inputs
+        - optional_default_consistency
+        - read_matches_create
+        - update_then_read_reflects
+        - second_apply_is_noop
+        - delete_then_read_404
+        - state_matches_expect
+        - import_reconstructs
+        - id_stable_across_update
+    update_to:
+        allow_simultaneous: false
+        ask_credential_on_launch: false
+        ask_diff_mode_on_launch: false
+        ask_execution_environment_on_launch: false
+        ask_forks_on_launch: false
+        ask_instance_groups_on_launch: false
+        ask_inventory_on_launch: false
+        ask_job_slice_count_on_launch: false
+        ask_job_type_on_launch: false
+        ask_labels_on_launch: false
+        ask_limit_on_launch: false
+        ask_scm_branch_on_launch: false
+        ask_skip_tags_on_launch: false
+        ask_tags_on_launch: false
+        ask_timeout_on_launch: false
+        ask_variables_on_launch: false
+        ask_verbosity_on_launch: false
+        become_enabled: false
+        description: updated description
+        diff_mode: false
+        extra_vars: ""
+        force_handlers: false
+        forks: 0
+        host_config_key: ""
+        inventory: 290
+        job_slice_count: 1
+        job_tags: ""
+        job_type: run
+        limit: ""
+        name: apeval-r7-105114-jt-updated
+        playbook: hello_world.yml
+        prevent_instance_group_fallback: false
+        project: 6
+        scm_branch: ""
+        skip_tags: ""
+        start_at_task: ""
+        survey_enabled: false
+        timeout: 0
+        use_fact_cache: false
+        verbosity: 0
+connection:
+    allow_insecure: true
+    allow_private_host: true
+    auth:
+        failure_status:
+            - 401
+            - 403
+        password: ${env.AWX_PASSWORD}
+        type: basic
+        username: ${env.AWX_USERNAME}
+    base_url: ${env.AWX}
+    headers:
+        Content-Type: application/json
+identity:
+    attribute: id
+    known_after: create
+    response_field: id
+ignore_server_fields:
+    - related
+    - summary_fields
+kind: Resource
+lifecycle:
+    create:
+        body:
+            - name
+            - description
+            - job_type
+            - playbook
+            - project
+            - inventory
+            - allow_simultaneous
+            - ask_credential_on_launch
+            - ask_diff_mode_on_launch
+            - ask_execution_environment_on_launch
+            - ask_forks_on_launch
+            - ask_instance_groups_on_launch
+            - ask_inventory_on_launch
+            - ask_job_slice_count_on_launch
+            - ask_job_type_on_launch
+            - ask_labels_on_launch
+            - ask_limit_on_launch
+            - ask_scm_branch_on_launch
+            - ask_skip_tags_on_launch
+            - ask_tags_on_launch
+            - ask_timeout_on_launch
+            - ask_variables_on_launch
+            - ask_verbosity_on_launch
+            - become_enabled
+            - diff_mode
+            - extra_vars
+            - force_handlers
+            - forks
+            - host_config_key
+            - job_slice_count
+            - job_tags
+            - limit
+            - prevent_instance_group_fallback
+            - scm_branch
+            - skip_tags
+            - start_at_task
+            - survey_enabled
+            - timeout
+            - use_fact_cache
+            - verbosity
+        expect_status:
+            - 200
+            - 201
+        method: POST
+        path: /api/v2/job_templates/
+    delete:
+        expect_status:
+            - 200
+            - 204
+        method: DELETE
+        not_found_status:
+            - 404
+        path: /api/v2/job_templates/${id}/
+    read:
+        expect_status:
+            - 200
+        method: GET
+        not_found_status:
+            - 404
+        path: /api/v2/job_templates/${id}/
+    update:
+        body:
+            - name
+            - description
+            - job_type
+            - playbook
+            - project
+            - inventory
+            - allow_simultaneous
+            - ask_credential_on_launch
+            - ask_diff_mode_on_launch
+            - ask_execution_environment_on_launch
+            - ask_forks_on_launch
+            - ask_instance_groups_on_launch
+            - ask_inventory_on_launch
+            - ask_job_slice_count_on_launch
+            - ask_job_type_on_launch
+            - ask_labels_on_launch
+            - ask_limit_on_launch
+            - ask_scm_branch_on_launch
+            - ask_skip_tags_on_launch
+            - ask_tags_on_launch
+            - ask_timeout_on_launch
+            - ask_variables_on_launch
+            - ask_verbosity_on_launch
+            - become_enabled
+            - diff_mode
+            - extra_vars
+            - force_handlers
+            - forks
+            - host_config_key
+            - job_slice_count
+            - job_tags
+            - limit
+            - prevent_instance_group_fallback
+            - scm_branch
+            - skip_tags
+            - start_at_task
+            - survey_enabled
+            - timeout
+            - use_fact_cache
+            - verbosity
+        expect_status:
+            - 200
+        method: PATCH
+        path: /api/v2/job_templates/${id}/
+        refresh_after: true
+schema:
+    attributes:
+        allow_simultaneous:
+            default: false
+            optional: true
+            type: bool
+        ask_credential_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_diff_mode_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_execution_environment_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_forks_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_instance_groups_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_inventory_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_job_slice_count_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_job_type_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_labels_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_limit_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_scm_branch_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_skip_tags_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_tags_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_timeout_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_variables_on_launch:
+            default: false
+            optional: true
+            type: bool
+        ask_verbosity_on_launch:
+            default: false
+            optional: true
+            type: bool
+        become_enabled:
+            default: false
+            optional: true
+            type: bool
+        created:
+            computed: true
+            type: string
+        custom_virtualenv:
+            computed: true
+            type: string
+        description:
+            default: ""
+            optional: true
+            type: string
+        diff_mode:
+            default: false
+            optional: true
+            type: bool
+        execution_environment:
+            computed: true
+            optional: true
+            type: number
+        extra_vars:
+            default: ""
+            optional: true
+            type: string
+        force_handlers:
+            default: false
+            optional: true
+            type: bool
+        forks:
+            default: 0
+            optional: true
+            type: number
+        host_config_key:
+            default: ""
+            optional: true
+            type: string
+        id:
+            computed: true
+            type: string
+        inventory:
+            optional: true
+            type: number
+        job_slice_count:
+            default: 1
+            optional: true
+            type: number
+        job_tags:
+            default: ""
+            optional: true
+            type: string
+        job_type:
+            default: run
+            optional: true
+            type: string
+        last_job_failed:
+            computed: true
+            type: bool
+        last_job_run:
+            computed: true
+            type: string
+        limit:
+            default: ""
+            optional: true
+            type: string
+        modified:
+            computed: true
+            type: string
+        name:
+            required: true
+            type: string
+        next_job_run:
+            computed: true
+            type: string
+        organization:
+            computed: true
+            type: number
+        playbook:
+            required: true
+            type: string
+        prevent_instance_group_fallback:
+            default: false
+            optional: true
+            type: bool
+        project:
+            required: true
+            type: number
+        scm_branch:
+            default: ""
+            optional: true
+            type: string
+        skip_tags:
+            default: ""
+            optional: true
+            type: string
+        start_at_task:
+            default: ""
+            optional: true
+            type: string
+        status:
+            computed: true
+            type: string
+        survey_enabled:
+            default: false
+            optional: true
+            type: bool
+        timeout:
+            default: 0
+            optional: true
+            type: number
+        type:
+            computed: true
+            type: string
+        url:
+            computed: true
+            type: string
+        use_fact_cache:
+            default: false
+            optional: true
+            type: bool
+        verbosity:
+            default: 0
+            optional: true
+            type: number
+        webhook_credential:
+            computed: true
+            optional: true
+            type: number
+        webhook_service:
+            computed: true
+            optional: true
+            type: string
+type: aap_job_template

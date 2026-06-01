@@ -1,0 +1,162 @@
+apiVersion: agentprovider/v1
+conformance:
+    example:
+        description: ""
+        kind: ""
+        name: apeval-r7-105114-inv
+        organization: 303
+        prevent_instance_group_fallback: false
+        variables: ""
+    expect:
+        id:
+            not_null: true
+    invariants:
+        - id_is_computed_and_nonempty
+        - create_echoes_inputs
+        - optional_default_consistency
+        - read_matches_create
+        - update_then_read_reflects
+        - second_apply_is_noop
+        - delete_then_read_404
+        - state_matches_expect
+        - import_reconstructs
+        - id_stable_across_update
+    update_to:
+        description: updated description
+        kind: ""
+        name: apeval-r7-105114-inv-updated
+        organization: 303
+        prevent_instance_group_fallback: false
+        variables: ""
+connection:
+    allow_insecure: true
+    allow_private_host: true
+    auth:
+        failure_status:
+            - 401
+            - 403
+        password: ${env.AWX_PASSWORD}
+        type: basic
+        username: ${env.AWX_USERNAME}
+    base_url: ${env.AWX}
+    headers:
+        Content-Type: application/json
+identity:
+    attribute: id
+    known_after: create
+    response_field: id
+ignore_server_fields:
+    - related
+    - summary_fields
+kind: Resource
+lifecycle:
+    create:
+        body:
+            - description
+            - kind
+            - name
+            - organization
+            - prevent_instance_group_fallback
+            - variables
+        expect_status:
+            - 200
+            - 201
+        method: POST
+        path: /api/v2/inventories/
+    delete:
+        expect_status:
+            - 200
+            - 202
+            - 204
+        method: DELETE
+        not_found_status:
+            - 404
+        path: /api/v2/inventories/${id}/
+    read:
+        expect_status:
+            - 200
+        method: GET
+        not_found_status:
+            - 404
+        path: /api/v2/inventories/${id}/
+    update:
+        body:
+            - description
+            - kind
+            - name
+            - organization
+            - prevent_instance_group_fallback
+            - variables
+        expect_status:
+            - 200
+        method: PATCH
+        path: /api/v2/inventories/${id}/
+        refresh_after: true
+schema:
+    attributes:
+        created:
+            computed: true
+            type: string
+        description:
+            default: ""
+            optional: true
+            type: string
+        has_active_failures:
+            computed: true
+            type: bool
+        has_inventory_sources:
+            computed: true
+            type: bool
+        host_filter:
+            computed: true
+            optional: true
+            type: string
+        hosts_with_active_failures:
+            computed: true
+            type: number
+        id:
+            computed: true
+            type: string
+        inventory_sources_with_failures:
+            computed: true
+            type: number
+        kind:
+            default: ""
+            optional: true
+            type: string
+        modified:
+            computed: true
+            type: string
+        name:
+            required: true
+            type: string
+        organization:
+            optional: true
+            type: number
+        pending_deletion:
+            computed: true
+            type: bool
+        prevent_instance_group_fallback:
+            default: false
+            optional: true
+            type: bool
+        total_groups:
+            computed: true
+            type: number
+        total_hosts:
+            computed: true
+            type: number
+        total_inventory_sources:
+            computed: true
+            type: number
+        type:
+            computed: true
+            type: string
+        url:
+            computed: true
+            type: string
+        variables:
+            default: ""
+            optional: true
+            type: string
+type: aap_inventory
