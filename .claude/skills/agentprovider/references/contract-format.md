@@ -229,6 +229,16 @@ lifecycle:
   delete: { method: DELETE, path: /widgets/${id}, expect_status: [204], not_found_status: [404] }
 ```
 
+**Null body values are omitted, not sent.** When an attribute listed in `body` is
+null/unset, the engine and the generated provider both **drop the key** from the
+request body (recursively — null object fields and null list/map elements are
+removed too). This keeps the offline cassette and the through-Terraform request
+byte-identical. The consequence: a contract **cannot express an explicit JSON null
+to "clear" a field** on a PATCH (absent-key vs explicit-null differ on some APIs),
+and it cannot send a positional array with null holes. If an API needs an explicit
+null, that is currently unsupported — model the clear as a sentinel value the API
+accepts, or omit the field.
+
 Operation fields:
 
 - `method`, `path` (with `${id}` / `${var}` interpolation), `body` (attrs to send),

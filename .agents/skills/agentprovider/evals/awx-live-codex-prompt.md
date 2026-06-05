@@ -19,9 +19,11 @@ Important constraints:
 - Keep the provider contract directory to exactly the seven target contracts
   before Terraform validation/apply; temporary discovery contracts must not be
   loaded by the provider.
-- Dynamic provider contract `type` values must be unique. Use a distinct
-  data-source type such as `job_template_ds` even when the AWX endpoint is the
-  same as the `job_template` resource endpoint.
+- Dynamic provider contracts are keyed by `(kind, type)`, so a resource and a
+  data source may share a `type` (Terraform namespaces them separately). Author
+  the job-template data source as `type: aap_job_template`, `kind: DataSource`
+  in `job_template.data.yaml` — do NOT add a `_ds` suffix to the type. Only two
+  contracts of the same kind AND type collide.
 - When re-recording to the same cassette path after a reviewed contract or
   request-shape change, use `record --force`; do not create alternate cassette
   paths for the same contract.

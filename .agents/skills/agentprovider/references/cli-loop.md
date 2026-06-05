@@ -517,3 +517,47 @@ drift is found; `drift` entries are secret-sanitized:
   "drift": ["GET /widgets/1: status 200 -> 404", "POST /widgets: response body changed"]
 }
 ```
+
+## generate — ship a proven contract as a standalone provider
+
+```
+agentprovider generate -contract <contract.yaml | folder> -out <dir> [-allow-unproven] [-force] [--format json|text]
+```
+
+The terminal step *after* `prove`. It emits a self-contained Terraform provider
+repo (its own `go.mod`, provider/resource/data source/action/ephemeral, vendored
+runtime, a go-vcr replay acceptance test, `PROVENANCE`, `tfplugindocs` wiring) from
+a validated contract — no hand-written Go. `prove` proves the contract; `generate`
+turns it into a shippable provider.
+
+- `-contract <file>`: generate a single-component provider from one contract.
+- `-contract <folder>`: aggregate **every** contract in the folder into **one**
+  provider (provider name = the shared prefix before the first `_`, e.g. `aap`).
+  Each contract is resolved to its own cassette (by contract file stem) and its
+  replay test replays the cassette it was recorded against. Two contracts that
+  generate the same `(kind, type)` are rejected — give each a distinct type.
+- `-allow-unproven`: scaffold without a verified `<contract>.proven.json` sidecar
+  (the default requires proof).
+
+The JSON output carries a `provenance_marker`:
+
+- `VERIFIED` — every contract's attestation verified against its cassette hash.
+- `ATTESTED` — proven, but this component kind has no generated replay test.
+- `UNPROVEN` — generated with `-allow-unproven`; no proof binding.
+
+Some contract capabilities are **not yet expressible** in a generated standalone
+provider (e.g. `connection.auth.type: oauth2`, pagination, `response_path`).
+`generate` fails fast and the error's `next_action` says so: these are
+engine-capability gaps, **not** contract defects — do not loop trying to "repair
+the contract." Serve such a contract with the generic provider instead, or remove
+the unsupported capability.
+
+```json
+{
+  "command": "generate",
+  "ok": true,
+  "module": "terraform-provider-aap",
+  "provenance_marker": "VERIFIED",
+  "components": [{"kind": "resource", "type": "aap_inventory"}]
+}
+```

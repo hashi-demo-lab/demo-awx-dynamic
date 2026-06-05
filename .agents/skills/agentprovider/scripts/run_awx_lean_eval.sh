@@ -234,6 +234,37 @@ jq '{overall_passed: .conform_passed}' "$WORK/proof-job-template.json" > "$WORK/
 jq '{passed: .completeness_passed}' "$WORK/proof-organization.json" > "$WORK/completeness-organization.json"
 jq '{passed: .completeness_passed}' "$WORK/proof-job-template.json" > "$WORK/completeness-job-template.json"
 
+# Generate a standalone Terraform provider scaffold from each freshly-recorded
+# contract and prove it through its own generated replay acceptance test
+# (terraform-plugin-testing). Because the cassette was just recorded against live
+# AWX with the current engine, the generated provider must reproduce the same
+# request shapes the engine recorded. This is the `generate` arm of the eval.
+GENERATE_OK=1
+for name in organization job_template; do
+  gen="$WORK/generated/lean_${name}"
+  if ! "$WORK/bin/agentprovider" generate \
+    -contract "$WORK/contracts/lean_${name}.yaml" \
+    -cassette "$WORK/cassettes/lean_${name}.cassette.yaml" \
+    -out "$gen" -force > "$WORK/generate-${name}.json" 2> "$WORK/generate-${name}.err"; then
+    GENERATE_OK=0
+    printf 'generate failed for lean_%s (see %s)\n' "$name" "$WORK/generate-${name}.err" >&2
+    continue
+  fi
+  if ! (
+    cd "$gen"
+    GOCACHE=${GOCACHE:-/private/tmp/rdp-gocache} \
+      GOMODCACHE=${GOMODCACHE:-/private/tmp/rdp-gomodcache} go mod tidy
+    TF_ACC=1 GOCACHE=${GOCACHE:-/private/tmp/rdp-gocache} \
+      GOMODCACHE=${GOMODCACHE:-/private/tmp/rdp-gomodcache} \
+      go test ./internal/provider/... -run Replay -count=1
+  ) > "$WORK/generated-gotest-${name}.log" 2>&1; then
+    GENERATE_OK=0
+    printf 'generated provider go test failed for lean_%s (see %s)\n' "$name" "$WORK/generated-gotest-${name}.log" >&2
+  fi
+done
+[ "$GENERATE_OK" = "1" ] || fail "generate arm failed (generate or generated replay go test)"
+printf 'generate arm passed: standalone scaffolds generated and replay-tested for organization, job_template\n'
+
 cp "$WORK/contracts/lean_organization.yaml" "$WORK/contracts/lean_organization.proven.json" \
   "$WORK/contracts/lean_job_template.yaml" "$WORK/contracts/lean_job_template.proven.json" \
   "$WORK/tf/contracts/"
@@ -350,7 +381,8 @@ jq -n \
       job_template: {conform: $jt_conform, completeness: $jt_complete, mutation_proof: $jt_proof},
       terraform_apply: true,
       terraform_noop_plan: true,
-      terraform_destroy: true
+      terraform_destroy: true,
+      generate_replay: true
     },
     cleanup_status: "verified_clean"
   }' > "$METRICS_FILE"
