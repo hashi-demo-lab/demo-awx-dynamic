@@ -15,10 +15,10 @@ Run `agentprovider help` for the command listing, and `agentprovider help <comma
 Most authoring subcommands emit JSON on stdout **by default** — this is what the
 loop reads. Pass `--format text` for human-readable output where the command
 supports it; `--json` is still accepted as an alias for `--format json` (the
-alias always forces JSON). `schema` is a deliberate exception: it emits the
+alias always forces JSON). `schema` is the one deliberate exception: it emits the
 contract-file schema as `--format json` or `--format yaml`, with no text mode.
-`introspect` is the other deliberate exception: it defaults to text for humans,
-and supports `--json` / `--format json` for agents and scripts.
+`introspect` also defaults to JSON, so its output pipes straight into
+`bootstrap --from-introspect -` with no extra flag.
 
 ## workflow — compact artifact-driven runs
 
@@ -93,9 +93,11 @@ Use these before reading Go source:
 ```bash
 agentprovider schema --format json
 agentprovider schema --format yaml
+agentprovider schema --path lifecycle.create    # one block + its $defs, ~90% smaller
 agentprovider invariants --kind resource
 agentprovider invariants contracts/widget.yaml
 agentprovider validate contracts/widget.yaml
+agentprovider describe --list                   # every authorable field path
 agentprovider describe 'schema.attributes.<name>.default'
 agentprovider describe conformance.invariants
 ```

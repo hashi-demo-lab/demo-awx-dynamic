@@ -61,8 +61,8 @@ Three rules that govern the whole loop:
   descriptor to a principal with add permission, and a read-only token silently
   degrades to `source: sample, confidence: reduced`. `--auth-env` takes an env-var
   *name* and is bearer-only. `--allow-private-host`/`--allow-insecure` for reviewed
-  dev targets. Each high-confidence `--format json` row carries a ready-to-use
-  `attribute` object — feed the JSON straight into `bootstrap --from-introspect`,
+  dev targets. Output is JSON by default; each high-confidence row carries a
+  ready-to-use `attribute` object — pipe it straight into `bootstrap --from-introspect`,
   then resolve only the `review_descriptor_metadata` rows by hand (FK ids →
   `type: number`; JSON/blob inputs → `type: string, default: ""`).
 - **bootstrap** — seed from `--openapi` (`--operation` or `--path`+`--method`),
