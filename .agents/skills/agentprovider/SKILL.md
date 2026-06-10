@@ -28,11 +28,38 @@ the conformance verdict is the definition of done.
 introspect (when a live schema endpoint exists) → bootstrap (seed) → preflight → record (cassette) → prove --uplift → apply repair_hints / classify fields → re-run until overall_passed → terraform apply (runtime proof)
 ```
 
+**Step 0 — verify the binary before anything else.** Installed copies go stale
+(a symlink into another checkout can silently lack newer subcommands such as
+`prove`). Rebuild if needed — never read Go source to discover what the CLI
+supports:
+
+```bash
+if ! agentprovider prove -h >/dev/null 2>&1; then
+  (cd terraform-provider-dynamic && go build -o /tmp/agentprovider ./cli/agentprovider)
+  export PATH=/tmp:$PATH
+fi
+```
+
 **Every command prints a compact JSON verdict and a `next:` hint — follow the
-hints; they encode this loop.** For repeat passes over known paths, prefer
-`agentprovider workflow <file|->` (one compact JSON summary; `--include-output` for
-full detail). Ask the CLI for authoritative rules instead of reading Go source:
-`agentprovider schema | invariants <c> | describe <field-path> | validate <c>`.
+hints; they encode this loop.** Once a contract is seeded and its paths are
+known, do NOT hand-run validate/preflight/record/prove as separate commands —
+bundle them with `agentprovider workflow <file|->` (one compact JSON verdict;
+ready-to-adapt file under "Bundle the proof loop" below; `--include-output` for
+full detail).
+
+**HARD RULE: never open engine Go source (`internal/`, `cli/`) while authoring.**
+Every authoring question has a CLI answer — map your uncertainty to a command:
+
+| Unsure about… | Ask |
+|---|---|
+| What subcommands or flags exist | `agentprovider help`, `agentprovider help <cmd>` |
+| Contract schema shape / one block | `agentprovider schema --path <block>` (e.g. `lifecycle.create`) |
+| What a field means or accepts | `agentprovider describe <field-path>` (`describe --list` for all paths) |
+| Which invariants a contract needs | `agentprovider invariants <contract.yaml>` |
+| Whether a draft loads | `agentprovider validate <contract.yaml>` |
+
+If the CLI genuinely can't answer, check `references/cli-loop.md` before
+touching Go — a needed source read is a skill gap to report, not a workaround.
 Exact flags and stable JSON shapes: `references/cli-loop.md`.
 
 Three rules that govern the whole loop:
@@ -47,16 +74,54 @@ Three rules that govern the whole loop:
 - **`agentprovider prove --uplift` is THE terminal gate.** It runs the completeness
   gate *and* `conform --mutation-check --emit-proof` in one pass and writes the
   proof sidecar; `--uplift` auto-routes server-owned fields to reach 100%.
-  Anti-pattern: hand-assembling standalone `completeness` + `conform --emit-proof`
-  as your default — `prove` wraps them, so running them separately just doubles
-  work. Use standalone `conform`/`completeness` only for focused repair detail.
+  Never run standalone `conform` or `completeness` as a first pass — `prove`
+  wraps both, so a separate run is pure duplicate work. The one sanctioned
+  trigger for standalone `conform` is: `prove` has **already failed** AND its
+  aggregate output lacks the repair detail you need. Return to `prove` for the
+  verdict afterwards — a green standalone `conform` is not the terminal gate.
 - **Re-record only after changing a *replayed request*** (body, path,
   `conformance.example`, or `update_to`). Field classification and
   `ignore_server_fields` are diff-only — just re-run `prove`.
 
+### Bundle the proof loop: `workflow` is the default, not an option
+
+Hand-running `validate` → `preflight` → `record` → `prove` as four separate
+commands — parsing four JSON results per contract — is the expensive path.
+After introspect/bootstrap seed the draft, write one workflow file per contract
+and run `agentprovider workflow <file>` for one compact JSON verdict. Adapt
+this directly (only the two artifact paths change per contract):
+
+```yaml
+contract: contracts/<type>.yaml
+cassette: .agentprovider/cassettes/<type>.cassette.yaml
+base_url_env: API_BASE_URL   # keeps the live URL out of the file
+uplift: true
+steps:
+  - validate
+  - name: preflight
+    stage: record
+  - name: record
+    allow_mutations: true    # drop for read-only data sources
+  - name: prove
+```
+
+On a failed verdict, apply the repair hints and re-run the same file (add
+`force: true` on the record step only when you changed a replayed request —
+diff-only fixes don't need it, and the record step is skippable once the
+cassette is good: a `prove`-only re-run is just `steps: [prove]`). The runner
+executes built-in steps only — `introspect` and `bootstrap` still happen first,
+outside the file. Full step options and per-step overrides:
+`references/cli-loop.md` (`workflow` section).
+
 ## Per-command notes
 
-- **introspect** — read-only live field discovery; writes nothing. Use a
+- **introspect** — read-only live field discovery; writes nothing. The endpoint
+  positional is a **leading-slash full path including the API version prefix**,
+  joined to an **origin-only** `--base-url` — e.g.
+  `agentprovider introspect /api/v1/widgets/ --base-url https://api.example.com --auth-env TOKEN`.
+  A 301/404 whose failing URL shows the host glued directly to the path with no
+  slash between them means the endpoint/base_url join is wrong — fix the
+  shapes above, not the credentials. Use a
   **write-scoped** token: many DRF APIs only serve the `actions.POST` `OPTIONS`
   descriptor to a principal with add permission, and a read-only token silently
   degrades to `source: sample, confidence: reduced`. `--auth-env` takes an env-var
@@ -64,7 +129,13 @@ Three rules that govern the whole loop:
   dev targets. Output is JSON by default; each high-confidence row carries a
   ready-to-use `attribute` object — pipe it straight into `bootstrap --from-introspect`,
   then resolve only the `review_descriptor_metadata` rows by hand (FK ids →
-  `type: number`; JSON/blob inputs → `type: string, default: ""`).
+  `type: number`; JSON/blob inputs → `type: string, default: ""`). Schema/`OPTIONS`
+  descriptors routinely **omit required-ness on FK/reference inputs** (a parent or
+  owner id may be required to create but is not flagged required), so
+  `--from-introspect` can leave a required FK out of the create body. Before the
+  first record, ask whether the object can exist without each FK — if not, model
+  it as `required` and put it in `conformance.example`; and a create **400 naming
+  a missing field means model that FK as required**, not that the API is broken.
 - **bootstrap** — seed from `--openapi` (`--operation` or `--path`+`--method`),
   `--response` (a sample JSON body), or `--from-introspect`. `--kind` is
   `resource` (default) | `datasource` | `ephemeral` | `action`; `--action <verb>`
@@ -131,12 +202,12 @@ Keep these in working memory; open `references/gotchas.md` /
 | Auth shape | Put `auth` under `connection`; basic-auth keys are `username` and `password`. |
 | Runtime base URL | Use `${env.VAR}` or provider config; `conform` does not prove `base_url`. |
 | Paths | Use `${...}`, never `{...}`; keep `base_url` as origin, full paths in ops. |
-| Statuses | Every op declares `expect_status`; add observed async statuses only after review. |
+| Statuses | Every op declares `expect_status`; add observed async statuses only after review. Some APIs run DELETE (or update) async — a delete returning 202 is *success*, not an error: declare `expect_status: [202]` plus the op's `async` block up front, don't burn a record discovering it. |
 | Update requests | `update.body` and `conformance.update_to` must carry the same request keys. |
 | Field names | Remap Terraform meta-args with `field:`; mark every object/nested attr required/optional/computed. |
 | Attribute shape | By omit behavior: rejects → `required`; null/absent → `optional`; stable scalar → `optional+default`; non-pinnable → `optional+computed`. |
 | URL identities | Identity tokens used in URLs should be `type: string`; integer FK ids can stay numeric. |
-| Actions | `dynamic_<type>_<verb>` comes from the action verb; by-id inputs must not share an API field with computed outputs. |
+| Actions | `dynamic_<type>_<verb>` comes from the action verb; by-id inputs must not share an API field with computed outputs. After `record`, fill output proof from the cassette: stable values (`status`, `name`) → `conformance.example`; server-assigned id-shaped values → `conformance.expect.<attr>: {not_null: true}`. |
 
 ### Proving by contract kind
 
@@ -149,6 +220,9 @@ Keep these in working memory; open `references/gotchas.md` /
 
 Action-only contracts are `kind: Resource` in YAML but Terraform sees them as
 Actions (`dynamic_<type>_<verb>`). Worked contracts: `references/contract-format.md`.
+For a specific contract's concrete floor and missing entries, run
+`agentprovider invariants <contract.yaml>` — the CLI, not engine Go or test
+source, is the authority on proof shape.
 
 ## Two outcomes you must distinguish
 

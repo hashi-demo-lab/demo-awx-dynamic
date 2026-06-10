@@ -106,3 +106,14 @@ is the *why* and the fix. `references/repair-hints.md` maps failure symptom → 
   and the rebuilt URL won't match. `conform` enforces this with a "declare type:
   string" hint. Integer FK ids may stay `type: number` only for canonical integer
   path segments.
+
+- **JSON:API: `base_url` must be origin-only; version prefix goes in op paths.** For a
+  `jsonapi:` contract (and any versioned API), set `base_url: https://host` and start
+  every op path with the version segment (`/api/v2/workspaces/${id}`). A `base_url`
+  that ends in `/api/v2` with bare op paths PROVES fine against a hand-written
+  synthetic cassette (host-agnostic path match) but a real `record` stores the full
+  `/api/v2/...` path, and offline `prove` then 501s on every write because the bare op
+  path doesn't match. Authoring a JSON:API contract from the `jsonapi:` block in
+  contract-format.md keeps the rest flat — `bootstrap --openapi` does not understand
+  JSON:API envelopes (it seeds attributes at the `data` level), so hand-author the
+  block.

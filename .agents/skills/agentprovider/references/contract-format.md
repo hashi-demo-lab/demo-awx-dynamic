@@ -216,6 +216,47 @@ without float artifacts (`7`, not `7.0`). So model integer FK ids as `type: numb
 and reference them in paths (`/pipelines/${pipeline_id}/runs/`) and bodies
 freely. Only switch the identity itself to `type: string` for non-canonical tokens.
 
+## jsonapi (JSON:API contracts)
+
+When the API speaks JSON:API (`application/vnd.api+json`; write bodies wrap as
+`{"data":{"type":…,"attributes":{…},"relationships":{…}}}` and reads nest the
+resource under `data`), add a top-level `jsonapi:` block. The engine then wraps
+write bodies and unwraps reads automatically, so the rest of the contract stays
+flat — author `schema.attributes`, `lifecycle.*.body`, and `conformance.example`
+exactly as for a plain REST API.
+
+```yaml
+jsonapi:
+  type: workspaces          # data.type discriminator (REQUIRED)
+  attribute_case: kebab     # snake_case attr <-> kebab-case member (auto_apply <-> auto-apply)
+  relationships:            # FK attributes carried as relationship links, not attributes
+    - attribute: project_id # the Terraform attribute holding the related id
+      name: project         # data.relationships.<name> key (defaults to attribute)
+      type: projects        # the related resource's data.type
+identity:
+  attribute: id
+  response_field: id        # the engine reads the id from data.id
+```
+
+Rules and conventions:
+
+- **`attribute_case: kebab`** removes per-attribute `field:` drudgery for kebab APIs.
+  An explicit `field:` on an attribute still wins (for irregular members).
+- **Relationships** are partitioned out of `data.attributes` into `data.relationships`
+  on write and read back from `data.relationships.<name>.data.id` onto the FK
+  attribute. Each relationship needs a declared `attribute` and a `type`; `name` must
+  be unique across relationships.
+- **Identity** comes from `data.id`. For a resource keyed by a generated id, use
+  `identity: {attribute: id}`. For a resource keyed by name (e.g. an organization
+  where `data.id == name`), use `identity: {attribute: name}`.
+- **Server envelope → `ignore_server_fields`.** Reads project only modeled attributes,
+  so unmodeled `data.attributes` members never reach state; list the server-owned ones
+  (de-kebab'd snake names: `created-at` → `created_at`) in `ignore_server_fields` so
+  completeness reaches 100% honestly. Do NOT sweep settable inputs there.
+- **`base_url` is origin-only** (`https://app.terraform.io`); put the version prefix in
+  every op path (`/api/v2/workspaces/${id}`). See gotchas.md — a path in `base_url`
+  passes synthetic proof but fails a real `record`.
+
 ## lifecycle
 
 CRUD for resources; `open`/`renew`/`close` (+ `renew_after_seconds`) for
@@ -251,6 +292,39 @@ Operation fields:
   `response_scalar_attr` (attribute receiving a scalar/whole-value body).
 - `async`: long-running operations (below).
 - `pagination`: multi-page reads (below).
+
+### Data source: look up by name (filtered)
+
+A data source can resolve an object by a human field (e.g. `name`) instead of its
+id. Read the collection endpoint with the lookup attribute as a query filter and
+unwrap the list envelope to the matched row:
+
+```yaml
+kind: DataSource
+identity: { attribute: name, response_field: name }
+lifecycle:
+  read:
+    method: GET
+    path: /api/v2/organizations/      # collection, not /${id}/
+    query: [name]                     # GET /organizations/?name=<name>
+    expect_status: [200]
+    response_path: results.0          # unwrap {count, results:[…]} -> results[0]
+schema:
+  attributes:
+    name: { required: true, type: string }   # the lookup input
+    id:   { computed: true, type: number }    # the resolved id
+conformance:
+  example: { name: acme }
+  expect:  { id: { not_null: true } }
+  invariants: [read_returns_expected, state_matches_expect, lookup_by_name_resolves]
+```
+
+Add the **`lookup_by_name_resolves`** invariant: it reads with the example filter
+and asserts the resolved object actually echoes each `query` filter value, so a
+server that ignores the filter (returns the first/arbitrary row) or a wrong
+`response_path` is caught — which `read_returns_expected` (computed outputs only)
+would not catch. By-name lookups return the **first** match; for non-unique names
+add more `query` filters to disambiguate.
 
 ### ephemeral lifecycle (open/renew/close)
 

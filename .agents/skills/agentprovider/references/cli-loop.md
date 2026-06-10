@@ -1,7 +1,18 @@
 # agentprovider CLI authoring loop
 
-All commands below use the `agentprovider` CLI; make sure it's available on your
-PATH before you start. The core authoring subcommands are `bootstrap`, `schema`,
+All commands below use the `agentprovider` CLI. Before you start, verify the
+binary on PATH actually carries the terminal gate — stale installs (symlinks
+into other checkouts) silently lack newer subcommands:
+
+```bash
+if ! agentprovider prove -h >/dev/null 2>&1; then
+  (cd terraform-provider-dynamic && go build -o /tmp/agentprovider ./cli/agentprovider)
+  export PATH=/tmp:$PATH
+fi
+```
+
+Do not read Go source to discover capabilities — `agentprovider help <command>`
+is authoritative. The core authoring subcommands are `bootstrap`, `schema`,
 `invariants`, `validate`, `describe`, `introspect`, `preflight`, `record`,
 `conform`, `prove` (terminal proof gate), `completeness` (coverage gate), and
 `refresh` (drift gate), plus `workflow` for compact artifact-driven runs; serving an
@@ -204,7 +215,12 @@ agentprovider introspect <endpoint> --base-url <url>
 ```
 
 - `endpoint` must be a relative API path. Absolute URLs are rejected so credentials
-  cannot bypass the reviewed `--base-url`.
+  cannot bypass the reviewed `--base-url`. Give it as a **leading-slash full path
+  including the version prefix** (`/api/v1/widgets/`) and keep `--base-url`
+  **origin-only** (`https://api.example.com`, not ending in `/api/v1`) — the same
+  origin-only rule the contract's `base_url` follows. A 301 or 404 where the URL
+  shows host and path concatenated without a slash boundary means this join is
+  malformed; correct the endpoint/base_url split rather than re-minting credentials.
 - `--auth-env` takes the name of an environment variable containing a bearer token;
   the token value is never passed on the command line.
 - Use `--allow-private-host` only for reviewed local/dev private hosts. Use
@@ -534,7 +550,8 @@ turns it into a shippable provider.
 
 - `-contract <file>`: generate a single-component provider from one contract.
 - `-contract <folder>`: aggregate **every** contract in the folder into **one**
-  provider (provider name = the shared prefix before the first `_`, e.g. `aap`).
+  provider (provider name = the shared prefix before the first `_`, e.g. `acme`
+  for `acme_widget`).
   Each contract is resolved to its own cassette (by contract file stem) and its
   replay test replays the cassette it was recorded against. Two contracts that
   generate the same `(kind, type)` are rejected — give each a distinct type.
@@ -558,8 +575,8 @@ the unsupported capability.
 {
   "command": "generate",
   "ok": true,
-  "module": "terraform-provider-aap",
+  "module": "terraform-provider-acme",
   "provenance_marker": "VERIFIED",
-  "components": [{"kind": "resource", "type": "aap_inventory"}]
+  "components": [{"kind": "resource", "type": "acme_widget"}]
 }
 ```
