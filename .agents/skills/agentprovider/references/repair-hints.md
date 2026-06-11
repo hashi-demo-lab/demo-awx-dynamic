@@ -3,7 +3,10 @@
 `agentprovider conform` runs the invariants a contract **declares** under
 `conformance.invariants` and emits a ranked `repair_hints` list on failure. This
 catalog explains each standard invariant and the common symptom → fix → *why* so
-you can apply a hint with understanding, not by rote.
+you can apply a hint with understanding, not by rote. Machine-applicable hints
+are also aggregated into a top-level `repair_patches` list — apply it verbatim
+with `agentprovider set <contract> --patch -`; the fixes below land the same
+way (`set <contract> <dotted.path>=<value>`), not by hand-editing the file.
 
 ## The standard invariant set
 
@@ -216,3 +219,13 @@ changes as proof: it must kill `conform` by mutating an asserted output,
 status-sensitive invariant response. If it reports inconclusive, add a real
 assertion surface and re-record/re-run; do not delete the invariant to make the
 proof sidecar appear.
+
+### delete returns 405 Method Not Allowed (`model_delete_less`)
+
+The API does not support deleting this resource. This is structural, not a
+status repair: remove the whole `lifecycle.delete` block (Terraform destroy
+becomes forget-from-state), drop `delete_then_read_404` from
+`conformance.invariants`, then re-record with `--force`. Pick a fresh example
+name for the retry — the object created by the failed pass cannot be deleted
+(sweep it later via a parent cascade if the API has one). `record` emits this
+as a `model_delete_less` suggestion when it observes the 405.

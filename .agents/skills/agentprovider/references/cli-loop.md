@@ -13,7 +13,8 @@ fi
 
 Do not read Go source to discover capabilities — `agentprovider help <command>`
 is authoritative. The core authoring subcommands are `bootstrap`, `schema`,
-`invariants`, `validate`, `describe`, `introspect`, `preflight`, `record`,
+`invariants`, `validate`, `set` (batched validated contract edits), `describe`,
+`introspect`, `preflight`, `record`,
 `conform`, `prove` (terminal proof gate), `completeness` (coverage gate), and
 `refresh` (drift gate), plus `workflow` for compact artifact-driven runs; serving an
 already-authored provider is separate (see `docs/RUNNING.md`).
@@ -31,6 +32,15 @@ contract-file schema as `--format json` or `--format yaml`, with no text mode.
 `introspect` also defaults to JSON, so its output pipes straight into
 `bootstrap --from-introspect -` with no extra flag.
 
+Every command also accepts `--get <dotted.path>` to project one field/subtree
+of its JSON output (numeric segments index lists): `introspect … --get
+results.0.fields`, `prove … --get conform.results`, `validate … --get ok`.
+It implies JSON, errors clearly on a path miss, and replaces ad-hoc
+python/jq parsing of command output — prefer it over piping into a parser.
+Failing prove/conform steps inside `workflow` summaries now carry a
+`failed_invariants` list (name/expected/actual/suggested_fix), so the bundled
+verdict is sufficient for repair without `--include-output`.
+
 ## workflow — compact artifact-driven runs
 
 Use a workflow file when you already know the artifact paths and want one compact
@@ -44,8 +54,7 @@ uplift: true
 min_completeness: 100
 min_settable_coverage: 40
 steps:
-  - validate
-  - name: preflight
+  - name: preflight              # strict-loads the contract (validate step would be redundant)
     stage: record
   - name: record
     suggest: true
@@ -53,23 +62,111 @@ steps:
   - name: prove
 ```
 
+For several contracts, replace the top-level `contract:`/`cassette:` with a
+`contracts:` list — the step pipeline runs once per entry and the output groups
+per-contract step results under `contracts[]`. Add `parallel: true` to run the
+contract pipelines concurrently when every step is offline (validate, conform,
+completeness, prove); workflows with `record`/`refresh` steps refuse it and run
+sequentially so live mutations never race. Contract paths may be globs and
+cassette paths may use `{name}` (the contract filename base, `.data` suffix
+stripped), so a whole corpus is one entry:
+
+```yaml
+contracts:
+  - contract: "contracts/*.yaml"
+    cassette: ".agentprovider/cassettes/{name}.cassette.yaml"
+```
+
+A failed contract does not stop the remaining ones, so a single invocation
+returns every contract's verdict and repair detail. Per-entry fields
+(`cassette`, `metadata`, `allow_mutations`, `uplift`, `force`, `suggest`,
+`base_url_env`, …) override the file-level defaults; declaring both a top-level
+`contract:` and a `contracts:` list is an error:
+
+```yaml
+base_url_env: API_BASE_URL
+uplift: true
+steps: [{name: preflight, stage: record}, {name: record, allow_mutations: true}, prove]
+contracts:
+  - contract: contracts/widget.yaml
+    cassette: .agentprovider/cassettes/widget.cassette.yaml
+  - contract: contracts/gadget.yaml
+    cassette: .agentprovider/cassettes/gadget.cassette.yaml
+```
+
 Run it with:
 
 ```bash
 agentprovider workflow workflow.yaml
+agentprovider workflow workflow.yaml --only inventories   # repair re-run for one contract
 cat workflow.yaml | agentprovider workflow -
 ```
 
+`--only <substr>` filters the contracts list by path substring, so a repair
+re-run targets just the failing contract instead of re-proving the green ones.
+
+`--resume-from <contract>[:<step>]` re-enters a failed run: it narrows to the
+named contract (exact path, or bare filename when unambiguous) and skips the
+steps before `<step>` (reported `skipped`, not passed; omit `:<step>` to re-run
+that contract's whole pipeline). Never construct the token by hand — every
+contract failure emits `resume_from` (the exact token) and `next_action` (the
+ready-to-run re-entry command) in the workflow envelope. Resuming past `prove`
+into `generate` is fail-closed: the runner verifies the proof attestation
+(contract hash + cassette hash + proof status) and refuses with a
+resume-from-prove remedy when it no longer holds; `allow_unproven: true` in the
+workflow file is the only bypass. With `repair: true` and a record step, a
+replay-miss forced re-record clears the resume skip, so the run still completes
+inside the driver.
+
+The mid-loop repair path is always: repair via `set`, re-enter the SAME
+workflow file via `--resume-from` — never drop out of the workflow driver into
+per-contract record/prove/generate commands. The failing envelope's
+`repair_patches` list (top-level on a failing `conform`, under
+`conform.repair_patches` on a failing `prove`, and inside the failing step's
+full `output` in a workflow verdict — failing steps always attach full output,
+never a compact summary) is the zero-transformation input to
+`agentprovider set --patch`; the failing envelope's `next_action` spells out
+the chained command:
+
+```bash
+agentprovider prove contracts/widget.yaml .agentprovider/cassettes/widget.cassette.yaml --get conform.repair_patches \
+  | agentprovider set contracts/widget.yaml --patch -
+agentprovider workflow workflow.yaml --resume-from contracts/widget.yaml:prove   # the emitted resume_from token
+```
+
 Supported step names are built-in only: `validate`, `preflight`, `record`,
-`refresh`, `conform`, `completeness`, and `prove`. The workflow runner does not
+`refresh`, `conform`, `completeness`, `prove`, and `generate` (emits the
+standalone provider repo; requires `out_dir` — file-level, per step, or per
+contracts entry, with `{name}` substituting the contract filename base — plus
+optional `module`/`allow_unproven`; fails closed on unproven contracts, and is
+parallel-safe). After a green generate, run the generated repo's replay test:
+`cd <out_dir> && go test ./internal/provider -run TestGeneratedReplay`. The workflow runner does not
 execute shell commands. Top-level fields are defaults; a step can override
 `contract`, `cassette`, `base_url`, `base_url_env`, `openapi`, `operation`,
 `path`, `method`, `metadata`, thresholds, freshness flags, `uplift`,
-`allow_mutations`, `force`, `suggest`, and `stage`. Use `base_url_env` to keep
-live URLs out of reusable workflow files; the env var must be set at run time.
-String steps such as `- validate` are accepted when no per-step options are
-needed. By default each step stores a compact `summary`; pass `--include-output`
-before the workflow path when you need full nested command JSON for debugging.
+`allow_mutations`, `force`, `suggest`, `stage`, `repair`, and (record only)
+`if_cassette_missing`. Use `base_url_env` to keep live URLs out of reusable
+workflow files; the env var must be set at run time. String steps such as
+`- validate` are accepted when no per-step options are needed. By default each
+step stores a compact `summary`; pass `--include-output` before the workflow
+path when you need full nested command JSON for debugging.
+
+Self-healing options (all opt-in; the `bootstrap --workflow-out` file presets
+them):
+
+- `if_cassette_missing: true` on a record step skips recording when the
+  cassette file already exists — diff-only repair re-runs make zero live
+  calls. `force: true` (or the auto re-record pass below) overrides the skip.
+- `repair: true` (file-level or per prove/conform step) makes a failing
+  prove/conform step run `conform --apply` — each call applies at most one
+  machine-applicable patch in place, fail-closed — until conform is green, no
+  patch applies, or 3 patches, then re-runs the step once. The step summary
+  carries `auto_repairs` and `auto_repair_exhausted`.
+- With `repair: true` AND a record step in the file, a failure carrying a
+  `replay_miss` diagnostic (stale cassette or a changed replayed request)
+  triggers one forced re-record + re-run pass; the per-contract output is
+  marked `auto_rerecorded: true`. A genuinely buggy contract fails closed at
+  the record step.
 
 On a **runtime** fatal error (exit 1) in JSON mode, a command prints a structured
 envelope to stdout. Some commands add `next_action`, `suggestions[]`, and `retry`
@@ -96,6 +193,39 @@ failures. **Usage / flag errors** (missing arguments, an unknown flag, an invali
 `--format` value) are reported as a usage line on **stderr** with exit code **2**,
 following the usual CLI convention — branch on the exit code (2 = bad invocation,
 1 = runtime failure, 0 = success).
+
+## set — batched, validated contract edits (the default mutation path)
+
+```
+agentprovider set <contract.yaml> [<dotted.path>=<value> ...] [--unset <dotted.path>]...
+               [--patch <file|->] [--format json|text] [--json]
+```
+
+Contract edits go through `set`, not a text editor: N edits land in ONE
+invocation (one parse, all ops applied in memory, one atomic
+comment-preserving write), and the patched contract is strict-validated before
+the write is kept — on failure the file is reverted byte-identical and the
+envelope carries the validator diagnostics. Raw file edits are only for shapes
+`set` cannot express.
+
+- Values are YAML-parsed, so they arrive typed:
+  `lifecycle.delete.expect_status=[202]`, `schema.attributes.name.required=true`,
+  `lifecycle.read.gone_when='{field: deleted, equals: true}'`. `=null` writes an
+  explicit null; an empty value is the empty string.
+- `--unset <path>` (repeatable) removes a key; removing an absent key is a
+  reported no-op. Missing intermediate mapping parents are auto-created and
+  echoed as `created_parents`.
+- The success envelope echoes a per-path diff — `{path, before, after, created,
+  created_parents, removed, changed}` — and **the diff IS the verification**:
+  never read the file back after a successful `set`. An all-`changed: false`
+  run is a no-op that exits 0.
+- `--patch <file|->` consumes exactly the `repair_patches` array a failing
+  conform/prove envelope (or a failing workflow step's `output`) emits —
+  `{path, value}` entries, plus `delete: true` as an input-side extension
+  (conform/prove never emit delete entries today) — as JSON or YAML, `-` for
+  stdin. It cannot be combined with `<path>=<value>` pairs or `--unset`.
+- Exit codes follow the convention: `0` success (including a no-op), `1`
+  runtime failure (an invalid result is reverted), `2` usage errors.
 
 ## schema / invariants / validate / describe — authoring introspection
 
@@ -139,8 +269,8 @@ does not add hidden gates to other commands.
 ## bootstrap — seed a draft contract
 
 ```
-agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path <p> --method <m>]
-                   | --from-introspect <introspect.json|->
+agentprovider bootstrap (--openapi <spec.yaml|json> [--list [--grep <substr>] | --operation <opId> | --path <p> --method <m>]
+                   | --from-introspect <introspect.json|-> [--endpoint <path>]
                    | --response <file.json|-> [--type <name>]
                    [--kind resource|datasource|ephemeral|action] [--action <verb>])
                    [--alias <param>=<attribute>]... [--ignore <name>]...
@@ -149,9 +279,34 @@ agentprovider bootstrap (--openapi <spec.yaml|json> [--operation <opId> | --path
 
 - `--openapi <spec>`: OpenAPI v3 spec; pick the resource anchor with `--operation`
   (operationId) or `--path` + `--method`.
+- `--openapi <spec> --list [--grep <substr>]`: inventory mode — emit every path
+  family with its collection/item method→operationId map and any
+  non-`application/json` request encoding, then stop (writes nothing). This is
+  how you find the anchor in a large spec; never read the raw spec file. An
+  `item: post` entry signals POST-as-update; `request_content_type` flags form
+  encoding for `connection.request_content_type`.
 - `--from-introspect <file|->`: seed a draft from `agentprovider introspect
   --format json` output. High-confidence fields become schema attributes and
-  create/update bodies are limited to settable inputs. For action endpoints, the
+  create/update bodies are limited to settable inputs. When the file is a
+  multi-endpoint envelope, pass `--endpoint <path>` to pick one result (with a
+  single result it is selected automatically); an API-index output is rejected —
+  introspect a child endpoint listed in it instead.
+- `--from-introspect <file|-> --all [--out-dir <dir>] [--workflow-out <file>]`:
+  seed one contract per
+  successful endpoint result in one invocation (types and paths derive per
+  endpoint; default dir `.agentprovider/contracts`). Index entries are skipped
+  as expected inventory, failed probes are reported per entry, and name
+  collisions fail that entry with a disambiguation hint. Conflicts with
+  `--endpoint`/`--type`/`--out`; resource and datasource kinds only. Each
+  per-entry JSON carries `review_fks` (FK-candidate fields — apply the
+  can-it-exist-without-it test; if not, mark `required` and add to
+  `conformance.example`) and `review_fields` (untranscribed structured or
+  sample-only fields — a required one 400s the seeded create until modeled by
+  hand); address both before running the workflow.
+  `--workflow-out` additionally writes a runnable workflow file covering the
+  seeded contracts (preflight→record→prove pipeline with `repair`, `uplift`,
+  and `if_cassette_missing` preset; `base_url_env: API_BASE_URL`), so the next
+  command is just `agentprovider workflow <file>`. For action endpoints, the
   scaffold uses the introspected endpoint as an action path, converts a numeric
   by-id segment into a required target input, carries required body inputs only,
   and does not invent output proof.
@@ -209,11 +364,31 @@ JSON shape (default):
 ## introspect — discover live settable fields before authoring
 
 ```
-agentprovider introspect <endpoint> --base-url <url>
+agentprovider introspect <endpoint> [<endpoint> ...] --base-url <url>
                [--auth-env <VAR>] [--allow-insecure] [--allow-private-host]
                [--format json|text] [--json]
 ```
 
+- **Inventory-first discovery.** If the API has a root/index endpoint, introspect
+  it first: a response that is a JSON map of URL paths (≥3 link values) is
+  reported as `source: index` with an `endpoints` array of `{name, path}` and a
+  `next_action` hint instead of fields. That one call replaces hand-crawling the
+  API for endpoints.
+- **`--expand` collapses discovery to ONE command.** On an index endpoint,
+  `--expand` introspects the child endpoints in the same invocation (bounded
+  concurrency, capped at 40 children) and emits the multi-endpoint envelope with
+  the index under `index`. Always pass `--grep <substr>` to filter children by
+  name/path (comma-separated terms match any: `--grep "project,credential"`
+  covers both topics in one call; same syntax on `bootstrap --list --grep`) — a full unfiltered expand of a large API is hundreds of KB. On a
+  non-index endpoint `--expand` is a no-op with a warning.
+- **Multiple endpoints, one invocation.** Pass several endpoint positionals; they
+  are probed concurrently (bounded) and emitted as one envelope:
+  `{"command":"introspect","ok":<all-ok>,"results":[<per-endpoint output>...]}`
+  in input order. A failed endpoint becomes
+  `{"endpoint","ok":false,"error","next_action","retry"}` inside `results` while
+  the others still succeed (exit code is non-zero if any failed). Single-endpoint
+  output is unchanged. Seed each contract from the same file with
+  `bootstrap --from-introspect multi.json --endpoint <path>`.
 - `endpoint` must be a relative API path. Absolute URLs are rejected so credentials
   cannot bypass the reviewed `--base-url`. Give it as a **leading-slash full path
   including the version prefix** (`/api/v1/widgets/`) and keep `--base-url`
@@ -375,12 +550,14 @@ Stable JSON shape (emitted by default):
       "suggested_fix": "add refresh_after: true to lifecycle.create"
     }
   ],
-  "repair_hints": ["add refresh_after: true to lifecycle.create"],
+  "repair_patches": [{ "path": "lifecycle.update.refresh_after", "value": true }],
+  "next_action": "apply the machine repairs in one shot: pipe repair_patches into `agentprovider set contracts/widget.yaml --patch -`, then re-run this gate",
   "summary": { "passed": 5, "failed": 1, "total": 6 }
 }
 ```
 
-Loop: while `overall_passed` is false, apply the top `repair_hints` entry (see
+Loop: while `overall_passed` is false, apply `repair_patches` via
+`set --patch -` and any remaining `suggested_fix` narratives via `set` (see
 `repair-hints.md`), re-run, repeat. A contract-validation failure surfaces through
 the same stream with `name: "contract_validation"`, so there is one parse path for
 both schema and replay failures. Exit code is non-zero when `overall_passed` is

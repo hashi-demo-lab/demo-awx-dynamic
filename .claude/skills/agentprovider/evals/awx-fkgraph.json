@@ -1,0 +1,105 @@
+{
+  "skill_name": "agentprovider",
+  "eval_kind": "live-fkgraph",
+  "notes": "Live AWX FK-graph eval — the DRF / OPTIONS-metadata-rich half of the cross-API anti-overfitting pair defined in docs/plans/agentprovider-cli-optimization-strategy.md (the Stripe half is stripe-fkgraph.json). Unlike awx-lean.json (two independent contracts, the cheap comparison loop), this eval's unit is a multi-resource FK GRAPH: organization -> inventory -> host, plus a relationship-heavy job_template (project/inventory FKs). Cross-resource wiring through computed ids is mandatory — multi-resource graphs are where real-world friction lives and where single-resource optimization hides bugs. Exercises: required-FK-omission detection from OPTIONS descriptors, async-202 delete, write-scoped-token introspect (a read-only token silently degrades to sample/reduced confidence), and the string-URL-identity -> numeric-FK cross-type conversion in HCL (tonumber).",
+  "requires": [
+    "AWX reachable at $AWX with credentials in $AWX_USERNAME and $AWX_PASSWORD (env at ~/git/demo-awx-dynamic/.env)",
+    "agentprovider CLI and terraform-provider-dynamic built from the current checkout",
+    "terraform installed",
+    "one existing project + playbook fixture suitable for a tagged job template"
+  ],
+  "metric_schema": {
+    "skill_version": "git ref or skill snapshot under test",
+    "cli_version": "agentprovider git ref or binary version under test",
+    "changed_lever": "skill, cli, eval, or mixed",
+    "token_total": "total agent tokens for the run",
+    "wall_seconds": "elapsed seconds from first authoring command through verified cleanup",
+    "cmd_invocations": "ordered list of every agentprovider invocation; the count is the primary efficiency metric",
+    "record_iterations": "number of record attempts per contract",
+    "conform_iterations": "number of conform attempts per contract",
+    "rerecord_count": "number of forced rerecords after request-shape changes",
+    "source_reads": "engine/provider/CLI source files read by the agent under test (hard floor 0)",
+    "manual_scaffold_edits": "avoidable hand repairs to generated scaffold before the first successful record; do not count deterministic per-run conformance example values, fixture ids, or values learned from the first record",
+    "manual_cassette_edits": "hand edits to recorded cassettes (target 0)",
+    "sensitivity_hand_edits": "hand-added sensitive: true markings the scaffold should have seeded (target 0)",
+    "preamble_repetitions": "raw env/export sequences repeated beyond the single setup.sh (target 0)",
+    "python_json_parses": "inline python/jq spelunking of CLI JSON output where a --get/--path flag exists (target 0)",
+    "reference_loads": "skill references/*.md files opened (low; 0 is ideal)",
+    "proof_quality": "conform, completeness, mutation/proof, terraform, no-op-plan, and cleanup outcomes",
+    "cleanup_status": "verified_clean, failed, or skipped with reason",
+    "generate_seconds": "elapsed seconds for generate + the generated repo's replay test",
+    "replay_test_status": "pass/fail per generated repo"
+  },
+  "setup": [
+    "Run from the repository root and source the AWX environment from its own directory without printing it.",
+    "Mint one write-scoped bearer token for introspect (read-only tokens silently degrade OPTIONS discovery to sample/reduced confidence); revoke it in cleanup and verify a subsequent request returns 401.",
+    "Export one RUN_TAG for the whole run; every created object must be named apeval-${RUN_TAG}-fk-*.",
+    "Pre-clean only stale apeval-* objects from earlier runs, preserving documented keep-fixtures."
+  ],
+  "evals": [
+    {
+      "id": "awx-fkgraph-org-inventory-host-jobtemplate",
+      "name": "awx-fkgraph-full-pipeline",
+      "coverage": "live",
+      "requires": [
+        "awx",
+        "terraform"
+      ],
+      "prompt": "Use the agentprovider skill to author a multi-resource AWX FK graph from a clean slate: organization, inventory (FK: organization), host (FK: inventory), and a relationship-heavy job_template (project/inventory FKs). Follow the CLI-first loop end to end: introspect --expand with the write-scoped token (OPTIONS metadata should come back high-confidence; if it degrades to sample confidence, diagnose the token scope rather than hand-repairing scaffolds), bootstrap --all --workflow-out, then one workflow run (preflight -> record -> prove -> generate), following the CLI 'next' hints rather than pre-scripting subcommands. Required FK inputs must come from the OPTIONS descriptors, not trial-and-error 400s; AWX deletes are async-202 — model and prove the async delete path. Then create one Terraform example with `agentprovider hcl` that wires the whole graph through computed ids — note the cross-type conversion: a string URL-shaped identity wired into a numeric FK needs tonumber(parent.id) in HCL — run a live terraform apply, verify a no-op second plan, and destroy. Finally run each generated repo's replay acceptance test (cd <out> && go mod tidy && go test ./internal/provider -run TestGeneratedReplay) — the eval is not done until replay passes. Use env placeholders for credentials and base_url; never print credential values. Record every metric_schema field in a markdown table, including the ordered cmd_invocations list and every record/conform/prove attempt, forced rerecord, source read, and manual edit. Run teardown and fail the eval if any apeval-${RUN_TAG}-fk-* object remains (delete-less types like labels are removed via parent cascade — scope the zero-leftover assertion accordingly).",
+      "assertions": [
+        {
+          "kind": "fkgraph_metrics_reported",
+          "text": "the final report includes every metric_schema field, with cmd_invocations as an ordered list"
+        },
+        {
+          "kind": "introspect_first_write_scoped",
+          "text": "introspect runs before bootstrap with a write-scoped token and reports high-confidence OPTIONS metadata; a confidence degradation is diagnosed as token scope, not patched by hand"
+        },
+        {
+          "kind": "required_fk_from_descriptors",
+          "text": "required FK inputs (inventory.organization, host.inventory, job_template.project/inventory) are seeded from OPTIONS descriptors before the first record, not discovered through 400 retries"
+        },
+        {
+          "kind": "async_delete_modeled",
+          "text": "the async-202 delete path is modeled in the contracts and proven by conformance invariants"
+        },
+        {
+          "kind": "relationship_field_reviewed",
+          "text": "relationship/FK/server-derived fields are classified with evidence; settable inputs are not parked in ignore_server_fields to inflate completeness"
+        },
+        {
+          "kind": "fk_wired_through_computed_ids",
+          "text": "the Terraform example wires every child resource's FK from its parent's computed id (with tonumber where a string identity feeds a numeric FK), not hardcoded ids"
+        },
+        {
+          "kind": "conform_and_completeness_pass",
+          "text": "all four contracts pass agentprovider prove with 100% completeness and mutation_status passed_targeted before Terraform runtime proof"
+        },
+        {
+          "kind": "terraform_runtime_checked",
+          "text": "terraform apply succeeds for the FK-graph example, a second plan is a no-op, and destroy completes"
+        },
+        {
+          "kind": "generated_replay_passes",
+          "text": "each proven contract generates a standalone provider repo whose TestGeneratedReplay passes"
+        },
+        {
+          "kind": "cleanup_complete",
+          "text": "teardown removes all apeval-${RUN_TAG}-fk-* objects (scoped to deletable types), revokes the minted token, and verifies 401 afterward; any leftover deletable object fails the eval"
+        }
+      ],
+      "efficiency_targets": {
+        "cmd_invocations": 4,
+        "source_reads": 0,
+        "manual_scaffold_edits": 0,
+        "manual_cassette_edits": 0,
+        "conform_iterations_per_contract": 1,
+        "rerecord_count": 0,
+        "preamble_repetitions": 0,
+        "python_json_parses": 0,
+        "note": "Targets are comparison anchors, not proof. A run that reduces cost by skipping completeness, mutation proof, Terraform, async-delete proof, or cleanup is a regression, not a win."
+      },
+      "cleanup": "Terraform destroy first, then API sweep every object named apeval-${RUN_TAG}-fk-* across the mutated AWX endpoints, deleting leaf objects before parents or relying on org cascade when safe; revoke the setup token and verify 401; verify name__startswith=apeval-${RUN_TAG}-fk- returns count 0 for every touched deletable endpoint; remove authored contracts, cassettes, proof sidecars, generated repos, and Terraform state from the workspace."
+    }
+  ]
+}

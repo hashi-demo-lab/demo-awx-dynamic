@@ -519,3 +519,24 @@ don't wait for the first conform to tell you.
 A contract must declare the invariants it wants — the harness fails closed on
 zero checks. See `repair-hints.md` for the full invariant catalog and which apply
 to which contract shape.
+
+## not_secret — credential-name false positives
+
+A settable attribute whose NAME matches a credential pattern but whose VALUE is
+not a secret (an OAuth `authorization_grant_type` enum, a `skip_authorization`
+toggle) must declare `not_secret: true` instead of `sensitive: true`. It
+satisfies the credential-shaped-name validation, AND the recorder skips
+name-based redaction for that field so echo invariants stay provable against
+the cassette (literal secret values are still scrubbed everywhere). Mutually
+exclusive with `sensitive`. Bootstrap seeds it automatically for bool-typed
+credential-named fields; review string enums yourself before flipping them.
+
+## write_only — inputs the server never returns
+
+`write_only: true` on a required/optional attribute keeps its value out of
+Terraform plan and state entirely (config + request bodies only), so a
+create-time secret the API never echoes can complete a real apply. Mutually
+exclusive with `computed`, `default`, and `carry_on_read`; not valid on sets
+or DataSource/Ephemeral kinds; satisfies the credential-name rule. Conformance
+echo invariants skip write-only attrs (request bodies still carry them, so
+replay matching is unchanged). Requires Terraform >= 1.11 at runtime.

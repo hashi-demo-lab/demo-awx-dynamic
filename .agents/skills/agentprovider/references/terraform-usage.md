@@ -1,3 +1,7 @@
+Start with `agentprovider hcl <contract.yaml>` — it emits main.tf + dev.tfrc
+and the exact build/apply commands. Hand-write HCL only for multi-resource
+graphs (FK wiring, action triggers) this reference describes.
+
 # Consuming a proven contract in Terraform (the HCL surface)
 
 Authoring + proving a contract is half the job; the other half is **using** it in
@@ -114,3 +118,7 @@ The contract-level proof (`agentprovider conform`) proves each contract against 
 cassette offline. The HCL above is the live end-to-end proof: a real `apply` /
 re-`plan` / `destroy` against the target. Keep credentials in `${env.*}` /
 `${var.*}` (or provider config) — never in the HCL or committed state.
+
+`dev_overrides` points at a DIRECTORY containing a binary literally named
+`terraform-provider-dynamic` — build with `-o <dir>/terraform-provider-dynamic`
+or copy/rename; a suffixed binary name is not found.

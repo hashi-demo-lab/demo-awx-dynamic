@@ -29,6 +29,11 @@ jq -e -s '(.[0].metric_schema | keys) == (.[1].metric_schema | keys)' \
   "$skill_dir/evals/awx-live.json" >/dev/null ||
   fail "awx-lean.json and awx-live.json metric_schema keys differ"
 
+jq -e -s '(.[0].metric_schema | keys) == (.[1].metric_schema | keys)' \
+  "$skill_dir/evals/awx-fkgraph.json" \
+  "$skill_dir/evals/stripe-fkgraph.json" >/dev/null ||
+  fail "awx-fkgraph.json and stripe-fkgraph.json metric_schema keys differ"
+
 generic_docs=$(find "$skill_dir/references" -type f -name '*.md' -print)
 if rg -n 'AWX|awx_|aap_|job_template|workflow_job_template|localhost:30080' "$skill_dir/SKILL.md" $generic_docs >/dev/null; then
   rg -n 'AWX|awx_|aap_|job_template|workflow_job_template|localhost:30080' "$skill_dir/SKILL.md" $generic_docs >&2

@@ -90,3 +90,16 @@ signal plus the one-test judgement.
   `--emit-proof` at it (prove those at `conform`, no sidecar).
 
 `record --suggest` also flags `unmodeled_fields` at record time (never auto-edits).
+
+## Settable but amorphous blobs (open-shape objects)
+
+A settable field whose shape is genuinely amorphous (free-form config blobs
+like `inputs`/`injectors` whose keys vary per instance) has three honest
+models, in preference order: (1) key/value-shaped → `type: map` with
+`value_type`; (2) fixed known sub-fields → `type: object` with `fields`
+(secret sub-fields the server masks → `write_only`); (3) truly open shape →
+route to `ignore_server_fields` and SAY SO in your report — this is a
+documented deferral, not green-washing, when the field's shape cannot be
+declared without `DynamicAttribute` (deliberately excluded: it destroys
+plan-time type info). Never model an object blob as `type: string` — that
+sends a JSON-string, not an object.

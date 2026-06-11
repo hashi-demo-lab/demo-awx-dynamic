@@ -117,3 +117,36 @@ is the *why* and the fix. `references/repair-hints.md` maps failure symptom → 
   contract-format.md keeps the rest flat — `bootstrap --openapi` does not understand
   JSON:API envelopes (it seeds attributes at the `data` level), so hand-author the
   block.
+
+- **Never merge stderr into a JSON parse (`2>&1 | python/jq`).** Every command's
+  stdout is pure JSON by default; uplift/proof advisories go to stderr by design.
+  Merging streams is what breaks parsing — capture stderr separately
+  (`> out.json 2> notes.txt`) or use `--get <field>` and skip the parser entirely.
+
+- **`conformance.example` values are NOT env-interpolated.** Only `connection`
+  expands `${env.*}`. A literal `${SOMETHING}` in an example is sent to the API
+  verbatim (→ 400/resource_missing). Put the real fixture id (e.g. a parent FK id
+  created during setup) into the example before `record`.
+
+- **Prefer the canonical `request_content_type` media type** (e.g.
+  `application/x-www-form-urlencoded` over the `form` alias). Aliases are valid and
+  current generated runtimes normalize them, but the canonical form is what the
+  cassette stores and works on every binary version.
+
+- **403/405 on the seeded PATCH update of an item path that accepted POST create →
+  try POST-as-update.** Some APIs (form-encoded ones especially) update via POST to
+  the item path and reject PATCH with an auth-shaped 403, not a method-shaped 405.
+  Switch `lifecycle.update.method` to POST and rerecord once — don't chase
+  credentials.
+
+- **A delete-less child makes its parent effectively delete-less.** A forgotten
+  (destroy = forget) child still attached server-side can 400 the parent's delete
+  (e.g. an active price blocks product deletion). Teardown order: deactivate/detach
+  the delete-less children first, then delete or archive the parent; scope
+  zero-leftover checks accordingly.
+
+- **`introspect --expand` on an API index: base_url must be origin-only.** Index
+  child paths come back root-absolute (`/api/v2/...`), so a versioned base_url
+  (`$HOST/api/v2`) double-joins to `/api/v2/api/v2/...` → opaque 404 "unusable
+  OPTIONS response". Pass the bare origin and put the version prefix in the
+  endpoint argument.

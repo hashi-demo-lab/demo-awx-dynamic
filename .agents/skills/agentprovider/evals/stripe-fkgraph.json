@@ -1,0 +1,109 @@
+{
+  "skill_name": "agentprovider",
+  "eval_kind": "live-fkgraph",
+  "notes": "Live Stripe FK-graph eval — the form-encoded / metadata-poor half of the cross-API anti-overfitting pair defined in docs/plans/agentprovider-cli-optimization-strategy.md (the AWX half is awx-fkgraph.json). Stripe is deliberately maximally different from AWX: form-encoded request bodies, no OPTIONS metadata (introspect runs in sample/reduced-confidence mode), gone_when tombstone reads (deleted customers read back 200 + deleted:true), last-item cursor pagination (cursor_from_item_field + starting_after), POST-as-update item paths, and a delete-less resource (price: destroy = forget/deactivate). A CLI or skill change validated only on AWX's DRF/OPTIONS shape is provisional until this eval also holds. Reference contracts for the same surface live in terraform-provider-dynamic/contracts/stripe_{product,price,customer}.yaml and stripe_customers.data.yaml — the agent under test must NOT read them (authoring from the skill alone is the point); they are the grader's oracle.",
+  "requires": [
+    "Stripe test-mode credentials in stripe.env at the repo root (STRIPE_API_KEY, STRIPE_BASE_URL); test mode only — never a live-mode key",
+    "agentprovider CLI and terraform-provider-dynamic built from the current checkout",
+    "terraform installed",
+    "network access to api.stripe.com"
+  ],
+  "metric_schema": {
+    "skill_version": "git ref or skill snapshot under test",
+    "cli_version": "agentprovider git ref or binary version under test",
+    "changed_lever": "skill, cli, eval, or mixed",
+    "token_total": "total agent tokens for the run",
+    "wall_seconds": "elapsed seconds from first authoring command through verified cleanup",
+    "cmd_invocations": "ordered list of every agentprovider invocation; the count is the primary efficiency metric",
+    "record_iterations": "number of record attempts per contract",
+    "conform_iterations": "number of conform attempts per contract",
+    "rerecord_count": "number of forced rerecords after request-shape changes",
+    "source_reads": "engine/provider/CLI source files read by the agent under test (hard floor 0)",
+    "manual_scaffold_edits": "avoidable hand repairs to generated scaffold before the first successful record; do not count deterministic per-run conformance example values, fixture ids, or values learned from the first record",
+    "manual_cassette_edits": "hand edits to recorded cassettes (target 0)",
+    "sensitivity_hand_edits": "hand-added sensitive: true markings the scaffold should have seeded (target 0)",
+    "preamble_repetitions": "raw env/export sequences repeated beyond the single setup.sh (target 0)",
+    "python_json_parses": "inline python/jq spelunking of CLI JSON output where a --get/--path flag exists (target 0)",
+    "reference_loads": "skill references/*.md files opened (low; 0 is ideal)",
+    "proof_quality": "conform, completeness, mutation/proof, terraform, no-op-plan, and cleanup outcomes",
+    "cleanup_status": "verified_clean, failed, or skipped with reason",
+    "generate_seconds": "elapsed seconds for generate + the generated repo's replay test",
+    "replay_test_status": "pass/fail per generated repo"
+  },
+  "setup": [
+    "Run from the repository root; source stripe.env from its own directory without printing any value.",
+    "Stripe auth is a static bearer key — there is no per-run token mint/revoke step (that part of the AWX credential contract does not apply); the key must only ever appear as an env placeholder.",
+    "Export one RUN_TAG for the whole run; every created Stripe object carries apeval-${RUN_TAG}-fk-* in its name and a run_tag metadata key where the API allows metadata.",
+    "Pre-clean only stale apeval-* test-mode objects from earlier runs (deactivate stale prices, delete stale products/customers)."
+  ],
+  "evals": [
+    {
+      "id": "stripe-fkgraph-product-price-customer",
+      "name": "stripe-fkgraph-full-pipeline",
+      "coverage": "live",
+      "requires": [
+        "stripe-test-mode",
+        "terraform"
+      ],
+      "prompt": "Use the agentprovider skill to author a multi-resource Stripe (test mode) provider surface from a clean slate: three CRUD resources forming an FK graph — product, then price (FK: product id), then customer — plus a paginated customers data source (cursor pagination via the last item's id and starting_after). Follow the CLI-first loop end to end: introspect --expand (expect sample/reduced-confidence — Stripe has no OPTIONS metadata; say so in the report rather than fighting it), bootstrap --all --workflow-out, then one workflow run (preflight -> record -> prove -> generate), following the CLI 'next' hints rather than pre-scripting subcommands. Request bodies are form-encoded; deleted customers read back as 200 with deleted:true (model gone_when); prices cannot be deleted (model the delete-less destroy = forget path and deactivate in teardown). Then create one Terraform example with `agentprovider hcl` that wires the FK graph through computed ids (price.product references the product resource's id attribute), run a live terraform apply, verify a no-op second plan, and destroy. Finally run each generated repo's replay acceptance test (cd <out> && go mod tidy && go test ./internal/provider -run TestGeneratedReplay) — the eval is not done until replay passes. Use env placeholders for the key and base_url; never print credential values. Record every metric_schema field in a markdown table, including the ordered cmd_invocations list and every record/conform/prove attempt, forced rerecord, source read, and manual edit. Run teardown and fail the eval if any deletable apeval-${RUN_TAG}-fk-* object remains or any apeval-${RUN_TAG}-fk-* price remains active.",
+      "assertions": [
+        {
+          "kind": "fkgraph_metrics_reported",
+          "text": "the final report includes every metric_schema field, with cmd_invocations as an ordered list"
+        },
+        {
+          "kind": "introspect_first_reduced_confidence",
+          "text": "introspect is attempted before bootstrap and its sample/reduced-confidence result is reported as expected behavior for a metadata-poor API, not as an error"
+        },
+        {
+          "kind": "form_encoding_modeled",
+          "text": "create/update request bodies are form-encoded via the contract's request_content_type, with no hand-written encoding workarounds and no manual cassette edits"
+        },
+        {
+          "kind": "tombstone_read_modeled",
+          "text": "the customer contract models the 200 + deleted:true tombstone via lifecycle.read.gone_when, proven by conformance and exercised by the destroy/recreate path"
+        },
+        {
+          "kind": "deleteless_resource_modeled",
+          "text": "the price contract models the delete-less destroy (forget) path; teardown deactivates rather than pretends to delete"
+        },
+        {
+          "kind": "cursor_pagination_proven",
+          "text": "the customers data source uses last-item cursor pagination (cursor_from_item_field + starting_after) and returns multiple pages' items in conformance or live proof"
+        },
+        {
+          "kind": "fk_wired_through_computed_ids",
+          "text": "the Terraform example wires price.product from the product resource's computed id (a real cross-resource reference, not a hardcoded id)"
+        },
+        {
+          "kind": "conform_and_completeness_pass",
+          "text": "all four contracts pass agentprovider prove with 100% completeness and mutation_status passed_targeted before Terraform runtime proof"
+        },
+        {
+          "kind": "terraform_runtime_checked",
+          "text": "terraform apply succeeds for the FK-graph example, a second plan is a no-op, and destroy completes"
+        },
+        {
+          "kind": "generated_replay_passes",
+          "text": "each proven contract generates a standalone provider repo whose TestGeneratedReplay passes"
+        },
+        {
+          "kind": "cleanup_complete",
+          "text": "teardown removes all deletable apeval-${RUN_TAG}-fk-* objects, deactivates all run-tagged prices, and verifies zero leftovers scoped to deletable types"
+        }
+      ],
+      "efficiency_targets": {
+        "cmd_invocations": 4,
+        "source_reads": 0,
+        "manual_scaffold_edits": 0,
+        "manual_cassette_edits": 0,
+        "conform_iterations_per_contract": 1,
+        "rerecord_count": 0,
+        "preamble_repetitions": 0,
+        "python_json_parses": 0,
+        "note": "Targets are comparison anchors, not proof. A run that reduces cost by skipping completeness, mutation proof, Terraform, pagination proof, or cleanup is a regression, not a win."
+      },
+      "cleanup": "Terraform destroy first, then API sweep: deactivate every active apeval-${RUN_TAG}-fk-* price, delete every apeval-${RUN_TAG}-fk-* product and customer, verify list endpoints return zero active run-tagged objects for each deletable type (prices are delete-less — assert deactivated, not absent), and remove authored contracts, cassettes, proof sidecars, generated repos, and Terraform state from the workspace."
+    }
+  ]
+}
