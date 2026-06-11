@@ -7,6 +7,13 @@ you can apply a hint with understanding, not by rote. Machine-applicable hints
 are also aggregated into a top-level `repair_patches` list — apply it verbatim
 with `agentprovider set <contract> --patch -`; the fixes below land the same
 way (`set <contract> <dotted.path>=<value>`), not by hand-editing the file.
+Machine patches cover, beyond per-invariant producers (`refresh_after`,
+`not_found_status`, `expect_status`, optional+computed, identity `type:
+string`): **any** invariant failing on a lifecycle status-gate mismatch with a
+2xx/3xx observed status — the patch widens `lifecycle.<op>.expect_status` to
+include what the API actually returned. 401/403 and 404/410 are deliberately
+never patched into the success set (they have their own repairs), so an empty
+`repair_patches` on those failures is by design, not a gap.
 
 ## The standard invariant set
 
